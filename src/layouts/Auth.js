@@ -1,35 +1,29 @@
 import React from "react";
-import { Switch, Route, Redirect } from "react-router-dom";
-
-// components
-
-import Navbar from "components/Navbars/AuthNavbar.js";
-import FooterSmall from "components/Footers/FooterSmall.js";
-
-// views
-
+import { Route, Routes } from "react-router-dom";
 import Login from "views/auth/Login.js";
 import Register from "views/auth/Register.js";
-
+import bg_5 from "../assets/img/bg2.jpg";
+import Registeragence from "views/auth/Registeragence";
 export default function Auth() {
   return (
     <>
-      <Navbar transparent />
+      {/* <Navbar transparent /> */}
       <main>
         <section className="relative w-full h-full py-40 min-h-screen">
           <div
             className="absolute top-0 w-full h-full bg-blueGray-800 bg-no-repeat bg-full"
             style={{
               backgroundImage:
-                "url(" + require("assets/img/register_bg_2.png").default + ")",
+                `url(${bg_5})`
             }}
           ></div>
-          <Switch>
-            <Route path="/auth/login" exact component={Login} />
-            <Route path="/auth/register" exact component={Register} />
-            <Redirect from="/auth" to="/auth/login" />
-          </Switch>
-          <FooterSmall absolute />
+          <Routes>
+            <Route path="login" element={<Login />} />
+            <Route path="register" element={<Register />} />
+            <Route path="RegisterAgence" element={<Registeragence />} />
+          </Routes>
+
+          {/* <FooterSmall absolute /> */}
         </section>
       </main>
     </>
