@@ -4,19 +4,20 @@ import { useNavigate, Link } from "react-router-dom";
 import { useDispatch } from 'react-redux'
 import { setCredentials } from "ApiSlice/authSlice";
 import { useLoginMutation } from "ApiSlice/authApiSlice";
+import Alert from "components/Alert/Alert";
+import InputField from "components/InputField/inputField";
 export default function Login() {
-  const userRef = useRef()
+
   const errRef = useRef()
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errMsg, setErrMsg] = useState('')
   const navigate = useNavigate()
   const dispatch = useDispatch()
+  const [alertMessage, setAlertMessage] = useState('');
+  const [alertType, setAlertType] = useState('');
   const [errors, setErrors] = useState({});
   const [login, { isLoading }] = useLoginMutation()
-  useEffect(() => {
-    userRef.current.focus()
-  }, [])
   useEffect(() => {
     setErrMsg('')
   }, [email, password])
@@ -44,24 +45,33 @@ export default function Login() {
     e.preventDefault();
     try {
       const response = await login({ email, password }).unwrap();
-      console.log('Response from login:', response);
       const { accessToken, collection, statue } = response;
-      console.log("Collection:", collection);
-
 
       dispatch(setCredentials({ accessToken, collection, statue }));
 
-      setEmail('');
-      setPassword('');
+      setEmail("");
+      setPassword("");
 
+      // Afficher le message de succès
+      setAlertMessage("Login successful!");
+      setAlertType("success");
 
-      if (collection === 'admin') {
-        navigate('/admin');
-      } else if (collection === 'b2b') {
-        navigate('/');
-      }
+      setTimeout(() => {
+        setAlertMessage(""); // Réinitialise le message
+        if (collection === "admin") {
+          navigate("/admin");
+        } else if (collection === "b2b" && statue === "approved") {
+          navigate("/");
+        }
+      }, 2000); // 2 secondes
     } catch (err) {
-      setErrMsg('Login failed!');
+      // Afficher le message d'erreur
+      setAlertMessage("Login failed! Check your credentials.");
+      setAlertType("error");
+
+      setTimeout(() => {
+        setAlertMessage(""); // Réinitialise après 3 secondes
+      }, 3000);
     }
   };
   const errClass = errMsg ? "errmsg" : "offscreen"
@@ -110,58 +120,27 @@ export default function Login() {
                 <div className="text-blueGray-400 text-center mb-3 font-bold">
                   <small>Or sign in with credentials</small>
                 </div>
+                <Alert message={alertMessage} type={alertType} />
                 <p ref={errRef} className={errClass} aria-live="assertive">{errMsg}</p>
                 <form>
-                  <div className="relative w-full mb-3">
-                    <label
-                      className="block uppercase text-blueGray-600 text-xs font-bold mb-2"
-                      htmlFor="grid-password"
-                    >
-                      Email
-                    </label>
-                    <span className="z-10 h-full leading-snug font-normal absolute text-center text-blueGray-700 absolute bg-transparent rounded text-base items-center justify-center w-8 pl-2 py-1">
-                      <i className="fas fa-envelope"></i>
-                    </span>
-                    <input
-                      type="email"
-                      ref={userRef}
-                      value={email}
-                      onChange={handleUserInput}
-                      className={`px-2 py-1 placeholder-blueGray-300 text-blueGray-600 relative bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full pl-10 ${errors.email ? 'border-red-500 bg-red-50' : ''
-                        }`}
-                      placeholder="Email"
-                    />
-                    {errors.email && (
-                      <p className="mt-2 text-sm text-red-300">
-                        <span className="font-medium ">Erreur:</span> {errors.email}
-                      </p>
-                    )}
-                  </div>
-
-                  <div className="relative w-full mb-3">
-                    <label
-                      className="block uppercase text-blueGray-600 text-xs font-bold mb-2"
-                      htmlFor="grid-password"
-                    >
-                      Password
-                    </label>
-                    <span className="z-10 h-full leading-snug font-normal absolute text-center text-blueGray-700 absolute bg-transparent rounded text-base items-center justify-center w-8 pl-2 py-1">
-                      <i className="fas fa-lock"></i>
-                    </span>
-                    <input
-                      type="password"
-                      onChange={handlepwdInput}
-                      value={password}
-                      className={`px-2 py-1 placeholder-blueGray-300 text-blueGray-600 relative bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full pl-10 ${errors.password ? 'border-red-500 bg-red-50' : ''
-                        }`}
-                      placeholder="Password"
-                    />
-                    {errors.password && (
-                      <p className="mt-2 text-sm text-red-300">
-                        <span className="font-medium ">Erreur:</span> {errors.password}
-                      </p>
-                    )}
-                  </div>
+                  <InputField
+                    label="Email"
+                    type="email"
+                    icon="fas fa-envelope"
+                    value={email}
+                    onChange={handleUserInput}
+                    placeholder="Email"
+                    error={errors.email}
+                  />
+                  <InputField
+                    label="Password"
+                    type="password"
+                    icon="fas fa-lock"
+                    value={password}
+                    onChange={handlepwdInput}
+                    placeholder="Enter your password"
+                    error={errors.password}
+                  />
                   <div>
                     <label className="inline-flex items-center cursor-pointer">
                       <input
@@ -195,11 +174,7 @@ export default function Login() {
                       </a>
                     </div>
                     <div className="w-1/2 text-right">
-                      <div>
-                        <Link to="/auth/register" className="text-blueGray-800">
-                          <small>Create new account</small>
-                        </Link>
-                      </div>
+
                       <Link to="/auth/RegisterAgence" className="text-blueGray-800">
                         <small>Create new account Pro</small>
                       </Link>

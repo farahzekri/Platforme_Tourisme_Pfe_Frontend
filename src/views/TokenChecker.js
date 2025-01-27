@@ -16,7 +16,7 @@ const TokenChecker = ({ children }) => {
             dispatch(setCredentials({ accessToken, collection, email, name, statue }));
           } catch (err) {
             console.log('Erreur lors du rafraîchissement du token:', err);
-            navigate('/auth/login'); 
+          
           }
         };
     

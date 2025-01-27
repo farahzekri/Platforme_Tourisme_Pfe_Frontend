@@ -33,6 +33,14 @@ module.exports = {
         800: '#a10101',
         900: '#810101',
       },
+      green:{
+      50:'#f1fcf3',  
+      100:'#defae6',
+      300:'#8ee7a8',
+      700:'#1d7839',
+      800:'#1c5f30',
+      },
+      customgreen: '#63E6BE',
     },
     extend: {
       minHeight: {

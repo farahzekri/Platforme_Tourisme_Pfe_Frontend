@@ -7,50 +7,59 @@ export const validateFieldRegistre = (name, value) => {
   switch (name) {
     case "email":
       if (!emailRegex.test(value)) {
-        errorMessage = "L'email doit être valide (ex: exemple@domaine.com).";
+        errorMessage = "Email must be valid (eg: example@domain.com).";
       }
       break;
 
     case "password":
       if (!passwordRegex.test(value)) {
         errorMessage =
-          "Le mot de passe doit contenir au moins 8 caractères, une majuscule et un chiffre.";
+          "Password must contain at least 8 characters, one capital letter and one number.";
       }
       break;
 
     case "phoneNumber":
       if (isNaN(value) ) {
-        errorMessage = "Le numéro de téléphone doit contenir uniquement des chiffres.";
+        errorMessage = "The phone number must contain only numbers.";
       }
       if(value.trim()===""){
-        errorMessage = "Le numéro de téléphone est requis.";
+        errorMessage = "Phone number is required.";
       }
       break;
 
     case "nameAgence":
       if (value.trim() === "") {
-        errorMessage = "Le nom de l'agence est requis.";
+        errorMessage = "Agency name is required.";
+      }
+      break;
+      case "username":
+      if (value.trim() === "") {
+        errorMessage = "Username is required.";
       }
       break;
 
     case "address":
       if (value.trim() === "") {
-        errorMessage = "L'adresse est requise.";
+        errorMessage = "Address is required.";
       }
       break;
 
     case "city":
       if (value.trim() === "") {
-        errorMessage = "La ville est requise.";
+        errorMessage = "The city is required.";
       }
       break;
 
     case "country":
       if (value.trim() === "") {
-        errorMessage = "Le pays est requis.";
+        errorMessage = "Country is required.";
       }
       break;
-
+    case "documents":
+      if(value.trim()===""){
+        errorMessage="documents are required"
+      }    
+     break;
     default:
       break;
   }

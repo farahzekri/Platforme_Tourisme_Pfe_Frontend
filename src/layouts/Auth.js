@@ -2,7 +2,7 @@ import React from "react";
 import { Route, Routes } from "react-router-dom";
 import Login from "views/auth/Login.js";
 import Register from "views/auth/Register.js";
-import bg_5 from "../assets/img/bg2.jpg";
+import bg_5 from "../assets/img/bg_5.jpg";
 import Registeragence from "views/auth/Registeragence";
 export default function Auth() {
   return (

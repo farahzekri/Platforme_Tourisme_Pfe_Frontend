@@ -1,10 +1,15 @@
 import React, { useState } from "react";
 import { useRegisterUser } from "views/hooks/use";
-import toast from "react-hot-toast";
+
 import { useNavigate } from "react-router-dom";
 import { validateFieldRegistre } from "./validation";
+import SelectField from "components/InputField/Selectedinputandfield";
+import InputField from "components/InputField/inputField";
+import SelectedFile from "components/InputField/selecedfile";
+import Alert from "components/Alert/Alert";
 export default function Registeragence() {
     const [errors, setErrors] = useState({});
+    const [alert, setAlert] = useState({ message: "", type: "" });
     const [formData, setFormData] = useState({
         nameAgence: "",
         email: "",
@@ -13,6 +18,8 @@ export default function Registeragence() {
         address: "",
         city: "",
         country: "",
+        documents: "",
+        typeAgence: "",
 
     });
     const { mutate: registerUser } = useRegisterUser();
@@ -27,7 +34,12 @@ export default function Registeragence() {
             [name]: errorMessage,
         }));
     };
-
+    const handleSelectChange = (value) => {
+        setFormData({
+            ...formData,
+            typeAgence: value, // Met à jour le type d'agence dans le formData
+        });
+    };
 
     const navigate = useNavigate();
 
@@ -46,15 +58,17 @@ export default function Registeragence() {
         setErrors(newErrors);
 
 
+
         if (Object.keys(newErrors).length > 0) {
-            toast.error("Veuillez corriger les erreurs avant de soumettre !");
+
+            setAlert({ message: "Please correct any errors before submitting !", type: "error" });
             return;
         }
 
 
         registerUser(formData, {
             onSuccess: (data) => {
-                toast.success("Utilisateur enregistré avec succès !");
+                setAlert({ message: "User registered successfully !", type: "success" });
                 console.log("Utilisateur enregistré :", data);
 
 
@@ -64,10 +78,20 @@ export default function Registeragence() {
             },
             onError: (error) => {
                 console.error("Erreur d'enregistrement :", error);
-                toast.error("L'enregistrement a échoué !");
+                setAlert({ message: "Registration failed !", type: "error" });
+                setTimeout(() => {
+                    setAlert({ message: "", type: "" }); // Cacher l'alerte après 3 secondes
+                }, 3000);
             },
         });
     };
+
+    const options = [
+        { value: " ", label: "select a type" },
+        { value: "travel_agency", label: "Travel agency" },
+        { value: "rental_agency", label: "Rental agency" },
+        { value: "hotel", label: "Hotel" },
+    ];
     return (
         <>
             <div className="container mx-auto px-4 h-full">
@@ -110,186 +134,93 @@ export default function Registeragence() {
                                 <div className="text-blueGray-400 text-center mb-3 font-bold">
                                     <small>Or sign up with credentials</small>
                                 </div>
+                                <Alert message={alert.message} type={alert.type} />
                                 <form>
-                                    <div className="relative w-full mb-3">
-                                        <label
-                                            className="block uppercase text-blueGray-600 text-xs font-bold mb-2"
-                                            htmlFor="grid-password"
-                                        >
-                                            Name Agence
-                                        </label>
-                                        <span className="z-10 h-full leading-snug font-normal absolute text-center text-blueGray-700 absolute bg-transparent rounded text-base items-center justify-center w-8 pl-2 py-1">
-                                            <i className="fas fa-user"></i>
-                                        </span>
-                                        <input
-                                            type="name"
-                                            name="nameAgence"
-                                            value={formData.nameAgence}
-                                            onChange={handleChange}
-                                            className={`px-2 py-1  placeholder-blueGray-300 text-blueGray-600 relative bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full pl-10 ${errors.email ? 'border-red-500 bg-red-50' : ''
-                                            }`}
-                                            placeholder="Name"
-                                        />
-                                        {errors.nameAgence && (
-                                            <p className="mt-2 text-sm text-red-300">
-                                                <span className="font-medium ">Erreur:</span> {errors.nameAgence}
-                                            </p>
-                                        )}
-                                    </div>
-
-                                    <div className="relative w-full mb-3">
-                                        <label
-                                            className="block uppercase text-blueGray-600 text-xs font-bold mb-2"
-                                            htmlFor="grid-password"
-                                        >
-                                            Email
-                                        </label>
-                                        <span className="z-10 h-full leading-snug font-normal absolute text-center text-blueGray-700 absolute bg-transparent rounded text-base items-center justify-center w-8 pl-2 py-1">
-                                            <i className="fas fa-envelope"></i>
-                                        </span>
-                                        <input
-                                            type="email"
-                                            name="email"
-                                            value={formData.email}
-                                            onChange={handleChange}
-                                            className={`px-2 py-1 placeholder-blueGray-300 text-blueGray-600 relative bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full pl-10 ${errors.email ? 'border-red-500 bg-red-50' : ''
-                                            }`}
-                                            placeholder="Email"
-                                        />
-                                         {errors.email && (
-                                            <p className="mt-2 text-sm text-red-300">
-                                                <span className="font-medium ">Erreur:</span> {errors.email}
-                                            </p>
-                                        )}
-                                    </div>
-
-                                    <div className="relative w-full mb-3">
-                                        <label
-                                            className="block uppercase text-blueGray-600 text-xs font-bold mb-2"
-                                            htmlFor="grid-password"
-                                        >
-                                            Password
-                                        </label>
-                                        <span class="z-10 h-full leading-snug font-normal absolute text-center text-blueGray-700 absolute bg-transparent rounded text-base items-center justify-center w-8 pl-2 py-1">
-                                            <i class="fas fa-lock"></i>
-                                        </span>
-                                        <input
-                                            type="password"
-                                            name="password"
-                                            value={formData.password}
-                                            onChange={handleChange}
-                                            className={`px-2 py-1 placeholder-blueGray-300 text-blueGray-600 relative bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full pl-10 ${errors.password ? 'border-red-500 bg-red-50' : ''
-                                            }`}
-                                            placeholder="Password"
-                                        />
-                                          {errors.password && (
-                                            <p className="mt-2 text-sm text-red-300">
-                                                <span className="font-medium ">Erreur:</span> {errors.password}
-                                            </p>
-                                        )}
-                                    </div>
-                                    <div className="relative w-full mb-3">
-                                        <label
-                                            className="block uppercase text-blueGray-600 text-xs font-bold mb-2"
-                                            htmlFor="phone-number"
-                                        >
-                                            Phone Number
-                                        </label>
-                                        <span className="z-10 h-full leading-snug font-normal absolute text-center text-blueGray-700 bg-transparent rounded text-base items-center justify-center w-8 pl-2 py-1">
-                                            <i className="fas fa-phone"></i>
-                                        </span>
-                                        <input
-                                            type="tel"
-                                            name="phoneNumber"
-                                            value={formData.phoneNumber}
-                                            onChange={handleChange}
-                                            className={`px-2 py-1 placeholder-blueGray-300 text-blueGray-600 relative bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full pl-10 ${errors.phoneNumber ? 'border-red-500 bg-red-50' : ''
-                                            }`}
-                                            placeholder="Phone Number"
-                                        />
-                                        {errors.phoneNumber && (
-                                            <p className="mt-2 text-sm text-red-300">
-                                                <span className="font-medium ">Erreur:</span> {errors.phoneNumber}
-                                            </p>
-                                        )}
-                                    </div>
-                                    <div className="relative w-full mb-3">
-                                        <label
-                                            className="block uppercase text-blueGray-600 text-xs font-bold mb-2"
-                                            htmlFor="phone-number"
-                                        >
-                                            adresse
-                                        </label>
-                                        <span className="z-10 h-full leading-snug font-normal absolute text-center text-blueGray-700 bg-transparent rounded text-base items-center justify-center w-8 pl-2 py-1">
-                                            <i className="fas fa-map-marker-alt"></i>
-                                        </span>
-                                        <input
-                                            type="tel"
-                                            name="address"
-                                            value={formData.address}
-                                            onChange={handleChange}
-                                            className={`px-2 py-1 placeholder-blueGray-300 text-blueGray-600 relative bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full pl-10 ${errors.address ? 'border-red-500 bg-red-50' : ''
-                                            }`}
-                                            placeholder="adresse"
-                                        />
-                                        {errors.address && (
-                                            <p className="mt-2 text-sm text-red-300">
-                                                <span className="font-medium ">Erreur:</span> {errors.address}
-                                            </p>
-                                        )}
-                                    </div>
-                                    <div className="relative w-full mb-3">
-                                        <label
-                                            className="block uppercase text-blueGray-600 text-xs font-bold mb-2"
-                                            htmlFor="phone-number"
-                                        >
-                                            city
-                                        </label>
-                                        <span className="z-10 h-full leading-snug font-normal absolute text-center text-blueGray-700 bg-transparent rounded text-base items-center justify-center w-8 pl-2 py-1">
-                                            <i class="fas fa-city"></i>
-                                        </span>
-                                        <input
-                                            type="tel"
-                                            name="city"
-                                            value={formData.city}
-                                            onChange={handleChange}
-                                            className={`px-2 py-1 placeholder-blueGray-300 text-blueGray-600 relative bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full pl-10 ${errors.city ? 'border-red-500 bg-red-50' : ''
-                                            }`}
-                                            placeholder="city"
-                                        />
-                                         {errors.city && (
-                                            <p className="mt-2 text-sm text-red-300">
-                                                <span className="font-medium ">Erreur:</span> {errors.city}
-                                            </p>
-                                        )}
-                                    </div>
-                                    <div className="relative w-full mb-3">
-                                        <label
-                                            className="block uppercase text-blueGray-600 text-xs font-bold mb-2"
-                                            htmlFor="phone-number"
-                                        >
-                                            country
-                                        </label>
-
-                                        <span className="z-10 h-full leading-snug font-normal absolute text-center text-blueGray-700 bg-transparent rounded text-base items-center justify-center w-8 pl-2 py-1">
-                                            <i class="fas fa-globe"></i>
-                                        </span>
-                                        <input
-                                            type="tel"
-                                            name="country"
-                                            value={formData.country}
-                                            onChange={handleChange}
-                                            className={`px-2 py-1 placeholder-blueGray-300 text-blueGray-600 relative bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full pl-10 ${errors.country ? 'border-red-500 bg-red-50' : ''
-                                            }`}
-                                            placeholder="country"
-                                        />
-                                        {errors.country && (
-                                            <p className="mt-2 text-sm text-red-300">
-                                                <span className="font-medium ">Erreur:</span> {errors.country}
-                                            </p>
-                                        )}
-                                    </div>
-
+                                    <InputField
+                                        label="Name Agence"
+                                        type="text"
+                                        icon="fas fa-user"
+                                        name="nameAgence"
+                                        value={formData.nameAgence}
+                                        onChange={handleChange}
+                                        placeholder="Name Agence"
+                                        error={errors.nameAgence}
+                                    />
+                                    <InputField
+                                        label="Email"
+                                        type="email"
+                                        icon="fas fa-envelope"
+                                        name="email"
+                                        value={formData.email}
+                                        onChange={handleChange}
+                                        placeholder="Email"
+                                        error={errors.email}
+                                    />
+                                    <InputField
+                                        label="Password"
+                                        type="password"
+                                        icon="fas fa-lock"
+                                        name="password"
+                                        value={formData.password}
+                                        onChange={handleChange}
+                                        placeholder="Password"
+                                        error={errors.password}
+                                    />
+                                    <InputField
+                                        label="Phone Number"
+                                        type="tel"
+                                        icon="fas fa-phone"
+                                        name="phoneNumber"
+                                        value={formData.phoneNumber}
+                                        onChange={handleChange}
+                                        placeholder="Phone Number"
+                                        error={errors.phoneNumber}
+                                    />
+                                    <SelectField
+                                        label="Type d'agence"
+                                        options={options}
+                                        value={formData.typeAgence}
+                                        onChange={handleSelectChange}
+                                        icon="fas fa-building" 
+                                        error={formData.typeAgence === "" && formData.typeAgence !== "other" ? "Please select an agency type." : ""}
+                                    />
+                                    <InputField
+                                        label="Adresse"
+                                        type="text"
+                                        icon="fas fa-map-marker-alt"
+                                        name="address"
+                                        value={formData.address}
+                                        onChange={handleChange}
+                                        placeholder="adresse"
+                                        error={errors.address}
+                                    />
+                                    <InputField
+                                        label="City"
+                                        type="text"
+                                        icon="fas fa-city"
+                                        name="city"
+                                        value={formData.city}
+                                        onChange={handleChange}
+                                        placeholder="city"
+                                        error={errors.city}
+                                    />
+                                    <InputField
+                                        label="Country"
+                                        type="text"
+                                        icon="fas fa-globe"
+                                        name="country"
+                                        value={formData.country}
+                                        onChange={handleChange}
+                                        placeholder="country"
+                                        error={errors.country}
+                                    />
+                                    <SelectedFile
+                                        label="Document"
+                                        value={formData.documents}
+                                        onChange={handleChange}
+                                        error={errors.document}
+                                        name="documents"
+                                    />
                                     <div>
                                         <label className="inline-flex items-center cursor-pointer">
                                             <input

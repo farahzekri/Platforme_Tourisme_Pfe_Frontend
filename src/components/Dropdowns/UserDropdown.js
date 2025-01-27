@@ -1,6 +1,8 @@
 import React from "react";
 import { createPopper } from "@popperjs/core";
-
+import { useSendLogoutMutation } from "ApiSlice/authApiSlice";
+import { useNavigate } from "react-router-dom";
+import imageuser from "assets/img/user-fron.jpg";
 const UserDropdown = () => {
   // dropdown props
   const [dropdownPopoverShow, setDropdownPopoverShow] = React.useState(false);
@@ -14,6 +16,16 @@ const UserDropdown = () => {
   };
   const closeDropdownPopover = () => {
     setDropdownPopoverShow(false);
+  };
+    const [sendLogout] = useSendLogoutMutation();
+    const navigate = useNavigate();
+  const handleLogout = async () => {
+    try {
+      await sendLogout().unwrap(); 
+      navigate('/auth/login'); 
+    } catch (err) {
+      console.error('Erreur lors de la déconnexion:', err);
+    }
   };
   return (
     <>
@@ -29,9 +41,9 @@ const UserDropdown = () => {
         <div className="items-center flex">
           <span className="w-12 h-12 text-sm text-white bg-blueGray-200 inline-flex items-center justify-center rounded-full">
             <img
-              alt="..."
+              alt='..'
               className="w-full rounded-full align-middle border-none shadow-lg"
-              src={require("assets/img/team-1-800x800.jpg").default}
+              src={imageuser}
             />
           </span>
         </div>
@@ -76,9 +88,9 @@ const UserDropdown = () => {
           className={
             "text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700"
           }
-          onClick={(e) => e.preventDefault()}
+          onClick={handleLogout}
         >
-          Seprated link
+         logout
         </a>
       </div>
     </>

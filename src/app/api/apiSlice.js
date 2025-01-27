@@ -37,7 +37,8 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
         collection: refreshResult.data.collection,
         email:refreshResult.data.email,
         name:refreshResult.data.name,
-        statue:refreshResult.data.statue}))
+        statue:refreshResult.data.statue,
+        role:refreshResult.data.role}))
 
       // retry original query with new access token
       result = await baseQuery(args, api, extraOptions)
