@@ -16,6 +16,7 @@ import Settings from "views/admin/Settings.js";
 import Tables from "views/admin/Tables.js";
 import Preselction from "views/admin/Preselection";
 import ListAdmin from "views/admin/gestion_admin/list_admin";
+import DetailAgence from "views/admin/detailagence";
 
 
 export default function Admin() {
@@ -37,6 +38,8 @@ export default function Admin() {
             <Route path="settings" element={<Settings />} />
             <Route path="tables" element={<Tables />} />
             <Route path="preselction" element={<Preselction/>}/>
+            <Route path="details/:nameAgence" element={<DetailAgence/>}/>
+
             <Route path="listadmin" element={<ListAdmin/>}/>
             
           </Routes>

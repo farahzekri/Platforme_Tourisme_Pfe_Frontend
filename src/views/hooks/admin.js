@@ -34,38 +34,67 @@ export const useCreateAdmin = () => {
     );
 };
 
-  export const useGetAllAdmins = () => {
-    
-    const token = useSelector((state) => state.auth.token);
-    
-    return useQuery({
-      queryKey: ['admins'],
-      queryFn: async () => {
-        try {
-          // Vérifie que le token existe
-          if (!token) {
-            throw new Error('Token non disponible');
-          }
-  
-          const { data } = await axios.get(`${url}/getall`, {
-            headers: {
-              Authorization: `Bearer ${token}`, // Utilise le token depuis Redux
-            },
-          });
-          return data;
-        } catch (error) {
-          const err = error?.response?.data?.error || 'Erreur lors de la récupération des admins.';
-          toast.error(err);
-          throw new Error(err);
+export const useGetAllAdmins = () => {
+  const token = useSelector((state) => state.auth.token);
+
+  return useQuery({
+    queryKey: ["admins"],
+    queryFn: async () => {
+      if (!token) {
+        throw new Error("Token non disponible. Veuillez vous reconnecter.");
+      }
+
+      try {
+        const { data } = await axios.get(`${url}/getall`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!Array.isArray(data)) {
+          throw new Error("Les données reçues ne sont pas un tableau.");
         }
-      },
-      onError: () => {
-        toast.error("Une erreur s'est produite lors du chargement des admins.");
-      },
-    });
-  };
 
+        return data;
+      } catch (error) {
+        const errMessage =
+          error.response?.data?.error || "Erreur lors de la récupération des admins.";
+        toast.error(errMessage);
+        throw new Error(errMessage);
+      }
+    },
+    enabled: !!token, // Empêche la requête si le token est absent
+    onError: () => {
+      toast.error("Impossible de charger les administrateurs.");
+    },
+  });
+};
 
+  export const useDeleteAdmin = (username) => {
+    const token = useSelector((state) => state.auth.token);
 
+    return useMutation(
+        async () => {
+            if (!token) {
+                throw new Error('Token non disponible');
+            }
 
+            const response = await axios.delete(`${url}/delete/${username}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            return response.data;
+        },
+        {
+            onSuccess: (data) => {
+                toast.success(data.message || 'Admin supprimé avec succès');
+            },
+            onError: (error) => {
+                toast.error(error?.response?.data?.message || "Erreur lors de la suppression de l'admin");
+            },
+        }
+    );
+};
 

@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import toast from "react-hot-toast";
+import { useSelector } from "react-redux";
 
 const url = "http://localhost:5000/agence"; 
 
@@ -42,28 +43,51 @@ export const useGetAllB2BUsers = () => {
 
 export const useUpdateB2BStatus = () => {
   const queryClient = useQueryClient();
-
+  const token = useSelector((state) => state.auth.token);
   return useMutation({
-    mutationFn: async ({ id, status }) => {
+    mutationFn: async ({ nameAgence, status }) => {
+      if (!token) {
+        throw new Error('Token non disponible');
+      }
       const { data } = await axios.post(
         `${url}/updatestatu`,
-        { id, status },
+        { nameAgence, status },
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem('accessToken')}`, // Token de sécurisation
+            Authorization: `Bearer ${token}`, 
           },
         }
       );
       return data;
     },
     onSuccess: (data) => {
-      toast.success(data.message); // Notification de succès
-      queryClient.invalidateQueries(['b2bUsers']); // Met à jour les données
+      toast.success(data.message);
+      queryClient.invalidateQueries(['b2bUsers']); 
     },
     onError: (error) => {
       const errMessage =
         error.response?.data?.message || 'Erreur lors de la mise à jour du statut.';
       toast.error(errMessage);
+    },
+  });
+};
+export const useGetB2BByNameAgence = (nameAgence) => {
+  return useQuery({
+    queryKey: ['b2bUser', nameAgence], 
+    queryFn: async () => {
+      try {
+        const { data } = await axios.get(`${url}/getusebyname/${nameAgence}`);
+        console.log('API Response:', data); 
+        return data;
+      } catch (error) {
+        const err = error?.response?.data?.message || "Erreur lors de la récupération de l'agence.";
+        toast.error(err);
+        throw new Error(err);
+      }
+    },
+    enabled: !!nameAgence, 
+    onError: () => {
+      toast.error("Une erreur s'est produite lors du chargement de l'agence.");
     },
   });
 };

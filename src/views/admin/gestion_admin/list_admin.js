@@ -2,10 +2,12 @@ import Alert from "components/Alert/Alert";
 import CardTable from "components/Cards/CardTable";
 import InputField from "components/InputField/inputField";
 import SelectFieldsimple from "components/InputField/selected";
+import ConfirmationModal from "components/modal/confirmationModal";
 
 import Modal from "components/modal/modalformulaire";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { validateFieldRegistre } from "views/auth/validation";
+import { useDeleteAdmin } from "views/hooks/admin";
 import { useCreateAdmin } from "views/hooks/admin";
 
 import { useGetAllAdmins } from "views/hooks/admin";
@@ -18,6 +20,10 @@ import { useGetAllAdmins } from "views/hooks/admin";
 export default function ListAdmin() {
     const { data: admins = [], isLoading, isError } = useGetAllAdmins();
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedUser, setSelectedUser] = useState(null);
+    const deleteAdminMutation = useDeleteAdmin(selectedUser?.username);
+    const [isModalOpenconfirm, setIsModalOpenconfirm] = useState(false);
+    const [tableData, setTableData] = useState([]);
     const [formData, setFormData] = useState({
         username: "",
         email: "",
@@ -27,60 +33,77 @@ export default function ListAdmin() {
 
 
     });
+    // const [tableData, setTableData] = useState(admins.map((user) => ({
+    //     id: user._id,
+    //     username: user.username,
+    //     Email: user.email,
+    //     privilege: user.privilege,
+    //     "Date d'inscription": new Date(user.createdAt).toLocaleDateString(),
+    // })));
+
     const createAdminMutation = useCreateAdmin();
     const [errors, setErrors] = useState({});
     const [alert, setAlert] = useState({ message: "", type: "" });
+
+    useEffect(() => {
+        if (admins.length > 0) {
+          setTableData(
+            admins.map((user) => ({
+              id: user._id,
+              username: user.username,
+              Email: user.email,
+              privilege: user.privilege,
+              "Date d'inscription": new Date(user.createdAt).toLocaleDateString(),
+            }))
+          );
+        }
+      }, [admins]);
     const handleOpenModal = () => setIsModalOpen(true);
     const handleCloseModal = () => setIsModalOpen(false);
+
     if (isLoading) return <p>Chargement des admin...</p>;
     if (isError) return <p>Erreur lors du chargement des admin.</p>;
 
-    const columns = ["username", "Email", "privilege", "Date d'inscription"];
+    const columns = ["username", "Email", "privilege", "Date d'inscription", "Actions"];
 
-    const tableData = admins.map((user) => ({
-        username: user.username,
-        Email: user.email,
-        privilege: user.privilege,
-        "Date d'inscription": new Date(user.createdAt).toLocaleDateString(),
-    }));
-
+  
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prev) => ({ ...prev, [name]: value }));
         const errorMessage = validateFieldRegistre(name, value);
-                setErrors((prevErrors) => ({
-                    ...prevErrors,
-                    [name]: errorMessage,
-                }));
+        setErrors((prevErrors) => ({
+            ...prevErrors,
+            [name]: errorMessage,
+        }));
 
-        
+
     };
     const handleSelectChange = (e) => {
-        const value = e.target.value; 
+        const value = e.target.value;
         setFormData({
             ...formData,
             privilege: value,
         });
     }
     const handleSubmit = async (e) => {
-        e.preventDefault(); 
+        e.preventDefault();
         const newErrors = {};
-                Object.keys(formData).forEach((key) => {
-                    const error = validateFieldRegistre(key, formData[key]);
-                    if (error) {
-                        newErrors[key] = error;
-                    }
-                });
-        
-                setErrors(newErrors);
-                if (Object.keys(newErrors).length > 0) {
+        Object.keys(formData).forEach((key) => {
+            const error = validateFieldRegistre(key, formData[key]);
+            if (error) {
+                newErrors[key] = error;
+            }
+        });
 
-                    setAlert({ message: "Please correct any errors before submitting !", type: "error" });
-                    return;
-                }
+        setErrors(newErrors);
+        if (Object.keys(newErrors).length > 0) {
+
+            setAlert({ message: "Please correct any errors before submitting !", type: "error" });
+            return;
+        }
 
         try {
-           
+
             await createAdminMutation.mutateAsync(formData);
             setFormData({
                 username: "",
@@ -90,22 +113,47 @@ export default function ListAdmin() {
                 privilege: "", // Réinitialiser à "read-only"
             });
         } catch (error) {
-            
+
             setAlert({ message: "Registration failed !", type: "error" });
         }
     };
 
     const options = [
-       
+
         { value: "privilege de add", label: "privilege de add" },
         { value: "provilege de supprime", label: "provilege de supprime " },
 
     ];
+    const handleOpenModalconfrm = (user) => {
+        console.log("User selected:", user); 
+        setSelectedUser(user);
+        setIsModalOpenconfirm(true);
+    };
+    const handleCloseModalconfirme = () => {
+        setIsModalOpenconfirm(false);
+    };
+
+    const handleConfirm = async () => {
+        if (!selectedUser) return;
+    
+        console.log("Admin username to delete:", selectedUser.username); // Now using username
+        try {
+            
+            await deleteAdminMutation.mutateAsync(selectedUser.username); 
+            setTableData((prevData) =>
+                prevData.filter((user) => user.username !== selectedUser.username)
+            );
+
+            setIsModalOpenconfirm(false);
+        } catch (error) {
+            console.error("Erreur lors de la suppression", error);
+        }
+    }
     return (
         <>
             <div className="w-full mb-13 px-4 pt-5 mt-20">
                 <div className="flex justify-between items-center mb-4 space-x-4">
-                  
+
                     {/* Barre de recherche */}
                     <form className="relative w-2/3">
                         <label
@@ -156,6 +204,7 @@ export default function ListAdmin() {
                     title="Admin"
                     columns={columns}
                     data={tableData}
+                    ondelete={(user) => handleOpenModalconfrm(user)}
 
                 />
 
@@ -164,7 +213,7 @@ export default function ListAdmin() {
                     onClose={handleCloseModal}
                     title="Add New Admin"
                 >
-                     <Alert message={alert.message} type={alert.type} />
+                    <Alert message={alert.message} type={alert.type} />
                     {/* Form content */}
                     <form className="space-y-4">
                         <InputField
@@ -195,9 +244,9 @@ export default function ListAdmin() {
                             value={formData.password}
                             onChange={handleChange}
                             placeholder="password"
-                           error={errors.password}
+                            error={errors.password}
                         />
-                        
+
                         <SelectFieldsimple
                             label="privilege"
                             options={options}
@@ -205,7 +254,7 @@ export default function ListAdmin() {
                             value={formData.privilege}
                             onChange={handleSelectChange}
                             icon="fas fa-unlock"
-                             error={formData.privilege === "" ? "Please select an privilege type." : ""}
+                            error={formData.privilege === "" ? "Please select an privilege type." : ""}
                         />
                         <button
                             type="submit"
@@ -216,6 +265,14 @@ export default function ListAdmin() {
                         </button>
                     </form>
                 </Modal>
+
+                <ConfirmationModal
+                    isOpen={isModalOpenconfirm}
+                    message="Are you sure you want to delete this user?"
+                    onConfirm={handleConfirm}
+                    onClose={handleCloseModalconfirme}
+
+                />
             </div>
         </>
     )

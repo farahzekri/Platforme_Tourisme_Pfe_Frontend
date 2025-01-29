@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye, faUserCheck, faUserXmark } from "@fortawesome/free-solid-svg-icons";
+import { faEye, faTrashCan, faUserCheck, faUserXmark } from "@fortawesome/free-solid-svg-icons";
 
 
 
@@ -15,6 +15,7 @@ const CardTable = ({
   onAccept = () => { },
   onReject = () => { },
   onViewdetail=()=>{ },
+  ondelete=()=>{},
 }) => {
   return (
     <div
@@ -95,6 +96,14 @@ const CardTable = ({
                           
                         </button>
                       </div>
+                       ) : column === "Actions" ? (
+                        <button
+                        onClick={() => ondelete(row)}
+                        className="flex items-center  "
+                      >
+                       
+                       <FontAwesomeIcon icon={faTrashCan} style={{color: "#e64141",}} />
+                      </button>
                     ) : (
                       /* Affichage par défaut pour les autres colonnes */
                       row[column] || "-"
@@ -117,6 +126,7 @@ CardTable.defaultProps = {
   onAccept: () => console.log("Accepted!"),
   onReject: () => console.log("Rejected!"),
   onViewdetail:()=>console.log("detail"),
+  ondelete:()=>console.log("delete"),
 };
 
 CardTable.propTypes = {
@@ -124,4 +134,5 @@ CardTable.propTypes = {
   onAccept: PropTypes.func,
   onReject: PropTypes.func,
   onViewdetail:PropTypes.func,
+  ondelete:PropTypes.func,
 };
