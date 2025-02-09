@@ -14,7 +14,7 @@ const Alert = ({ message, type }) => {
       role="alert"
     >
       <span className="font-medium">
-        {type === "success" ? "Success!" : "Error!"}
+        {type === "success" ? "Succès!" : "Erreur!"}
       </span>{" "}
       {message}
     </div>

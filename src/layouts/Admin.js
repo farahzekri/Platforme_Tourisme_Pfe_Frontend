@@ -17,13 +17,15 @@ import Tables from "views/admin/Tables.js";
 import Preselction from "views/admin/Preselection";
 import ListAdmin from "views/admin/gestion_admin/list_admin";
 import DetailAgence from "views/admin/detailagence";
+import Inscription from "views/admin/inscription";
+
 
 
 export default function Admin() {
   return (
     <>
       <Sidebar />
-      <div className="relative md:ml-64 bg-blueGray-100">
+      <div className="relative md:ml-64 bg-blueGray-200">
         <AdminNavbar />
         {/* Header */}
         <HeaderStats />
@@ -39,7 +41,7 @@ export default function Admin() {
             <Route path="tables" element={<Tables />} />
             <Route path="preselction" element={<Preselction/>}/>
             <Route path="details/:nameAgence" element={<DetailAgence/>}/>
-
+            <Route path="inscription" element={<Inscription/>}/>
             <Route path="listadmin" element={<ListAdmin/>}/>
             
           </Routes>

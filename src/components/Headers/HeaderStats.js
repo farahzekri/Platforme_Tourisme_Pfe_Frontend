@@ -3,63 +3,91 @@ import React from "react";
 // components
 
 import CardStats from "components/Cards/CardStats.js";
+import { useGetAdminStats } from "views/hooks/admin";
+import { useGetAgencyStats } from "views/hooks/use";
 
 export default function HeaderStats() {
+  const { data, isLoading } = useGetAdminStats();
+
+  const totalAdmins = data?.totalAdmins || 0;
+  const newAdmins = data?.newAdmins || 0;
+
+  // Calculer le pourcentage de croissance des admins
+  const growthPercentage = totalAdmins
+    ? ((newAdmins / totalAdmins) * 100).toFixed(2)
+    : 0;
+
+    const { data:Agence, isLoadingAgence } = useGetAgencyStats();
+
+    // const totalAgencies = Agence?.totalAgencies || 0;
+    const pendingAgencies = Agence?.pendingAgencies || 0;
+    const approvedPercentage = Agence?.approvedPercentage || 0;
+    const rejectedPercentage = Agence?.rejectedPercentage || 0;
   return (
     <>
       {/* Header */}
-      <div className="relative bg-lightBlue-500 md:pt-32 pb-32 pt-12">
+      <div className="relative bg-palette-bleuclere md:pt-32 pb-32 pt-12">
         <div className="px-4 md:px-10 mx-auto w-full">
           <div>
             {/* Card stats */}
             <div className="flex flex-wrap">
               <div className="w-full lg:w-6/12 xl:w-3/12 px-4">
-                <CardStats
-                  statSubtitle="TRAFFIC"
-                  statTitle="350,897"
-                  statArrow="up"
-                  statPercent="3.48"
-                  statPercentColor="text-emerald-500"
-                  statDescripiron="Since last month"
-                  statIconName="far fa-chart-bar"
-                  statIconColor="bg-red-500"
-                />
+              <CardStats
+                statSubtitle="ADMINI STRATEURS"
+                statTitle={isLoading ? "..." : totalAdmins}
+                statArrow={newAdmins > 0 ? "up" : "down"}
+                statPercent={isLoading ? "..." : growthPercentage}
+                statPercentColor={newAdmins > 0 ? "text-emerald-500" : "text-red-500"}
+                statDescripiron="Depuis le mois dernier"
+                statIconName="fas fa-users"
+                statIconColor="bg-palette-orangefonce"
+              />
               </div>
               <div className="w-full lg:w-6/12 xl:w-3/12 px-4">
-                <CardStats
-                  statSubtitle="NEW USERS"
-                  statTitle="2,356"
-                  statArrow="down"
-                  statPercent="3.48"
-                  statPercentColor="text-red-500"
-                  statDescripiron="Since last week"
-                  statIconName="fas fa-chart-pie"
-                  statIconColor="bg-orange-500"
-                />
+              {/* <CardStats
+                statSubtitle="AGENCES EN ATTENTE"
+                statTitle={isLoadingAgence ? "..." : pendingAgencies}
+                statArrow="right"
+                statPercent="..."
+                statPercentColor="text-yellow-500"
+                statDescripiron="En attente d'approbation"
+                statIconName="fas fa-clock"
+                statIconColor="bg-orange-500"
+              /> */}
+               <CardStats
+            statSubtitle="AGENCES EN ATTENTE"
+            statTitle={isLoadingAgence ? "..." : pendingAgencies}
+            statArrow="up"
+            statPercent={isLoadingAgence ? "..." : approvedPercentage}
+            statPercentColor="text-green-500"
+            statDescripiron={`Agences acceptées: ${isLoadingAgence ? "..." : approvedPercentage}`}
+            statIconName="fas fa-clock"
+            statIconColor="bg-orange-500"
+        />
               </div>
               <div className="w-full lg:w-6/12 xl:w-3/12 px-4">
-                <CardStats
-                  statSubtitle="SALES"
-                  statTitle="924"
-                  statArrow="down"
-                  statPercent="1.10"
-                  statPercentColor="text-orange-500"
-                  statDescripiron="Since yesterday"
-                  statIconName="fas fa-users"
-                  statIconColor="bg-pink-500"
-                />
+              <CardStats
+                statSubtitle="AGENCES APPROUVÉES"
+                statTitle={isLoadingAgence ? "..." : `${approvedPercentage}%`}
+                statArrow="up"
+                statPercent="..."
+                statPercentColor="text-green-500"
+                statDescripiron="Taux d'acceptation"
+                statIconName="fas fa-check-circle"
+                statIconColor="bg-green-500"
+              />
               </div>
               <div className="w-full lg:w-6/12 xl:w-3/12 px-4">
-                <CardStats
-                  statSubtitle="PERFORMANCE"
-                  statTitle="49,65%"
-                  statArrow="up"
-                  statPercent="12"
-                  statPercentColor="text-emerald-500"
-                  statDescripiron="Since last month"
-                  statIconName="fas fa-percent"
-                  statIconColor="bg-lightBlue-500"
-                />
+              <CardStats
+                statSubtitle="AGENCES REJETÉES"
+                statTitle={isLoadingAgence ? "..." : `${rejectedPercentage}%`}
+                statArrow="down"
+                statPercent="..."
+                statPercentColor="text-red-500"
+                statDescripiron="Taux de rejet"
+                statIconName="fas fa-times-circle"
+                statIconColor="bg-red-500"
+              />
               </div>
             </div>
           </div>

@@ -1,189 +1,89 @@
 /*eslint-disable*/
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import image from '../../assets/img/hubs-logo.jpg'
-import NotificationDropdown from "components/Dropdowns/NotificationDropdown.js";
-import UserDropdown from "components/Dropdowns/UserDropdown.js";
+import { faBars, faBusinessTime, faCheckToSlot, faClipboardList, faHouse, faUserShield } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-export default function Sidebar() {
-  const [collapseShow, setCollapseShow] = React.useState("hidden");
+
+const Sidebar = () => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  
   return (
     <>
-      <nav className="md:left-0 md:block md:fixed md:top-0 md:bottom-0 md:overflow-y-auto md:flex-row md:flex-nowrap md:overflow-hidden shadow-xl bg-white flex flex-wrap items-center justify-between relative md:w-64 z-10 py-4 px-6">
-        <div className="md:flex-col md:items-stretch md:min-h-full md:flex-nowrap px-0 flex flex-wrap items-center justify-between w-full mx-auto">
-          {/* Brand */}
-          <Link
-            className="md:block text-left md:pb-2 text-blueGray-600 mr-0 inline-block whitespace-nowrap text-sm uppercase font-bold p-4 px-0"
-            to="/"
-          >
-           <img src={image} className="h-22 w-auto" />
+      {/* Bouton Menu Mobile */}
+      <button
+        className="md:hidden fixed top-4 left-4 z-50 bg-blue-500 text-white p-3 rounded-full shadow-lg"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        {isOpen ?  <FontAwesomeIcon icon={faBusinessTime} size={20} />: <FontAwesomeIcon icon={faBars} size={20}/>}
+      </button>
+
+      {/* Sidebar */}
+      <nav
+        className={`fixed top-0 left-0 h-full bg-white shadow-xl p-6 w-64 z-40 transition-transform duration-300 ease-in-out md:translate-x-0 ${
+          isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+        }`}
+      >
+        {/* Logo */}
+        <div className="flex items-center justify-between">
+          <Link to="/">
+            <img src={image} className="h-50 w-auto" alt="Logo" />
           </Link>
-     
-          <div
-            className={
-              "md:flex md:flex-col md:items-stretch md:opacity-100 md:relative md:mt-4 md:shadow-none shadow absolute top-0 left-0 right-0 z-40 overflow-y-auto overflow-x-hidden h-auto items-center flex-1 rounded " +
-              collapseShow
-            }
+          {/* Bouton fermer (mobile) */}
+          <button
+            className="md:hidden text-gray-600"
+            onClick={() => setIsOpen(false)}
           >
-            {/* Divider */}
-          
-            {/* Heading */}
-            <h6 className="md:min-w-full text-blueGray-500 text-xs uppercase font-bold block pt-1 pb-4 no-underline">
-              Super Admin 
-            </h6>
-            {/* Navigation */}
-
-            <ul className="md:flex-col md:min-w-full flex flex-col list-none">
-              <li className="items-center">
-                <Link
-                  className={
-                    "text-xs uppercase py-3 font-bold block " +
-                    (window.location.href.indexOf("/admin/dashboard") !== -1
-                      ? "text-lightBlue-500 hover:text-lightBlue-600"
-                      : "text-blueGray-700 hover:text-blueGray-500")
-                  }
-                  to="/admin/dashboard"
-                >
-                  <i
-                    className={
-                      "fas fa-tv mr-2 text-sm " +
-                      (window.location.href.indexOf("/admin/dashboard") !== -1
-                        ? "opacity-75"
-                        : "text-blueGray-300")
-                    }
-                  ></i>{" "}
-                  Dashboard
-                </Link>
-              </li>
-              <li className="items-center">
-                <Link
-                  className={
-                    "text-xs uppercase py-3 font-bold block " +
-                    (window.location.href.indexOf("/admin/dashboard") !== -1
-                      ? "text-lightBlue-500 hover:text-lightBlue-600"
-                      : "text-blueGray-700 hover:text-blueGray-500")
-                  }
-                  to="/admin/listadmin"
-                >
-                  <i
-                    className={
-                      "fas fa-tv mr-2 text-sm " +
-                      (window.location.href.indexOf("/admin/listadmin") !== -1
-                        ? "opacity-75"
-                        : "text-blueGray-300")
-                    }
-                  ></i>{" "}
-                  Admin
-                </Link>
-              </li>
-              <hr className="my-4 md:min-w-full" />
-              <h6 className="md:min-w-full text-blueGray-500 text-xs uppercase font-bold block pt-1 pb-4 no-underline">
-              Agence
-             </h6>
-              <li className="items-center">
-                <Link
-                  className={
-                    "text-xs uppercase py-3 font-bold block " +
-                    (window.location.href.indexOf("/admin/preselctio") !== -1
-                      ? "text-lightBlue-500 hover:text-lightBlue-600"
-                      : "text-blueGray-700 hover:text-blueGray-500")
-                  }
-                  to="/admin/preselction"
-                >
-                  <i
-                    className={
-                      "fas fa-tools mr-2 text-sm " +
-                      (window.location.href.indexOf("/admin/preselctio") !== -1
-                        ? "opacity-75"
-                        : "text-blueGray-300")
-                    }
-                  ></i>{" "}
-                  preinscription
-                </Link>
-              </li>
-
-              <li className="items-center">
-                <Link
-                  className={
-                    "text-xs uppercase py-3 font-bold block " +
-                    (window.location.href.indexOf("/admin/tables") !== -1
-                      ? "text-lightBlue-500 hover:text-lightBlue-600"
-                      : "text-blueGray-700 hover:text-blueGray-500")
-                  }
-                  to="/admin/tables"
-                >
-                  <i
-                    className={
-                      "fas fa-table mr-2 text-sm " +
-                      (window.location.href.indexOf("/admin/tables") !== -1
-                        ? "opacity-75"
-                        : "text-blueGray-300")
-                    }
-                  ></i>{" "}
-                  Inscription
-                </Link>
-              </li>
-
-              {/* <li className="items-center">
-                <Link
-                  className={
-                    "text-xs uppercase py-3 font-bold block " +
-                    (window.location.href.indexOf("/admin/maps") !== -1
-                      ? "text-lightBlue-500 hover:text-lightBlue-600"
-                      : "text-blueGray-700 hover:text-blueGray-500")
-                  }
-                  to="/admin/maps"
-                >
-                  <i
-                    className={
-                      "fas fa-map-marked mr-2 text-sm " +
-                      (window.location.href.indexOf("/admin/maps") !== -1
-                        ? "opacity-75"
-                        : "text-blueGray-300")
-                    }
-                  ></i>{" "}
-                  Maps
-                </Link>
-              </li> */}
-            </ul>
-
-            {/* Divider */}
-            <hr className="my-4 md:min-w-full" />
-            {/* Heading */}
-            <h6 className="md:min-w-full text-blueGray-500 text-xs uppercase font-bold block pt-1 pb-4 no-underline">
-              Offre
-            </h6>
-            {/* Navigation */}
-
-            <ul className="md:flex-col md:min-w-full flex flex-col list-none md:mb-4">
-              <li className="items-center">
-                <Link
-                  className="text-blueGray-700 hover:text-blueGray-500 text-xs uppercase py-3 font-bold block"
-                  to="/auth/login"
-                >
-                  <i className="fas fa-fingerprint text-blueGray-400 mr-2 text-sm"></i>{" "}
-                  Login
-                </Link>
-              </li>
-
-              <li className="items-center">
-                <Link
-                  className="text-blueGray-700 hover:text-blueGray-500 text-xs uppercase py-3 font-bold block"
-                  to="/auth/register"
-                >
-                  <i className="fas fa-clipboard-list text-blueGray-300 mr-2 text-sm"></i>{" "}
-                  Register
-                </Link>
-              </li>
-            </ul>
-            <hr className="my-4 md:min-w-full" />
-            {/* Heading */}
-            <h6 className="md:min-w-full text-blueGray-500 text-xs uppercase font-bold block pt-1 pb-4 no-underline">
-              Reservation
-            </h6>
-          </div>
+           <FontAwesomeIcon icon={faBusinessTime} size={20} />
+          </button>
         </div>
+
+        {/* Super Admin */}
+      
+        <ul className="space-y-2 mt-3">
+          <SidebarItem to="/admin/dashboard" icon={<FontAwesomeIcon icon={faHouse} />} label="Dashboard" />
+         
+        </ul>
+        <hr className="my-4 border-gray-300" />
+        <h6 className="text-gray-700 text-xs uppercase font-extrabold mt-6">Gestion des Admin</h6>
+        <ul className="space-y-2 mt-3">
+      
+          <SidebarItem to="/admin/listadmin" icon={<FontAwesomeIcon icon={faUserShield} />} label="Admin" />
+        </ul>
+        {/* Divider */}
+        <hr className="my-4 border-gray-300" />
+
+        {/* Agence */}
+        <h6 className="text-gray-700 text-xs uppercase font-extrabold">Gestion des Agence</h6>
+        <ul className="space-y-2 mt-3">
+          <SidebarItem to="/admin/preselction" icon={<FontAwesomeIcon icon={faClipboardList} />} label="Préinscription" />
+          <SidebarItem to="/admin/inscription" icon={<FontAwesomeIcon icon={faCheckToSlot} />} label="Inscription" />
+        </ul>
       </nav>
     </>
   );
-}
+};
+
+// Composant SidebarItem pour éviter la répétition du code
+const SidebarItem = ({ to, icon, label }) => {
+  const location = useLocation();
+  const isActive = location.pathname === to;
+  return (
+    <li>
+    <Link
+      to={to}
+      className={`flex items-center px-4 py-3 rounded-lg text-sm font-bold transition-colors ${
+        isActive 
+          ? "bg-lightBlue-450 text-white" 
+          : "text-gray-700 bg-white hover:bg-lightBlue-450 hover:text-white"
+      }`}
+    >
+      <span className="mr-2">{icon}</span> {label}
+    </Link>
+  </li>
+  );
+};
+
+export default Sidebar;

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useRegisterUser } from "views/hooks/use";
 
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { validateFieldRegistre } from "./validation";
 import SelectField from "components/InputField/Selectedinputandfield";
 import InputField from "components/InputField/inputField";
@@ -61,14 +61,14 @@ export default function Registeragence() {
 
         if (Object.keys(newErrors).length > 0) {
 
-            setAlert({ message: "Please correct any errors before submitting !", type: "error" });
+            setAlert({ message: "Veuillez corriger les éventuelles erreurs avant de soumettre !", type: "error" });
             return;
         }
 
 
         registerUser(formData, {
             onSuccess: (data) => {
-                setAlert({ message: "User registered successfully !", type: "success" });
+                setAlert({ message: "Utilisateur enregistré avec succès !", type: "success" });
                 console.log("Utilisateur enregistré :", data);
 
 
@@ -78,7 +78,7 @@ export default function Registeragence() {
             },
             onError: (error) => {
                 console.error("Erreur d'enregistrement :", error);
-                setAlert({ message: "Registration failed !", type: "error" });
+                setAlert({ message: "Inscription échouée !", type: "error" });
                 setTimeout(() => {
                     setAlert({ message: "", type: "" }); // Cacher l'alerte après 3 secondes
                 }, 3000);
@@ -87,10 +87,10 @@ export default function Registeragence() {
     };
 
     const options = [
-        { value: " ", label: "select a type" },
-        { value: "travel_agency", label: "Travel agency" },
-        { value: "rental_agency", label: "Rental agency" },
-        { value: "hotel", label: "Hotel" },
+        { value: " ", label: "sélectionner un type" },
+        { value: "travel_agency", label: "Agence de voyage" },
+        { value: "rental_agency", label: "Agence de location" },
+        { value: "hotel", label: "Hôtel" },
     ];
     return (
         <>
@@ -101,7 +101,7 @@ export default function Registeragence() {
                             <div className="rounded-t mb-0 px-6 py-6">
                                 <div className="text-center mb-3">
                                     <h6 className="text-blueGray-500 text-sm font-bold">
-                                        Sign up with
+                                        Inscrivez-vous avec
                                     </h6>
                                 </div>
                                 <div className="btn-wrapper text-center">
@@ -132,12 +132,12 @@ export default function Registeragence() {
                             </div>
                             <div className="flex-auto px-4 lg:px-10 py-10 pt-0">
                                 <div className="text-blueGray-400 text-center mb-3 font-bold">
-                                    <small>Or sign up with credentials</small>
+                                    <small>Ou inscrivez-vous avec vos identifiants</small>
                                 </div>
                                 <Alert message={alert.message} type={alert.type} />
                                 <form>
                                     <InputField
-                                        label="Name Agence"
+                                        label="Nom Agence*"
                                         type="text"
                                         icon="fas fa-user"
                                         name="nameAgence"
@@ -147,7 +147,7 @@ export default function Registeragence() {
                                         error={errors.nameAgence}
                                     />
                                     <InputField
-                                        label="Email"
+                                        label="Email*"
                                         type="email"
                                         icon="fas fa-envelope"
                                         name="email"
@@ -157,7 +157,7 @@ export default function Registeragence() {
                                         error={errors.email}
                                     />
                                     <InputField
-                                        label="Password"
+                                        label="Mot de passe*"
                                         type="password"
                                         icon="fas fa-lock"
                                         name="password"
@@ -167,7 +167,7 @@ export default function Registeragence() {
                                         error={errors.password}
                                     />
                                     <InputField
-                                        label="Phone Number"
+                                        label="Numéro de téléphone*"
                                         type="tel"
                                         icon="fas fa-phone"
                                         name="phoneNumber"
@@ -181,11 +181,11 @@ export default function Registeragence() {
                                         options={options}
                                         value={formData.typeAgence}
                                         onChange={handleSelectChange}
-                                        icon="fas fa-building" 
+                                        icon="fas fa-building"
                                         error={formData.typeAgence === "" && formData.typeAgence !== "other" ? "Please select an agency type." : ""}
                                     />
                                     <InputField
-                                        label="Adresse"
+                                        label="Adresse*"
                                         type="text"
                                         icon="fas fa-map-marker-alt"
                                         name="address"
@@ -195,7 +195,7 @@ export default function Registeragence() {
                                         error={errors.address}
                                     />
                                     <InputField
-                                        label="City"
+                                        label="Ville*"
                                         type="text"
                                         icon="fas fa-city"
                                         name="city"
@@ -205,7 +205,7 @@ export default function Registeragence() {
                                         error={errors.city}
                                     />
                                     <InputField
-                                        label="Country"
+                                        label="Pays*"
                                         type="text"
                                         icon="fas fa-globe"
                                         name="country"
@@ -229,13 +229,13 @@ export default function Registeragence() {
                                                 className="form-checkbox border-0 rounded text-blueGray-700 ml-1 w-5 h-5 ease-linear transition-all duration-150"
                                             />
                                             <span className="ml-2 text-sm font-semibold text-blueGray-600">
-                                                I agree with the{" "}
+                                                Je suis d'accord avec le{" "}
                                                 <a
                                                     href="#pablo"
                                                     className="text-lightBlue-500"
                                                     onClick={(e) => e.preventDefault()}
                                                 >
-                                                    Privacy Policy
+                                                    politique de confidentialité
                                                 </a>
                                             </span>
                                         </label>
@@ -247,8 +247,16 @@ export default function Registeragence() {
                                             type="button"
                                             onClick={handleSubmit}
                                         >
-                                            Create Account pro
+                                            Créer un compte pro
                                         </button>
+                                    </div>
+                                    <div className="text-center mt-2 font-semibold text-blueGray-600">
+                                        <p>
+                                            Vous avez déjà un compte ?{' '}
+                                            <Link to="/auth/login" className="text-lightBlue-500">
+                                            Se connecter
+                                            </Link>
+                                        </p>
                                     </div>
                                 </form>
                             </div>

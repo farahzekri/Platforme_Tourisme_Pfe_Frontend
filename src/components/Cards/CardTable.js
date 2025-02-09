@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faTrashCan, faUserCheck, faUserXmark } from "@fortawesome/free-solid-svg-icons";
@@ -14,14 +14,22 @@ const CardTable = ({
   title = "Card Table",
   onAccept = () => { },
   onReject = () => { },
-  onViewdetail=()=>{ },
-  ondelete=()=>{},
+  onViewdetail = () => { },
+  ondelete = () => { },
 }) => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const rowsPerPage = 5;
+
+  // Calcul du nombre total de pages
+  const totalPages = Math.ceil(data.length / rowsPerPage);
+
+  // Récupération des données à afficher pour la page actuelle
+  const currentData = data.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
   return (
     <div
       className={
-        "relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded " +
-        (color === "light" ? "bg-white" : "bg-lightBlue-900 text-white")
+        "relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-xl " +
+        (color === "light" ? "bg-white" : "bg-lightBlue-450 text-white")
       }
     >
       <div className="rounded-t mb-0 px-4 py-3 border-0">
@@ -49,7 +57,7 @@ const CardTable = ({
                     "px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left " +
                     (color === "light"
                       ? "bg-blueGray-50 text-blueGray-500 border-blueGray-100"
-                      : "bg-lightBlue-800 text-lightBlue-300 border-lightBlue-700")
+                      : "bg-lightBlue-450 text-lightBlue-200 border-lightBlue-700")
                   }
                 >
                   {column}
@@ -58,7 +66,7 @@ const CardTable = ({
             </tr>
           </thead>
           <tbody>
-            {data.map((row, rowIndex) => (
+            {currentData.map((row, rowIndex) => (
               <tr key={rowIndex}>
                 {columns.map((column, colIndex) => (
                   <td
@@ -66,9 +74,13 @@ const CardTable = ({
                     className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"
                   >
                     {/* Affichage spécifique pour la colonne "Statut" */}
-                    {column === "Statut" && row[column] === "pending" ? (
+                    {column === "Statut" ? (
                       <div className="flex items-center">
-                        <span className="w-2 h-2 rounded-full bg-orange-500 inline-block mr-2"></span>
+                        <span
+                          className={`w-2 h-2 rounded-full inline-block mr-2 ${row[column] === "pending" ? "bg-orange-500" :
+                            row[column] === "approved" ? "bg-green-300" : "bg-gray-400"
+                            }`}
+                        ></span>
                         {row[column]}
                       </div>
                     ) : column === "Action" ? (
@@ -76,34 +88,52 @@ const CardTable = ({
                       <div className="flex items-center space-x-4">
                         <button
                           onClick={() => onAccept(row)}
-                          className="flex items-center text-customgreen text-green-500 hover:text-green-600"
+                          className="flex items-center text-palette-customgreenfonce text-green-500 hover:text-palette-customgreen"
                         >
-                          <FontAwesomeIcon icon={faUserCheck} className="text-customgreen text-lg mr-2" />
-                          <span className="text-xs font-semibold">Accepted</span>
+                          <FontAwesomeIcon icon={faUserCheck} className="text-palette-customgreenfonce hover:text-palette-customgreen text-lg mr-2" />
+                          <span className="text-xs font-semibold">Accepté</span>
                         </button>
                         <button
                           onClick={() => onReject(row)}
-                          className="flex items-center text-red-500 hover:text-red-600"
+                          className="flex items-center text-palette-orangefonce hover:text-palette-orange"
                         >
-                          <FontAwesomeIcon icon={faUserXmark} className="text-red-500 text-lg mr-2" />
-                          <span className="text-xs font-semibold">Rejected</span>
+                          <FontAwesomeIcon icon={faUserXmark} className="text-palette-orangefonce hover:text-palette-orange text-lg mr-2" />
+                          <span className="text-xs font-semibold">Rejetée</span>
                         </button>
                         <button
                           onClick={() => onViewdetail(row)}// Ajoute ta fonction onViewDetails
                           className="flex items-center  "
                         >
-                          <FontAwesomeIcon icon={faEye} style={{color: "#FFD43B",}} className="text-lg" />
-                          
+                          <FontAwesomeIcon icon={faEye} style={{ color: "#e9c46a", }} className="text-lg" />
+
                         </button>
                       </div>
-                       ) : column === "Actions" ? (
-                        <button
+                    ) : column === "Actions" ? (
+                      <button
                         onClick={() => ondelete(row)}
-                        className="flex items-center  "
+                        className="flex items-center hover:text-palette-orange "
                       >
-                       
-                       <FontAwesomeIcon icon={faTrashCan} style={{color: "#e64141",}} />
+
+                        <FontAwesomeIcon icon={faTrashCan} className="text-palette-orangefonce hover:text-palette-orange text-lg mr-2" />
                       </button>
+                    ) : column === "Supprimer/voir detail" ? (
+                      <div className="flex items-center space-x-4">
+                      <button
+                        onClick={() => ondelete(row)}
+                        className="flex items-center hover:text-palette-orange "
+                      >
+
+                        <FontAwesomeIcon icon={faTrashCan} className="text-palette-orangefonce hover:text-palette-orange text-lg mr-2"/>
+                      </button>
+
+                       <button
+                         onClick={() => onViewdetail(row)}// Ajoute ta fonction onViewDetails
+                         className="flex items-center  "
+                        >
+                        <FontAwesomeIcon icon={faEye} style={{ color: "#e9c46a", }} className="text-lg" />
+
+                       </button>
+                      </div>
                     ) : (
                       /* Affichage par défaut pour les autres colonnes */
                       row[column] || "-"
@@ -115,6 +145,27 @@ const CardTable = ({
           </tbody>
         </table>
       </div>
+      {/* Pagination */}
+      <div className="flex justify-between items-center p-4">
+        <button
+          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+          disabled={currentPage === 1}
+          className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+        >
+          Précédent
+        </button>
+        <span>
+          Page {currentPage} sur {totalPages}
+        </span>
+        <button
+          onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+          disabled={currentPage === totalPages}
+          className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+        >
+          Suivant
+        </button>
+      </div>
+
     </div>
   );
 };
@@ -125,14 +176,14 @@ CardTable.defaultProps = {
   color: "light",
   onAccept: () => console.log("Accepted!"),
   onReject: () => console.log("Rejected!"),
-  onViewdetail:()=>console.log("detail"),
-  ondelete:()=>console.log("delete"),
+  onViewdetail: () => console.log("detail"),
+  ondelete: () => console.log("delete"),
 };
 
 CardTable.propTypes = {
   color: PropTypes.oneOf(["light", "dark"]),
   onAccept: PropTypes.func,
   onReject: PropTypes.func,
-  onViewdetail:PropTypes.func,
-  ondelete:PropTypes.func,
+  onViewdetail: PropTypes.func,
+  ondelete: PropTypes.func,
 };

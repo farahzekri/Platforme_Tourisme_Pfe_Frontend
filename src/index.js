@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "react-query";
@@ -20,40 +20,42 @@ import{store} from './app/store';
 import '../src/index.css';
 
 import TokenChecker from "views/TokenChecker";
+import NotFound from "views/Errorpages/Notfound";
+import Loader from "views/Errorpages/loader";
+import Unauthorized from "views/Errorpages/unauthorization";
+import ProtectedRoute from "views/auth/ProtectedRoute";
+
 const queryClient = new QueryClient();
-ReactDOM.render(
-  <QueryClientProvider client={queryClient}>
-     <Provider store={store}>
-  <BrowserRouter>
-   <TokenChecker>
-    <Routes>
-     
-       
-      <Route path="/admin/*" element={
-        
-        <Admin />
-       
-        } />
-        <Route path="/auth/*" element={
-          
-          <Auth />
-          
-          } />
-        <Route path="/landing" element={
-          
-          <Landing />
-          
-          } />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/" element={
-          
-          <Index />
-          
-          } />
-      </Routes>
-      </TokenChecker>
-  </BrowserRouter>
-  </Provider>
-  </QueryClientProvider>,
-  document.getElementById("root")
-);
+
+
+const App = () => {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setTimeout(() => setLoading(false), 1000); 
+  }, []);
+
+  return loading ? (
+    <Loader /> 
+  ) : (
+    <QueryClientProvider client={queryClient}>
+      <Provider store={store}>
+        <BrowserRouter>
+          <TokenChecker>
+            <Routes>
+              <Route path="/admin/*" element={<ProtectedRoute><Admin /> </ProtectedRoute> } />
+              <Route path="/auth/*" element={<Auth />} />
+              <Route path="/landing" element={<Landing />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/Unauthorized" element={<Unauthorized />} />
+              <Route path="/" element={<Index />} />
+              <Route path="/*" element={<NotFound />} />
+            </Routes>
+          </TokenChecker>
+        </BrowserRouter>
+      </Provider>
+    </QueryClientProvider>
+  );
+};
+
+ReactDOM.render(<App />, document.getElementById("root"));

@@ -10,6 +10,9 @@ import { useRegisterUser } from "views/hooks/use";
 import { useGetAllB2BUsers, useUpdateB2BStatus } from "views/hooks/use";
 import Alert from "components/Alert/Alert";
 import { useNavigate } from "react-router-dom";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import Button from "components/Button/button";
+import { ConfirmationModalSiAccepted } from "components/modal/confirmationModalAccepted";
 
 export default function Preselction() {
     const { data: b2bUsers = [], isLoading, isError } = useGetAllB2BUsers();
@@ -25,6 +28,13 @@ export default function Preselction() {
     const [alert, setAlert] = useState({ message: "", type: "" });
     const { mutate: registerUser } = useRegisterUser();
     const [searchTerm, setSearchTerm] = useState("");
+    const [isContractModalOpen, setIsContractModalOpen] = useState(false);
+    const [contractDetails, setContractDetails] = useState({
+        startDate: '',
+        endDate: '',
+        duration: '',
+        amount: '',
+    });
     const [formData, setFormData] = useState({
         nameAgence: "",
         email: "",
@@ -40,11 +50,11 @@ export default function Preselction() {
     if (isLoading) return <p>Chargement des utilisateurs...</p>;
     if (isError) return <p>Erreur lors du chargement des utilisateurs.</p>;
 
-   
-    const columns = ["nameAgence", "Email", "Statut", "phoneNumber", "Date d'inscription", "Action"];
 
-   
- 
+    const columns = ["NonAgence", "Email", "Statut", "Téléphone", "Date d'inscription", "Action"];
+
+
+
     const handleOpenModal = (user, action) => {
         setSelectedUser(user);
         setModalAction(action);
@@ -52,14 +62,27 @@ export default function Preselction() {
     };
 
     const handleConfirm = () => {
-        if (modalAction === "accept") {
-            updateStatus({ nameAgence: selectedUser.nameAgence, status: "approved" });
-        } else if (modalAction === "reject") {
-            updateStatus({ nameAgence: selectedUser.nameAgence, status: "rejected" });
+        console.log(selectedUser);
+        if (!selectedUser.Email) {
+            console.error("❌ L'email de l'utilisateur est introuvable !");
+            return;
         }
-        setIsModalOpen(false); // Fermer le modal après confirmation
+        if (modalAction === "accept") {
+            setIsModalOpen(false);
+            setIsContractModalOpen(true);
+        } else if (modalAction === "reject") {
+            updateStatus({
+                nameAgence: selectedUser.NonAgence,
+                status: "rejected",
+                email: selectedUser.Email
+            });
+        }
+        setIsModalOpen(false);
     };
-
+    // const handleChangecontrar = (e) => {
+    //     const { name, value } = e.target;
+    //     setContractDetails((prev) => ({ ...prev, [name]: value }));
+    // };
     const handleCloseModal = () => {
         setIsModalOpen(false);
     };
@@ -85,6 +108,15 @@ export default function Preselction() {
         { value: "rental_agency", label: "Rental agency" },
         { value: "hotel", label: "Hotel" },
     ];
+    const handleContractSubmit = () => {
+        updateStatus({
+            nameAgence: selectedUser.NonAgence,
+            status: "approved",
+            email: selectedUser.Email,
+            ...contractDetails, // Envoi des détails du contrat
+        });
+        setIsContractModalOpen(false);
+    };
     const handleSubmit = (e) => {
         e.preventDefault();
 
@@ -126,14 +158,14 @@ export default function Preselction() {
         console.log("nameAgence:", nameAgence);
         navigate(`/admin/details/${nameAgence}`);
     }
-    const filteredData = b2bUsers.filter((user) => 
+    const filteredData = b2bUsers.filter((user) =>
         user.nameAgence.toLowerCase().includes(searchTerm.toLowerCase()) ||
         user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
         user.phoneNumber.includes(searchTerm)
     );
     return (
         <>
-            <div className="w-full mb-13 px-4 pt-5 mt-20">
+            <div className="w-full mb-13 px-4 pt-8 mt-20">
                 <div className="flex justify-between items-center mb-4 space-x-4">
 
                     {/* Barre de recherche */}
@@ -165,7 +197,7 @@ export default function Preselction() {
                             <input
                                 type="search"
                                 id="default-search"
-                                className="block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
+                                className="block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-xl bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
                                 placeholder="Rechercher des utilisateurs..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -174,28 +206,30 @@ export default function Preselction() {
                     </form>
 
                     {/* Bouton pour ajouter une agence */}
-                    <button
-                        onClick={handleOpenModalform}
-                        className="bg-red-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-red-600"
-                    >
-                        Ajouter une agence
-                    </button>
 
+                    <Button
+                        onClick={handleOpenModalform}
+                        icon={faPlus}
+                        label="Ajouter une agence"
+                        bgColor="bg-palette-greenajou"
+                        hoverBgColor="hover:bg-palette-green"
+                        textColor="text-white"
+                    />
                 </div>
                 <CardTable
                     color="dark"
                     title="Utilisateurs B2B"
                     columns={columns}
                     data={filteredData.map((user) => ({
-                        nameAgence: user.nameAgence,
+                        NonAgence: user.nameAgence,
                         Email: user.email,
                         Statut: user.status,
-                        phoneNumber: user.phoneNumber,
+                        Téléphone: user.phoneNumber,
                         "Date d'inscription": new Date(user.createdAt).toLocaleDateString(),
                     }))}
                     onAccept={(user) => handleOpenModal(user, "accept")}
                     onReject={(user) => handleOpenModal(user, "reject")}
-                    onViewdetail={(user) => handleViewDetails(user.nameAgence)}
+                    onViewdetail={(user) => handleViewDetails(user.NonAgence)}
                 />
 
                 <ConfirmationModal
@@ -207,109 +241,136 @@ export default function Preselction() {
                     }
                     onConfirm={handleConfirm}
                     onClose={handleCloseModal}
-                    
+                    animationDirection="slideInLeft"
+
+                />
+                <ConfirmationModalSiAccepted
+                    isOpen={isContractModalOpen}
+                    onClose={() => setIsContractModalOpen(false)}
+                    onSubmit={handleContractSubmit}
+                    contractDetails={contractDetails}
+                    setContractDetails={setContractDetails}
                 />
                 <Modal
                     isOpen={isModalOpenform}
                     onClose={handleCloseModalform}
-                    title="Add New Admin"
+                    title="Ajouter un nouvel Agence"
+                    size="xl"
                 >
 
                     <Alert message={alert.message} type={alert.type} />
                     {/* Form content */}
-                    <form className="space-y-4">
-                        <InputField
-                            label="Name Agence"
-                            type="text"
-                            icon="fas fa-user"
-                            name="nameAgence"
-                            value={formData.nameAgence}
-                            onChange={handleChange}
-                            placeholder="Name Agence"
-                            error={errors.nameAgence}
-                        />
-                        <InputField
-                            label="Email"
-                            type="email"
-                            icon="fas fa-envelope"
-                            name="email"
-                            value={formData.email}
-                            onChange={handleChange}
-                            placeholder="Email"
-                            error={errors.email}
-                        />
-                        <InputField
-                            label="Password"
-                            type="password"
-                            icon="fas fa-lock"
-                            name="password"
-                            value={formData.password}
-                            onChange={handleChange}
-                            placeholder="Password"
-                            error={errors.password}
-                        />
-                        <InputField
-                            label="Phone Number"
-                            type="tel"
-                            icon="fas fa-phone"
-                            name="phoneNumber"
-                            value={formData.phoneNumber}
-                            onChange={handleChange}
-                            placeholder="Phone Number"
-                            error={errors.phoneNumber}
-                        />
-                        <SelectField
-                            label="Type d'agence"
-                            options={options}
-                            value={formData.typeAgence}
-                            onChange={handleSelectChange}
-                            icon="fas fa-building"
-                            error={formData.typeAgence === "" && formData.typeAgence !== "other" ? "Please select an agency type." : ""}
-                        />
-                        <InputField
-                            label="Adresse"
-                            type="text"
-                            icon="fas fa-map-marker-alt"
-                            name="address"
-                            value={formData.address}
-                            onChange={handleChange}
-                            placeholder="adresse"
-                            error={errors.address}
-                        />
-                        <InputField
-                            label="City"
-                            type="text"
-                            icon="fas fa-city"
-                            name="city"
-                            value={formData.city}
-                            onChange={handleChange}
-                            placeholder="city"
-                            error={errors.city}
-                        />
-                        <InputField
-                            label="Country"
-                            type="text"
-                            icon="fas fa-globe"
-                            name="country"
-                            value={formData.country}
-                            onChange={handleChange}
-                            placeholder="country"
-                            error={errors.country}
-                        />
-                        <SelectedFile
-                            label="Document"
-                            value={formData.documents}
-                            onChange={handleChange}
-                            error={errors.document}
-                            name="documents"
-                        />
-                        <button
-                            type="submit"
-                            onClick={handleSubmit}
-                            className="w-full px-5 py-2.5 text-white bg-red-400 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm"
-                        >
-                            Submit
-                        </button>
+                    <form className="grid grid-cols-2 gap-4">
+                        {/* Colonne de gauche */}
+                        <div>
+                            <InputField
+                                label="Non de l'Agence"
+                                type="text"
+                                icon="fas fa-user"
+                                name="nameAgence"
+                                value={formData.nameAgence}
+                                onChange={handleChange}
+                                placeholder="Name Agence"
+                                error={errors.nameAgence}
+                            />
+                            <InputField
+                                label="Email"
+                                type="email"
+                                icon="fas fa-envelope"
+                                name="email"
+                                value={formData.email}
+                                onChange={handleChange}
+                                placeholder="Email"
+                                error={errors.email}
+                            />
+                            <InputField
+                                label="Mot de passe "
+                                type="password"
+                                icon="fas fa-lock"
+                                name="password"
+                                value={formData.password}
+                                onChange={handleChange}
+                                placeholder="Password"
+                                error={errors.password}
+                            />
+                            <InputField
+                                label="Telephone"
+                                type="tel"
+                                icon="fas fa-phone"
+                                name="phoneNumber"
+                                value={formData.phoneNumber}
+                                onChange={handleChange}
+                                placeholder="Phone Number"
+                                error={errors.phoneNumber}
+                            />
+                        </div>
+
+                        {/* Colonne de droite */}
+                        <div>
+                            <SelectField
+                                label="Type d'agence"
+                                options={options}
+                                value={formData.typeAgence}
+                                onChange={handleSelectChange}
+                                icon="fas fa-building"
+                                error={formData.typeAgence === "" && formData.typeAgence !== "other" ? "Please select an agency type." : ""}
+                            />
+                            <InputField
+                                label="Adresse"
+                                type="text"
+                                icon="fas fa-map-marker-alt"
+                                name="address"
+                                value={formData.address}
+                                onChange={handleChange}
+                                placeholder="Adresse"
+                                error={errors.address}
+                            />
+                            <InputField
+                                label="ville"
+                                type="text"
+                                icon="fas fa-city"
+                                name="city"
+                                value={formData.city}
+                                onChange={handleChange}
+                                placeholder="City"
+                                error={errors.city}
+                            />
+                            <InputField
+                                label="Pays"
+                                type="text"
+                                icon="fas fa-globe"
+                                name="country"
+                                value={formData.country}
+                                onChange={handleChange}
+                                placeholder="Country"
+                                error={errors.country}
+                            />
+                        </div>
+
+                        {/* Document en pleine largeur */}
+                        <div className="col-span-2">
+                            <SelectedFile
+                                label="Document"
+                                value={formData.documents}
+                                onChange={handleChange}
+                                error={errors.document}
+                                name="documents"
+                            />
+                        </div>
+
+                        {/* Bouton Submit en pleine largeur */}
+                        <div className="col-span-2 flex justify-center">
+
+
+                            <Button
+                                onClick={handleSubmit}
+                                icon={faPlus}
+                                label="Soumettre"
+                                bgColor="bg-palette-greenajou"
+                                hoverBgColor="hover:bg-palette-green"
+                                textColor="text-white"
+                            />
+                        </div>
                     </form>
                 </Modal>
             </div>

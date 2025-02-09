@@ -98,3 +98,27 @@ export const useGetAllAdmins = () => {
     );
 };
 
+export const useGetAdminStats = () => {
+ 
+
+  return useQuery({
+    queryKey: ["adminStats"],
+    queryFn: async () => {
+      
+
+      try {
+        const { data } = await axios.get(`${url}/count`);
+        return data;
+      } catch (error) {
+        const errMessage =
+          error.response?.data?.message || "Erreur lors de la récupération des statistiques.";
+      
+        throw new Error(errMessage);
+      }
+    },
+
+    onError: () => {
+      toast.error("Impossible de charger les statistiques des administrateurs.");
+    },
+  });
+};

@@ -17,7 +17,23 @@ export default function Login() {
   const [alertMessage, setAlertMessage] = useState('');
   const [alertType, setAlertType] = useState('');
   const [errors, setErrors] = useState({});
+  const [lockoutTime, setLockoutTime] = useState(0);
+  const timerRef = useRef(null);
   const [login, { isLoading }] = useLoginMutation()
+  useEffect(() => {
+    if (lockoutTime > 0) {
+      timerRef.current = setInterval(() => {
+        setLockoutTime((prev) => {
+          if (prev <= 1) {
+            clearInterval(timerRef.current);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+    return () => clearInterval(timerRef.current);
+  }, [lockoutTime]);
   useEffect(() => {
     setErrMsg('')
   }, [email, password])
@@ -53,7 +69,7 @@ export default function Login() {
       setPassword("");
 
       // Afficher le message de succès
-      setAlertMessage("Login successful!");
+      setAlertMessage("Connexion réussie !");
       setAlertType("success");
 
       setTimeout(() => {
@@ -65,8 +81,12 @@ export default function Login() {
         }
       }, 2000); // 2 secondes
     } catch (err) {
-      // Afficher le message d'erreur
-      setAlertMessage("Login failed! Check your credentials.");
+      if (err.status === 429) {
+        const retryAfter = err.data.retryAfter || 60; // Récupère `retryAfter` du backend
+        setLockoutTime(retryAfter);
+        setErrMsg("Trop de tentatives. Réessayez après " + retryAfter + " secondes.");
+      }
+      setAlertMessage("Connexion échouée ! Vérifiez vos identifiants.");
       setAlertType("error");
 
       setTimeout(() => {
@@ -87,7 +107,7 @@ export default function Login() {
               <div className="rounded-t mb-0 px-6 py-6">
                 <div className="text-center mb-3">
                   <h6 className="text-blueGray-500 text-sm font-bold">
-                    Sign in with
+                    Connectez-vous avec
                   </h6>
                 </div>
                 <div className="btn-wrapper text-center">
@@ -118,71 +138,75 @@ export default function Login() {
               </div>
               <div className="flex-auto px-4 lg:px-10 py-10 pt-0">
                 <div className="text-blueGray-400 text-center mb-3 font-bold">
-                  <small>Or sign in with credentials</small>
+                  <small>Ou connectez-vous avec vos identifiants</small>
                 </div>
                 <Alert message={alertMessage} type={alertType} />
                 <p ref={errRef} className={errClass} aria-live="assertive">{errMsg}</p>
-                <form>
-                  <InputField
-                    label="Email"
-                    type="email"
-                    icon="fas fa-envelope"
-                    value={email}
-                    onChange={handleUserInput}
-                    placeholder="Email"
-                    error={errors.email}
-                  />
-                  <InputField
-                    label="Password"
-                    type="password"
-                    icon="fas fa-lock"
-                    value={password}
-                    onChange={handlepwdInput}
-                    placeholder="Enter your password"
-                    error={errors.password}
-                  />
-                  <div>
-                    <label className="inline-flex items-center cursor-pointer">
-                      <input
-                        id="customCheckLogin"
-                        type="checkbox"
-                        className="form-checkbox border-0 rounded text-blueGray-700 ml-1 w-5 h-5 ease-linear transition-all duration-150"
-                      />
-                      <span className="ml-2 text-sm font-semibold text-blueGray-600">
-                        Remember me
-                      </span>
-                    </label>
-                  </div>
+                {lockoutTime > 0 ? (
+                  <p className="text-red-700">Réessayez dans {lockoutTime} secondes</p>
+                ) : (
+                  <form>
+                    <InputField
+                      label="Email"
+                      type="email"
+                      icon="fas fa-envelope"
+                      value={email}
+                      onChange={handleUserInput}
+                      placeholder="Email"
+                      error={errors.email}
+                    />
+                    <InputField
+                      label="Mot de passe"
+                      type="password"
+                      icon="fas fa-lock"
+                      value={password}
+                      onChange={handlepwdInput}
+                      placeholder="Enter your password"
+                      error={errors.password}
+                    />
+                    <div>
+                      <label className="inline-flex items-center cursor-pointer">
+                        <input
+                          id="customCheckLogin"
+                          type="checkbox"
+                          className="form-checkbox border-0 rounded text-blueGray-700 ml-1 w-5 h-5 ease-linear transition-all duration-150"
+                        />
+                        <span className="ml-2 text-sm font-semibold text-blueGray-600">
+                          Souviens-toi de moi
+                        </span>
+                      </label>
+                    </div>
 
-                  <div className="text-center mt-6">
-                    <button
-                      className="bg-blueGray-800 text-white active:bg-blueGray-600 text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 w-full ease-linear transition-all duration-150"
-                      type="button"
-                      onClick={handleSubmit}
-                    >
-                      Sign In
-                    </button>
-                  </div>
-                  <div className="flex flex-wrap mt-6 relative">
-                    <div className="w-1/2">
-                      <a
-                        href="#pablo"
-                        onClick={(e) => e.preventDefault()}
-                        className="text-blueGray-800"
+                    <div className="text-center mt-6">
+                      <button
+                        className="bg-blueGray-800 text-white active:bg-blueGray-600 text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 w-full ease-linear transition-all duration-150"
+                        type="button"
+                        onClick={handleSubmit}
                       >
-                        <small>Forgot password?</small>
-                      </a>
+                       Se connecter
+                      </button>
                     </div>
-                    <div className="w-1/2 text-right">
+                    <div className="flex flex-wrap mt-6 relative">
+                      <div className="w-1/2">
+                        <a
+                          href="#pablo"
+                          onClick={(e) => e.preventDefault()}
+                          className="text-blueGray-800"
+                        >
+                          <small>Mot de passe oublié ?</small>
+                        </a>
+                      </div>
+                      <div className="w-1/2 text-right">
 
-                      <Link to="/auth/RegisterAgence" className="text-blueGray-800">
-                        <small>Create new account Pro</small>
-                      </Link>
+                        <Link to="/auth/RegisterAgence" className="text-blueGray-800">
+                          <small>Créer un compte Pro</small>
+                        </Link>
 
+                      </div>
                     </div>
-                  </div>
 
-                </form>
+                  </form>
+                )}
               </div>
             </div>
 

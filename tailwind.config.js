@@ -27,8 +27,8 @@ module.exports = {
         200: '#fc9191',
         300: '#fb6262',
         400: '#fa3333',
-        500: '#f80202', 
-        600: '#e00101',
+        500: '#D46F4D', 
+        600: '#5C8143',
         700: '#c10101',
         800: '#a10101',
         900: '#810101',
@@ -40,9 +40,74 @@ module.exports = {
       700:'#1d7839',
       800:'#1c5f30',
       },
-      customgreen: '#63E6BE',
+     
+      gray: {
+        100: '#F3F4F6', // gray-100
+        500: '#6B7280', // gray-500
+        600: '#4B5563', // gray-600
+        700: '#374151', // gray-700
+      },
+      blue: {
+        500: '#3B82F6',
+      },
+      jaun: '#7AA95C', // Jaune (doré)
+      white: '#ffffff',
+      lightBlue: {
+        50: "#e0f0f7",  // Lightest shade
+        100: "#4A919E", 
+        200: "#80c2d4",
+        300: "#4daab2",  // Slightly lighter than the original
+        400: "#26939b",
+        450:'#264653',
+        500: "#0f7c84",  // Base color
+        600: "#0e6b77", 
+        700: "#0c5a6a",
+        800: "#0a495c", 
+        900: "#0c4a6e",  // Original color
+      },
+      palette:{
+        greenajou:"#5C8143",
+        green:"#7AA95C",
+        jaun:"#e9c46a",
+        bleufonce:"#264653",
+        bleuclere:"#4A919E",
+        orange:"#D46F4D",
+        orangefonce:"#A8553B",
+        customgreen: '#63E6BE',
+        customgreenfonce:"#4BB294"
+
+      }
     },
     extend: {
+      animation: {
+        fadeIn: 'fadeIn 0.3s ease',
+        slideInTop: 'slideInTop 0.5s ease-out',
+        slideInBottom: 'slideInBottom 0.5s ease-out',
+        slideInLeft: 'slideInLeft 0.5s ease-out',
+        slideInRight: 'slideInRight 0.5s ease-out',
+      },
+      keyframes: {
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        slideInTop: {
+          '0%': { transform: 'translateY(-100%)' },
+          '100%': { transform: 'translateY(0)' },
+        },
+        slideInBottom: {
+          '0%': { transform: 'translateY(100%)' },
+          '100%': { transform: 'translateY(0)' },
+        },
+        slideInLeft: {
+          '0%': { transform: 'translateX(-100%)' },
+          '100%': { transform: 'translateX(0)' },
+        },
+        slideInRight: {
+          '0%': { transform: 'translateX(100%)' },
+          '100%': { transform: 'translateX(0)' },
+        },
+      },
       minHeight: {
         "screen-75": "75vh",
       },

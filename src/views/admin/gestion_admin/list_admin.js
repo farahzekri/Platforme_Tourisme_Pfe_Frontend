@@ -1,4 +1,6 @@
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import Alert from "components/Alert/Alert";
+import Button from "components/Button/button";
 import CardTable from "components/Cards/CardTable";
 import InputField from "components/InputField/inputField";
 import SelectFieldsimple from "components/InputField/selected";
@@ -9,14 +11,7 @@ import { useEffect, useState } from "react";
 import { validateFieldRegistre } from "views/auth/validation";
 import { useDeleteAdmin } from "views/hooks/admin";
 import { useCreateAdmin } from "views/hooks/admin";
-
 import { useGetAllAdmins } from "views/hooks/admin";
-
-
-
-
-
-
 export default function ListAdmin() {
     const { data: admins = [], isLoading, isError } = useGetAllAdmins();
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -33,13 +28,7 @@ export default function ListAdmin() {
 
 
     });
-    // const [tableData, setTableData] = useState(admins.map((user) => ({
-    //     id: user._id,
-    //     username: user.username,
-    //     Email: user.email,
-    //     privilege: user.privilege,
-    //     "Date d'inscription": new Date(user.createdAt).toLocaleDateString(),
-    // })));
+    
 
     const createAdminMutation = useCreateAdmin();
     const [errors, setErrors] = useState({});
@@ -47,26 +36,26 @@ export default function ListAdmin() {
 
     useEffect(() => {
         if (admins.length > 0) {
-          setTableData(
-            admins.map((user) => ({
-              id: user._id,
-              username: user.username,
-              Email: user.email,
-              privilege: user.privilege,
-              "Date d'inscription": new Date(user.createdAt).toLocaleDateString(),
-            }))
-          );
+            setTableData(
+                admins.map((user) => ({
+                    id: user._id,
+                    Name_Utlisateur: user.username,
+                    Email: user.email,
+                    privilege: user.privilege,
+                    "Date d'inscription": new Date(user.createdAt).toLocaleDateString(),
+                }))
+            );
         }
-      }, [admins]);
+    }, [admins]);
     const handleOpenModal = () => setIsModalOpen(true);
     const handleCloseModal = () => setIsModalOpen(false);
 
     if (isLoading) return <p>Chargement des admin...</p>;
     if (isError) return <p>Erreur lors du chargement des admin.</p>;
 
-    const columns = ["username", "Email", "privilege", "Date d'inscription", "Actions"];
+    const columns = ["Name_Utlisateur", "Email", "privilege", "Date d'inscription", "Actions"];
 
-  
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prev) => ({ ...prev, [name]: value }));
@@ -98,7 +87,7 @@ export default function ListAdmin() {
         setErrors(newErrors);
         if (Object.keys(newErrors).length > 0) {
 
-            setAlert({ message: "Please correct any errors before submitting !", type: "error" });
+            setAlert({ message: "Veuillez corriger les éventuelles erreurs avant de soumettre !", type: "error" });
             return;
         }
 
@@ -114,7 +103,7 @@ export default function ListAdmin() {
             });
         } catch (error) {
 
-            setAlert({ message: "Registration failed !", type: "error" });
+            setAlert({ message: "Erreur d'enregistrement :!", type: "error" });
         }
     };
 
@@ -125,7 +114,7 @@ export default function ListAdmin() {
 
     ];
     const handleOpenModalconfrm = (user) => {
-        console.log("User selected:", user); 
+        console.log("User selected:", user);
         setSelectedUser(user);
         setIsModalOpenconfirm(true);
     };
@@ -135,11 +124,11 @@ export default function ListAdmin() {
 
     const handleConfirm = async () => {
         if (!selectedUser) return;
-    
+
         console.log("Admin username to delete:", selectedUser.username); // Now using username
         try {
-            
-            await deleteAdminMutation.mutateAsync(selectedUser.username); 
+
+            await deleteAdminMutation.mutateAsync(selectedUser.username);
             setTableData((prevData) =>
                 prevData.filter((user) => user.username !== selectedUser.username)
             );
@@ -151,7 +140,7 @@ export default function ListAdmin() {
     }
     return (
         <>
-            <div className="w-full mb-13 px-4 pt-5 mt-20">
+            <div className="w-full mb-13 px-4 pt-8 mt-20">
                 <div className="flex justify-between items-center mb-4 space-x-4">
 
                     {/* Barre de recherche */}
@@ -183,21 +172,22 @@ export default function ListAdmin() {
                             <input
                                 type="search"
                                 id="default-search"
-                                className="block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
+                                className="block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-xl bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
                                 placeholder="Rechercher des utilisateurs..."
                                 required
                             />
                         </div>
                     </form>
 
-                    {/* Bouton pour ajouter une agence */}
-                    <button
-                        onClick={handleOpenModal}
-                        className="bg-red-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-red-600"
-                    >
-                        Ajouter un admin
-                    </button>
 
+                    <Button
+                        onClick={handleOpenModal}
+                        icon={faPlus}
+                        label="Ajouter un compte"
+                        bgColor="bg-palette-greenajou"
+                        hoverBgColor="hover:bg-palette-green"
+                        textColor="text-white"
+                    />
                 </div>
                 <CardTable
                     color="dark"
@@ -208,24 +198,27 @@ export default function ListAdmin() {
 
                 />
 
-                <Modal
-                    isOpen={isModalOpen}
-                    onClose={handleCloseModal}
-                    title="Add New Admin"
-                >
-                    <Alert message={alert.message} type={alert.type} />
+                <Modal isOpen={isModalOpen} onClose={handleCloseModal} title="Ajouter un nouvel administrateur" size="md">
+                    {/* Alert Message */}
+                    {alert.message && (
+                        <Alert message={alert.message} type={alert.type} />
+                    )}
+
                     {/* Form content */}
-                    <form className="space-y-4">
+                    <form className="space-y-6 mt-4">
+                        {/* Username Input */}
                         <InputField
-                            label="username"
+                            label="Non d'utlisateur"
                             type="text"
                             icon="fas fa-user"
                             name="username"
                             value={formData.username}
                             onChange={handleChange}
-                            placeholder="username"
+                            placeholder="Enter username"
                             error={errors.username}
                         />
+
+                        {/* Email Input */}
                         <InputField
                             label="Email"
                             type="email"
@@ -233,42 +226,50 @@ export default function ListAdmin() {
                             name="email"
                             value={formData.email}
                             onChange={handleChange}
-                            placeholder="Email"
+                            placeholder="Enter your email"
                             error={errors.email}
                         />
+
+                        {/* Password Input */}
                         <InputField
-                            label="Password"
+                            label="Mote de passe"
                             type="password"
                             icon="fas fa-lock"
                             name="password"
                             value={formData.password}
                             onChange={handleChange}
-                            placeholder="password"
+                            placeholder="Enter password"
                             error={errors.password}
                         />
 
+                        {/* Privilege Select */}
                         <SelectFieldsimple
-                            label="privilege"
+                            label="Privilege"
                             options={options}
                             name="privilege"
                             value={formData.privilege}
                             onChange={handleSelectChange}
                             icon="fas fa-unlock"
-                            error={formData.privilege === "" ? "Please select an privilege type." : ""}
+                            error={formData.privilege === "" ? "Please select a privilege." : ""}
                         />
-                        <button
-                            type="submit"
-                            onClick={handleSubmit}
-                            className="w-full px-5 py-2.5 text-white bg-red-400 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm"
-                        >
-                            Submit
-                        </button>
+
+                       
+                        <div className="flex justify-between items-center  px-20 ml-12">
+                        <Button
+                        onClick={handleSubmit}
+                        icon={faPlus}
+                        label="Submit"
+                        bgColor="bg-palette-greenajou"
+                        hoverBgColor="hover:bg-palette-green"
+                        textColor="text-white"
+                    />
+                    </div>
                     </form>
                 </Modal>
 
                 <ConfirmationModal
                     isOpen={isModalOpenconfirm}
-                    message="Are you sure you want to delete this user?"
+                    message="Etes-vous sûr de vouloir supprimer cet utilisateur ?"
                     onConfirm={handleConfirm}
                     onClose={handleCloseModalconfirme}
 

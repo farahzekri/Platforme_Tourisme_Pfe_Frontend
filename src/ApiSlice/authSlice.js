@@ -2,7 +2,7 @@ import {createSlice} from '@reduxjs/toolkit'
  
 const authSlice =createSlice({
     name:'auth',
-    initialState:{token:null,collection: null , email: null,name: null,statue:null,role:null},
+    initialState:{token:null,collection: null , email: null,name: null,statue:null,isAuthorized : false,role:null},
     reducers:{
         setCredentials:(state,action)=>{
             const {accessToken,collection ,email,name,statue,role}=action.payload
@@ -11,6 +11,7 @@ const authSlice =createSlice({
             state.email = email;
             state.name = name;
             state.statue = statue;
+            state.isAuthorized = true;
             state.role=role;
           
             
@@ -34,4 +35,5 @@ export default authSlice.reducer
 
 export const selectCurrentToken=(state)=>state.auth.token
 
-// export const selectIsAuthorized = (state: { auth: AuthState }) => state.auth.isAuthorized;
+export const selectIsAuthorized = (state) => state.auth.isAuthorized;
+
