@@ -28,6 +28,7 @@ export default function Preselction() {
     const [alert, setAlert] = useState({ message: "", type: "" });
     const { mutate: registerUser } = useRegisterUser();
     const [searchTerm, setSearchTerm] = useState("");
+    const [dateFilter, setDateFilter] = useState("");
     const [isContractModalOpen, setIsContractModalOpen] = useState(false);
     const [contractDetails, setContractDetails] = useState({
         startDate: '',
@@ -158,11 +159,32 @@ export default function Preselction() {
         console.log("nameAgence:", nameAgence);
         navigate(`/admin/details/${nameAgence}`);
     }
-    const filteredData = b2bUsers.filter((user) =>
-        user.nameAgence.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.phoneNumber.includes(searchTerm)
-    );
+    const filteredData = b2bUsers.filter((user) => {
+        // Recherche par nom, email ou numéro de téléphone
+        const matchesSearch =
+            user.nameAgence.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            user.phoneNumber.includes(searchTerm);
+
+        // Filtrage par date d'inscription
+        const today = new Date();
+        const oneWeekAgo = new Date();
+        oneWeekAgo.setDate(today.getDate() - 7);
+        const oneYearAgo = new Date();
+        oneYearAgo.setFullYear(today.getFullYear() - 1);
+
+        const userDate = new Date(user.createdAt);
+
+        const matchesDate =
+            dateFilter === "" ||
+            (dateFilter === "today" && userDate.toDateString() === today.toDateString()) ||
+            (dateFilter === "week" && userDate >= oneWeekAgo) ||
+            (dateFilter === "year" && userDate >= oneYearAgo);
+
+        return matchesSearch && matchesDate;
+    });
+
+
     return (
         <>
             <div className="w-full mb-13 px-4 pt-8 mt-20">
@@ -203,8 +225,32 @@ export default function Preselction() {
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
                         </div>
-                    </form>
 
+
+                    </form>
+                    <div className="flex gap-2 p-2">
+                        {[
+                            { value: "today", label: "Aujourd'hui" },
+                            { value: "week", label: "Cette semaine" },
+                            { value: "year", label: "Cette année" },
+                        ].map((option) => (
+                            <label key={option.value} className="cursor-pointer">
+                                <input
+                                    type="radio"
+                                    name="dateFilter"
+                                    value={option.value}
+                                    checked={dateFilter === option.value}
+                                    onChange={(e) => setDateFilter(e.target.value)}
+                                    className="sr-only peer"
+                                />
+                                <div className="flex items-center justify-center h-12 px-4 rounded-xl border-2 border-gray-300 bg-gray-50 transition duration-150 hover:border-blue-400 peer-checked:border-blue-500 peer-checked:shadow-md peer-checked:shadow-blue-400">
+                                    <span className="text-gray-500 peer-checked:text-blue-500">
+                                        {option.label}
+                                    </span>
+                                </div>
+                            </label>
+                        ))}
+                    </div>
                     {/* Bouton pour ajouter une agence */}
 
                     <Button

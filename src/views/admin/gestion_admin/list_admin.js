@@ -38,7 +38,7 @@ export default function ListAdmin() {
         if (admins.length > 0) {
             setTableData(
                 admins.map((user) => ({
-                    id: user._id,
+                    id: user.id,
                     Name_Utlisateur: user.username,
                     Email: user.email,
                     privilege: user.privilege,
@@ -114,6 +114,7 @@ export default function ListAdmin() {
 
     ];
     const handleOpenModalconfrm = (user) => {
+    
         console.log("User selected:", user);
         setSelectedUser(user);
         setIsModalOpenconfirm(true);

@@ -18,6 +18,7 @@ import Preselction from "views/admin/Preselection";
 import ListAdmin from "views/admin/gestion_admin/list_admin";
 import DetailAgence from "views/admin/detailagence";
 import Inscription from "views/admin/inscription";
+import Historique from "views/admin/Historique";
 
 
 
@@ -43,7 +44,7 @@ export default function Admin() {
             <Route path="details/:nameAgence" element={<DetailAgence/>}/>
             <Route path="inscription" element={<Inscription/>}/>
             <Route path="listadmin" element={<ListAdmin/>}/>
-            
+            <Route path="Historique" element={<Historique/>}/>
           </Routes>
           
           {/* <FooterAdmin /> */}

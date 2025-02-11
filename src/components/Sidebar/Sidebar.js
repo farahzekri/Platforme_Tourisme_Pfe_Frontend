@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import image from '../../assets/img/hubs-logo.jpg'
-import { faBars, faBusinessTime, faCheckToSlot, faClipboardList, faHouse, faUserShield } from "@fortawesome/free-solid-svg-icons";
+import { faBars, faBusinessTime, faCheckToSlot, faClipboardList, faClockRotateLeft, faHouse, faUserShield } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 
@@ -60,6 +60,11 @@ const Sidebar = () => {
         <ul className="space-y-2 mt-3">
           <SidebarItem to="/admin/preselction" icon={<FontAwesomeIcon icon={faClipboardList} />} label="Préinscription" />
           <SidebarItem to="/admin/inscription" icon={<FontAwesomeIcon icon={faCheckToSlot} />} label="Inscription" />
+        </ul>
+        <hr className="my-4 border-gray-300" />
+        <h6 className="text-gray-700 text-xs uppercase font-extrabold">Historique</h6>
+        <ul className="space-y-2 mt-3">
+        <SidebarItem to="/admin/Historique" icon={<FontAwesomeIcon icon={faClockRotateLeft} />} label="Historique" />
         </ul>
       </nav>
     </>
