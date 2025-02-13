@@ -24,6 +24,7 @@ import NotFound from "views/Errorpages/Notfound";
 import Loader from "views/Errorpages/loader";
 import Unauthorized from "views/Errorpages/unauthorization";
 import ProtectedRoute from "views/auth/ProtectedRoute";
+// import ProtectedRouterprivilege from "views/auth/ProtectedRouterdeprivilege";
 
 const queryClient = new QueryClient();
 
@@ -43,13 +44,20 @@ const App = () => {
         <BrowserRouter>
           <TokenChecker>
             <Routes>
-              <Route path="/admin/*" element={<ProtectedRoute><Admin /> </ProtectedRoute> } />
+                <Route path="/admin/*" element={<ProtectedRoute><Admin /> </ProtectedRoute> } /> 
               <Route path="/auth/*" element={<Auth />} />
               <Route path="/landing" element={<Landing />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/Unauthorized" element={<Unauthorized />} />
               <Route path="/" element={<Index />} />
+              
+     
+              {/* <Route path="/admin/*" element={<ProtectedRoute allowedRoles={["admin", "superadmin"]}> 
+                <Admin /> 
+              </ProtectedRoute>} /> */}
               <Route path="/*" element={<NotFound />} />
+          
+           
             </Routes>
           </TokenChecker>
         </BrowserRouter>

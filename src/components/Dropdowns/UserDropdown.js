@@ -3,11 +3,17 @@ import { createPopper } from "@popperjs/core";
 import { useSendLogoutMutation } from "ApiSlice/authApiSlice";
 import { useNavigate } from "react-router-dom";
 import imageuser from "assets/img/user-fron.jpg";
+import { useSelector } from "react-redux";
+import { selectIsAuthorized } from 'ApiSlice/authSlice';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCog, faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
 const UserDropdown = () => {
   // dropdown props
   const [dropdownPopoverShow, setDropdownPopoverShow] = React.useState(false);
   const btnDropdownRef = React.createRef();
   const popoverDropdownRef = React.createRef();
+  const name = useSelector((state) => state.auth.name);
+  const isAuthorized = useSelector(selectIsAuthorized);
   const openDropdownPopover = () => {
     createPopper(btnDropdownRef.current, popoverDropdownRef.current, {
       placement: "bottom-start",
@@ -55,51 +61,31 @@ const UserDropdown = () => {
           "bg-white text-base z-50 float-left py-2 list-none text-left rounded shadow-lg min-w-48"
         }
       >
-        <a
+        {isAuthorized && (
+          <div className="text-sm py-2 px-4 font-bold text-blueGray-700">
+            {name}
+          </div>
+        )}
+         <div className="h-0 my-2 border border-solid border-blueGray-100" />
+         <a
           href="#pablo"
-          className={
-            "text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700"
-          }
-          onClick={(e) => e.preventDefault()}
+          className="flex items-center gap-2 text-sm py-2 px-4 font-medium w-full text-blueGray-700 hover:bg-gray-100 transition-all duration-200"
+          onClick={() => navigate('/admin/settings')}
         >
-          Action
-        </a>
-        <a
-          href="#pablo"
-          className={
-            "text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700"
-          }
-          onClick={(e) => e.preventDefault()}
-        >
-          Another action
-        </a>
-        <a
-          href="#pablo"
-          className={
-            "text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700"
-          }
-          onClick={(e) => e.preventDefault()}
-        >
-          Something else here
-        </a>
-        <a
-          href="#pablo"
-          className={
-            "text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700"
-          }
-          onClick={(e) => navigate('/admin/settings')}
-        >
+          <FontAwesomeIcon icon={faCog} className="text-blueGray-500" />
           Settings
         </a>
-        <div className="h-0 my-2 border border-solid border-blueGray-100" />
+
+        <div className="h-0 my-2 border-t border-blueGray-100" />
+
+     
         <a
           href="#pablo"
-          className={
-            "text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700"
-          }
+          className="flex items-center gap-2 text-sm py-2 px-4 font-medium w-full text-red-500 hover:bg-red-100 transition-all duration-200"
           onClick={handleLogout}
         >
-         logout
+          <FontAwesomeIcon icon={faSignOutAlt} className="text-red-500" />
+          Logout
         </a>
       </div>
     </>

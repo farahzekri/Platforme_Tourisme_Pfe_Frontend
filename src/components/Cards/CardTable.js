@@ -77,8 +77,8 @@ const CardTable = ({
                     {column === "Statut" ? (
                       <div className="flex items-center">
                         <span
-                          className={`w-2 h-2 rounded-full inline-block mr-2 ${row[column] === "pending" ? "bg-orange-500" :
-                            row[column] === "approved" ? "bg-green-300" : "bg-gray-400"
+                          className={`w-2 h-2 rounded-full inline-block mr-2 ${row[column] === "en attente" ? "bg-orange-500" :
+                            row[column] === "approuvée" ? "bg-green-300" : "bg-white"
                             }`}
                         ></span>
                         {row[column]}

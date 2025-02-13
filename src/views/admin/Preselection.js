@@ -6,7 +6,7 @@ import ConfirmationModal from "components/modal/confirmationModal";
 import Modal from "components/modal/modalformulaire";
 import React, { useState } from "react";
 import { validateFieldRegistre } from "views/auth/validation";
-import { useRegisterUser } from "views/hooks/use";
+import { useAddAgence } from "views/hooks/use";
 import { useGetAllB2BUsers, useUpdateB2BStatus } from "views/hooks/use";
 import Alert from "components/Alert/Alert";
 import { useNavigate } from "react-router-dom";
@@ -26,7 +26,7 @@ export default function Preselction() {
     const [errors, setErrors] = useState({});
     const navigate = useNavigate();
     const [alert, setAlert] = useState({ message: "", type: "" });
-    const { mutate: registerUser } = useRegisterUser();
+    const { mutate: registerUser } = useAddAgence();
     const [searchTerm, setSearchTerm] = useState("");
     const [dateFilter, setDateFilter] = useState("");
     const [isContractModalOpen, setIsContractModalOpen] = useState(false);
@@ -74,7 +74,7 @@ export default function Preselction() {
         } else if (modalAction === "reject") {
             updateStatus({
                 nameAgence: selectedUser.NonAgence,
-                status: "rejected",
+                status: "rejetée",
                 email: selectedUser.Email
             });
         }
@@ -112,7 +112,7 @@ export default function Preselction() {
     const handleContractSubmit = () => {
         updateStatus({
             nameAgence: selectedUser.NonAgence,
-            status: "approved",
+            status: "approuvée",
             email: selectedUser.Email,
             ...contractDetails, // Envoi des détails du contrat
         });
@@ -282,8 +282,8 @@ export default function Preselction() {
                     isOpen={isModalOpen}
                     message={
                         modalAction === "accept"
-                            ? "Are you sure you want to approve this user?"
-                            : "Are you sure you want to reject this user?"
+                            ? "Etes-vous sûr de vouloir approuver cet utilisateur ?"
+                            : "Etes-vous sûr de vouloir rejeter cet utilisateur ?"
                     }
                     onConfirm={handleConfirm}
                     onClose={handleCloseModal}

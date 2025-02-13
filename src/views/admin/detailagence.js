@@ -103,7 +103,7 @@ export default function DetailAgence() {
             <p className="text-gray-500">Aucun document disponible.</p>
           )}
         </div>
-        {b2bDetails?.status === "approved" && b2bDetails?.contract && (
+        {b2bDetails?.status === "approuvée" && b2bDetails?.contract && (
           <div className="mt-4 p-4 bg-white rounded-lg shadow">
             <h3 className="text-lg font-bold mb-2">Détails du Contrat :</h3>
             <InfoRow label="Date de début" value={new Date(b2bDetails.contract.startDate).toLocaleDateString()} />
@@ -128,8 +128,8 @@ export default function DetailAgence() {
         <div className="flex items-center space-x-2 mt-5">
           <span className="font-medium">Statut :</span>
           <span className={`px-3 py-1 rounded-full text-white text-sm font-semibold 
-          ${b2bDetails?.status === "approved" ? "bg-palette-green" :
-              b2bDetails?.status === "pending" ? "bg-yellow-500" :
+          ${b2bDetails?.status === "approuvée" ? "bg-palette-green" :
+              b2bDetails?.status === "en attente" ? "bg-yellow-500" :
                 "bg-red-500"}`}
           >
             {b2bDetails?.status}
@@ -211,7 +211,7 @@ export default function DetailAgence() {
 
           />
         </div>
-        {b2bDetails?.status === "approved" &&  b2bDetails?.contract &&(
+        {b2bDetails?.status === "approuvée" &&  b2bDetails?.contract &&(
           <>
             <InputField
               label="Date de début"

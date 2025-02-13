@@ -1,5 +1,5 @@
 import React from "react";
-import {  Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 
 // components
 
@@ -19,6 +19,7 @@ import ListAdmin from "views/admin/gestion_admin/list_admin";
 import DetailAgence from "views/admin/detailagence";
 import Inscription from "views/admin/inscription";
 import Historique from "views/admin/Historique";
+// import ProtectedRouterprivilege from "views/auth/ProtectedRouterdeprivilege";
 
 
 
@@ -31,22 +32,24 @@ export default function Admin() {
         {/* Header */}
         <HeaderStats />
         <div className="px-4 md:px-10 mx-auto w-full -m-24">
-        <Routes>
+          <Routes>
             <Route path="dashboard" element={
-             
+
               <Dashboard />
-             
-              } />
+
+            } />
             <Route path="maps" element={<Maps />} />
             <Route path="settings" element={<Settings />} />
             <Route path="tables" element={<Tables />} />
-            <Route path="preselction" element={<Preselction/>}/>
-            <Route path="details/:nameAgence" element={<DetailAgence/>}/>
-            <Route path="inscription" element={<Inscription/>}/>
-            <Route path="listadmin" element={<ListAdmin/>}/>
+            <Route path="preselction" element={<Preselction/>}/> 
+            <Route path="details/:nameAgence" element={<DetailAgence/>}/> 
+            <Route path="inscription" element={<Inscription/>}/> 
+            <Route path="listadmin" element={<ListAdmin/>}/> 
             <Route path="Historique" element={<Historique/>}/>
-          </Routes>
+
           
+          </Routes>
+
           {/* <FooterAdmin /> */}
         </div>
       </div>

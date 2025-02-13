@@ -3,6 +3,24 @@ import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import { useSelector } from "react-redux";
 
+
+// const api = axios.create({
+//   baseURL: "http://localhost:5000/admin",
+//   withCredentials: true,
+// });
+
+
+// api.interceptors.response.use(
+//   (response) => response, 
+//   (error) => {
+//       if (error.response?.status === 403) {
+
+//           window.location.href = "/unauthorized"; // 🚀 Redirige
+//       }
+//       return Promise.reject(error);
+//   }
+// );
+
 const url = 'http://localhost:5000/admin';
 
 
@@ -121,4 +139,36 @@ export const useGetAdminStats = () => {
       toast.error("Impossible de charger les statistiques des administrateurs.");
     },
   });
+};
+export const useUpdateAdmin = () => {
+  const token = useSelector((state) => state.auth.token);
+  const currentUsername = useSelector((state) => state.auth.name); 
+
+  return useMutation(
+      async ({ newUsername, newEmail }) => {
+          if (!token) {
+              throw new Error('Token non disponible');
+          }
+
+          const response = await axios.put(
+              `${url}/updateuser/${currentUsername}`,
+              { newUsername, newEmail },
+              {
+                  headers: {
+                      Authorization: `Bearer ${token}`,
+                  },
+              }
+          );
+
+          return response.data;
+      },
+      {
+          onSuccess: (data) => {
+              toast.success(data.message || 'Profil mis à jour avec succès');
+          },
+          onError: (error) => {
+              toast.error(error?.response?.data?.message || "Erreur lors de la mise à jour du profil");
+          },
+      }
+  );
 };

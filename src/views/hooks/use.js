@@ -10,18 +10,35 @@ export const useRegisterUser = () => {
     mutationFn: async (userData) => {
       try {
         const { data } = await axios.post(`${url}/register`, userData);
-        toast.success("User registered successfully!");
+        toast.success("Agence enregistrée avec succès !");
         return data;
       } catch (error) {
         const err = error?.response?.data?.error;
-        toast.error(err || "Registration failed!");
+        toast.error(err || "Échec de l'inscription !");
         throw error;
       }
     },
   });
 };
+export const useAddAgence = () => {
+  const token = useSelector((state) => state.auth.token);
 
+  return useMutation({
+    mutationFn: async (userData) => {
+      try {
+        const config = { headers: { Authorization: `Bearer ${token}` } };
+        const { data } = await axios.post(`${url}/agence/add`, userData, config);
 
+        toast.success("Agence ajoutée avec succès !");
+        return data;
+      } catch (error) {
+        const err = error?.response?.data?.error;
+        toast.error(err || "Échec de l'ajout !");
+        throw error;
+      }
+    },
+  });
+};
 export const useGetAllB2BUsers = () => {
   return useQuery({
     queryKey: ['b2bUsers'], 
@@ -159,17 +176,23 @@ export const useUpdateB2B = () => {
 };
 
 export const useDeletB2b = () => {
+  const token = useSelector((state) => state.auth.token); // Récupérer le token
+
   return useMutation(
-      async (nameAgence) => { // 💡 Assurez-vous d'utiliser nameAgence ici
-          const response = await axios.delete(`${url}/delete/${nameAgence}`);
+      async (nameAgence) => {
+          const config = {
+              headers: { Authorization: `Bearer ${token}` },
+          };
+
+          const response = await axios.delete(`${url}/delete/${nameAgence}`, config);
           return response.data;
       },
       {
           onSuccess: (data) => {
-              toast.success(data.message || 'B2B supprimé avec succès');
+              toast.success(data.message || 'Agence supprimée avec succès');
           },
           onError: (error) => {
-              toast.error(error?.response?.data?.message || "Erreur lors de la suppression de B2B");
+              toast.error(error?.response?.data?.message || "Erreur lors de la suppression de l'agence");
           },
       }
   );

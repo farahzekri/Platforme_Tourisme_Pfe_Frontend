@@ -8,6 +8,8 @@ import ConfirmationModal from "components/modal/confirmationModal";
 
 import Modal from "components/modal/modalformulaire";
 import { useEffect, useState } from "react";
+// import { useSelector } from "react-redux";
+// import { useNavigate } from "react-router-dom";
 import { validateFieldRegistre } from "views/auth/validation";
 import { useDeleteAdmin } from "views/hooks/admin";
 import { useCreateAdmin } from "views/hooks/admin";
@@ -19,6 +21,8 @@ export default function ListAdmin() {
     const deleteAdminMutation = useDeleteAdmin(selectedUser?.username);
     const [isModalOpenconfirm, setIsModalOpenconfirm] = useState(false);
     const [tableData, setTableData] = useState([]);
+    // const navigate = useNavigate();
+    // const { role} = useSelector((state) => state.auth);
     const [formData, setFormData] = useState({
         username: "",
         email: "",
@@ -47,7 +51,12 @@ export default function ListAdmin() {
             );
         }
     }, [admins]);
-    const handleOpenModal = () => setIsModalOpen(true);
+    const handleOpenModal = () => {
+        // if(role==='admin'){
+        //     navigate('/Unauthorized');
+        // }
+        setIsModalOpen(true);
+    }
     const handleCloseModal = () => setIsModalOpen(false);
 
     if (isLoading) return <p>Chargement des admin...</p>;
@@ -109,8 +118,8 @@ export default function ListAdmin() {
 
     const options = [
 
-        { value: "privilege de add", label: "privilege de add" },
-        { value: "provilege de supprime", label: "provilege de supprime " },
+        { value: "tous", label: "tous les privilèges" },
+        { value: "Gestion agecne", label: "privilèges pour Gestion agecne" },
 
     ];
     const handleOpenModalconfrm = (user) => {
