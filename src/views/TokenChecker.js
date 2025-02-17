@@ -18,8 +18,8 @@ const TokenChecker = ({ children }) => {
               const data = await refresh().unwrap();
               console.log('Token rafraîchi avec succès:', data);
 
-              const { accessToken, collection, email, name, statue,role } = data;
-              dispatch(setCredentials({ accessToken, collection, email, name, statue,role }));
+              const { accessToken, collection, email, name, statue,role,privilege } = data;
+              dispatch(setCredentials({ accessToken, collection, email, name, statue,role,privilege }));
 
               // Décode le token pour obtenir son expiration
               const decoded = jwtDecode(accessToken);

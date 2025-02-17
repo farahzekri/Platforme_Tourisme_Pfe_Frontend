@@ -104,10 +104,10 @@ export default function Preselction() {
         });
     };
     const options = [
-        { value: " ", label: "select a type" },
-        { value: "travel_agency", label: "Travel agency" },
-        { value: "rental_agency", label: "Rental agency" },
-        { value: "hotel", label: "Hotel" },
+        { value: " ", label: "sélectionner un type" },
+        { value: "Agence de voyage", label: "Agence de voyage" },
+        { value: "Agence de location", label: "Agence de location" },
+        { value: "Hôtel", label: "Hôtel" },
     ];
     const handleContractSubmit = () => {
         updateStatus({
@@ -145,6 +145,9 @@ export default function Preselction() {
             onSuccess: (data) => {
                 setAlert({ message: "User registered successfully !", type: "success" });
                 console.log("Utilisateur enregistré :", data);
+                setTimeout(() => {
+                    handleCloseModalform();
+                }, 2000);
             },
             onError: (error) => {
                 console.error("Erreur d'enregistrement :", error);

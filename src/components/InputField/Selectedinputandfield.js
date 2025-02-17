@@ -3,29 +3,29 @@ import React, { useState, useEffect } from "react";
 const SelectField = ({ label, options, value, onChange, icon, error }) => {
   const [customOption, setCustomOption] = useState(""); // Pour gérer l'input "Autre"
 
-  // Met à jour la valeur de l'input personnalisé uniquement lorsque la sélection est "other"
+  
   useEffect(() => {
     if (value !== "other") {
-      setCustomOption(""); // Réinitialiser l'input personnalisé quand la sélection n'est pas "other"
+      setCustomOption(""); 
     }
   }, [value]);
 
   const handleSelectChange = (e) => {
     const selectedValue = e.target.value;
     if (selectedValue === "other") {
-      onChange("other"); // Change la valeur à "other"
+      onChange("other"); 
     } else {
-      onChange(selectedValue); // Change la valeur en fonction de la sélection
+      onChange(selectedValue); 
     }
   };
 
   const handleCustomInputChange = (e) => {
-    setCustomOption(e.target.value); // Mets à jour la valeur de l'input "Autre"
+    setCustomOption(e.target.value); 
   };
 
   const handleCustomInputBlur = () => {
     if (customOption !== "") {
-      onChange(customOption); // Envoie la valeur de l'input au parent seulement après que l'utilisateur ait terminé
+      onChange(customOption); 
     }
   };
 
@@ -55,7 +55,7 @@ const SelectField = ({ label, options, value, onChange, icon, error }) => {
             {option.label}
           </option>
         ))}
-        <option value="other">other</option>
+        <option value="other">autre</option>
       </select>
 
       {value === "other" && (
@@ -66,9 +66,9 @@ const SelectField = ({ label, options, value, onChange, icon, error }) => {
               error ? "border-red-500 bg-red-50" : ""
             }`}
             placeholder="Saisissez le type d'agence"
-            value={customOption} // Utilise customOption pour l'affichage
-            onChange={handleCustomInputChange} // Gère la saisie sans appeler onChange parent
-            onBlur={handleCustomInputBlur} // Met à jour le parent quand l'utilisateur quitte le champ
+            value={customOption} 
+            onChange={handleCustomInputChange}
+            onBlur={handleCustomInputBlur} 
           />
         </div>
       )}

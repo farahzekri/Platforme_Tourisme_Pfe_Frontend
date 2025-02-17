@@ -1,19 +1,20 @@
 /*eslint-disable*/
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { FaUserCircle } from "react-icons/fa";
+import { FaChevronDown, FaFileContract, FaHotel, FaList, FaUserCircle } from "react-icons/fa";
 // components
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import image from '../../assets/img/hubs-logo.jpg'
 import { useSendLogoutMutation } from "ApiSlice/authApiSlice";
 import UserDropdown from "components/Dropdowns/UserDropdown";
+import HotelDropdown from "components/Dropdowns/HotelDropdown";
 
 export default function Navbar(props) {
   const navigate = useNavigate();
   const [sendLogout, { isLoading, isError, error }] = useSendLogoutMutation();
   const [isScrolled, setIsScrolled] = useState(false);
-
+  const [isHotelOpen, setIsHotelOpen] = useState(false);
   // Change navbar style on scroll
   useEffect(() => {
     const handleScroll = () => {
@@ -27,7 +28,7 @@ export default function Navbar(props) {
     };
   }, []);
   const dispatch = useDispatch();
-  const { collection, email, username } = useSelector((state) => state.auth);
+  const { collection, typeAgence } = useSelector((state) => state.auth);
   const handleLogout = async () => {
     try {
       await sendLogout().unwrap();
@@ -54,38 +55,18 @@ export default function Navbar(props) {
               href="/"
               className=" px-4 hover:text-primary  transition duration-300"
             >
-              Home
+              Accueil
             </a>
-            <a
-              href="/about"
-              className="px-4 hover:text-primary transition duration-300"
-            >
-              About
-            </a>
+
             <a
               href="/destination"
               className="px-4 hover:text-primary transition duration-300"
             >
               Destination
             </a>
-            <a
-              href="/hotel"
-              className="px-4 hover:text-primary transition duration-300"
-            >
-              Hotel
-            </a>
-            <a
-              href="/blog"
-              className="px-4 hover:text-primary transition duration-300"
-            >
-              Blog
-            </a>
-            <a
-              href="/contact"
-              className="px-4 hover:text-primary transition duration-300"
-            >
-              Contact
-            </a>
+
+
+
 
             {/* Buttons */}
             {!collection ? (
@@ -109,11 +90,13 @@ export default function Navbar(props) {
 
                 {collection === "b2b" && (
                   <Link to="/add-offer">
-                    <button className="px-4 py-2 rounded-md bg-secondary text-white font-semibold hover:bg-secondary/90 transition duration-300">
-                      Ajouter une offre
+                    <button className="px-4 hover:text-primary transition duration-300">
+                      Les offre
                     </button>
                   </Link>
                 )}
+                 <HotelDropdown/>
+               
                 <ul className="flex-col md:flex-row list-none items-center hidden md:flex">
                   <UserDropdown />
                 </ul>

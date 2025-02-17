@@ -22,7 +22,7 @@ useEffect(() => {
             id: user._id,
             NonAgence: user.nameAgence,
             Email: user.email,
-            Statut: user.statut,
+            Statut: user.status,
             Téléphone: user.phoneNumber,
             "Date d'inscription": new Date(user.createdAt).toLocaleDateString(),
         }));

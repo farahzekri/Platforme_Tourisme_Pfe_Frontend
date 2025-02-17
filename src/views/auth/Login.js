@@ -67,7 +67,15 @@ export default function Login() {
 
       setEmail("");
       setPassword("");
-
+      if (collection === "b2b" && statue === "en attente") {
+        setAlertMessage("Votre compte est en attente d'approbation par le Super Admin.");
+        setAlertType("error");
+  
+        setTimeout(() => {
+          setAlertMessage(""); // Réinitialise après 3 secondes
+        }, 3000);
+        return; // Stoppe l'exécution ici
+      }
       // Afficher le message de succès
       setAlertMessage("Connexion réussie !");
       setAlertType("success");
@@ -76,7 +84,7 @@ export default function Login() {
         setAlertMessage(""); // Réinitialise le message
         if (collection === "admin") {
           navigate("/admin");
-        } else if (collection === "b2b" && statue === "approved") {
+        } else if (collection === "b2b" && statue === "approuvée") {
           navigate("/");
         }
       }, 2000); // 2 secondes

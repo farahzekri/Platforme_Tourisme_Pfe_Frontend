@@ -13,6 +13,7 @@ const UserDropdown = () => {
   const btnDropdownRef = React.createRef();
   const popoverDropdownRef = React.createRef();
   const name = useSelector((state) => state.auth.name);
+  const { collection } = useSelector((state) => state.auth);
   const isAuthorized = useSelector(selectIsAuthorized);
   const openDropdownPopover = () => {
     createPopper(btnDropdownRef.current, popoverDropdownRef.current, {
@@ -66,7 +67,10 @@ const UserDropdown = () => {
             {name}
           </div>
         )}
-         <div className="h-0 my-2 border border-solid border-blueGray-100" />
+       
+         {collection === "admin" && (
+           <>
+          <div className="h-0 my-2 border border-solid border-blueGray-100" />
          <a
           href="#pablo"
           className="flex items-center gap-2 text-sm py-2 px-4 font-medium w-full text-blueGray-700 hover:bg-gray-100 transition-all duration-200"
@@ -75,7 +79,8 @@ const UserDropdown = () => {
           <FontAwesomeIcon icon={faCog} className="text-blueGray-500" />
           Settings
         </a>
-
+          </>
+          )}
         <div className="h-0 my-2 border-t border-blueGray-100" />
 
      

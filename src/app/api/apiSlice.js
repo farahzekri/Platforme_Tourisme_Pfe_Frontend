@@ -38,9 +38,11 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
         email:refreshResult.data.email,
         name:refreshResult.data.name,
         statue:refreshResult.data.statue,
-        role:refreshResult.data.role}))
+        role:refreshResult.data.role,
+        privilege:refreshResult.data.privilege,
+        typeAgence: refreshResult.data.typeAgence,}))
 
-      // retry original query with new access token
+      // retry original query with new access 
       result = await baseQuery(args, api, extraOptions)
     } else {
 
