@@ -1,0 +1,61 @@
+import React from "react";
+
+const InputWithIcon = ({ 
+  label, 
+  type = "text", 
+  placeholder, 
+  value, 
+  onChange, 
+  icon, 
+  options = [], 
+  multiple = false 
+}) => {
+  return (
+    <div className="space-y-2">
+      {/* Le label */}
+      <label className="text-gray-700 font-semibold">{label}</label>
+
+      <div className="shadow-lg flex gap-2 items-center bg-white p-2 hover:shadow-xl duration-300 hover:border-2 border-gray-400 group delay-200 rounded-md">
+        {/* Icône dynamique */}
+        <div className="group-hover:rotate-[360deg] duration-300">
+          {icon}
+        </div>
+
+        {/* Champ input, select ou number */}
+        {type === "select" ? (
+          <select
+            className="flex-1 focus:outline-none bg-white border-none"
+            value={value}
+            onChange={onChange}
+            multiple={multiple}  // Ajouter l'attribut multiple pour permettre la sélection multiple
+          >
+            {options.map((option, index) => (
+              <option key={index} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        ) : type === "number" ? (
+          <input
+            type="number"
+            className="flex-1 focus:outline-none"
+            placeholder={placeholder}
+            value={value}
+            onChange={onChange}
+            min="0"  // Exemple d'attribut pour définir un minimum si besoin
+          />
+        ) : (
+          <input
+            type={type}
+            className="flex-1 focus:outline-none"
+            placeholder={placeholder}
+            value={value}
+            onChange={onChange}
+          />
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default InputWithIcon;

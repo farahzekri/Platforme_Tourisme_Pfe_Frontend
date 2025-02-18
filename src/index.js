@@ -24,6 +24,7 @@ import NotFound from "views/Errorpages/Notfound";
 import Loader from "views/Errorpages/loader";
 import Unauthorized from "views/Errorpages/unauthorization";
 import ProtectedRoute from "views/auth/ProtectedRoute";
+import HotelAjouter from "views/Frontoffice/Hotel/AjouterHotel";
 // import ProtectedRouterprivilege from "views/auth/ProtectedRouterdeprivilege";
 
 const queryClient = new QueryClient();
@@ -50,6 +51,7 @@ const App = () => {
               <Route path="/profile" element={<Profile />} />
               <Route path="/Unauthorized" element={<Unauthorized />} />
               <Route path="/" element={<Index />} />
+              <Route path="/AjouterHotel" element={< HotelAjouter/>} />
               <Route path="/*" element={<NotFound />} />
           
            

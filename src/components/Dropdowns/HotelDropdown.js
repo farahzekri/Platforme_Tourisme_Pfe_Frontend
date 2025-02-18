@@ -39,7 +39,7 @@ const HotelDropdown = () => {
         <ul className="py-2">
           <li>
             <Link
-              to="/add-hotel"
+              to="/AjouterHotel"
               className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-100 hover:text-primary transition-all duration-300"
             >
               <FaHotel className="text-green-500" />

@@ -72,25 +72,25 @@ export default function Login() {
         setAlertType("error");
   
         setTimeout(() => {
-          setAlertMessage(""); // Réinitialise après 3 secondes
+          setAlertMessage("");
         }, 3000);
-        return; // Stoppe l'exécution ici
+        return; 
       }
-      // Afficher le message de succès
+      
       setAlertMessage("Connexion réussie !");
       setAlertType("success");
 
       setTimeout(() => {
-        setAlertMessage(""); // Réinitialise le message
+        setAlertMessage(""); 
         if (collection === "admin") {
           navigate("/admin");
         } else if (collection === "b2b" && statue === "approuvée") {
           navigate("/");
         }
-      }, 2000); // 2 secondes
+      }, 2000); 
     } catch (err) {
       if (err.status === 429) {
-        const retryAfter = err.data.retryAfter || 60; // Récupère `retryAfter` du backend
+        const retryAfter = err.data.retryAfter || 60; 
         setLockoutTime(retryAfter);
         setErrMsg("Trop de tentatives. Réessayez après " + retryAfter + " secondes.");
       }
@@ -98,7 +98,7 @@ export default function Login() {
       setAlertType("error");
 
       setTimeout(() => {
-        setAlertMessage(""); // Réinitialise après 3 secondes
+        setAlertMessage(""); 
       }, 3000);
     }
   };

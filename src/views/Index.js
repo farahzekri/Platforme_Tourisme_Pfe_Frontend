@@ -1,5 +1,5 @@
 /*eslint-disable*/
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 import IndexNavbar from "components/Navbars/IndexNavbar.js";
@@ -23,6 +23,16 @@ const trendingDestinations = [
 export default function Index() {
   const [currentPage, setCurrentPage] = useState(1);
   const offersPerPage = 2;
+  const [offsetY, setOffsetY] = useState(0);
+
+  const handleScroll = () => {
+    setOffsetY(window.scrollY * 0.5); 
+  };
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
   
   const indexOfLastOffer = currentPage * offersPerPage;
   const indexOfFirstOffer = indexOfLastOffer - offersPerPage;
@@ -47,8 +57,10 @@ export default function Index() {
       <IndexNavbar fixed />
       <section className="header relative pt-16 items-center flex h-screen max-h-860-px"
         style={{
-          backgroundImage:
-            `url(${bg_5})`
+          backgroundImage:`url(${bg_5})`,
+          backgroundSize: "cover",
+          backgroundPosition: `center ${offsetY}px`, 
+          transition: "background-position 0.1s ease-out",
         }}>
         <div className="container mx-auto items-center flex flex-wrap" >
           <div className="w-full md:w-8/12 lg:w-6/12 xl:w-6/12 px-4">
