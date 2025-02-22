@@ -35,6 +35,7 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
       api.dispatch(setCredentials({
         accessToken: refreshResult.data.accessToken,
         collection: refreshResult.data.collection,
+        id:refreshResult.data.collection,
         email:refreshResult.data.email,
         name:refreshResult.data.name,
         statue:refreshResult.data.statue,

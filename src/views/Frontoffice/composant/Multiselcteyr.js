@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const MultiSelectWithTags = ({ label, options, onChange ,icon}) => {
+const MultiSelectWithTags = ({ label,name, options, onChange ,icon,error }) => {
   const [selectedOptions, setSelectedOptions] = useState([]);
 
   const handleSelectChange = (e) => {
@@ -24,12 +24,14 @@ const MultiSelectWithTags = ({ label, options, onChange ,icon}) => {
       <label className="text-gray-700 font-semibold">{label}</label>
 
       {/* Sélecteur déroulant */}
-      <div className="shadow-lg flex gap-2 items-center bg-white p-2 hover:shadow-xl duration-300 hover:border-2 border-gray-400 group delay-200 rounded-md">
+      <div className={`shadow-lg flex gap-2 items-center bg-white p-2 hover:shadow-xl duration-300 hover:border-2 border-gray-400 group delay-200 rounded-md  ${error ? "border-red-500" : selectedOptions.length > 0 ? "border-green-500" : "border-gray-400"}
+        `}>
 
       <div className="group-hover:rotate-[360deg] duration-300">
           {icon}
         </div>
         <select
+          name={name}
           value="" // permet de réinitialiser la sélection après ajout
           onChange={handleSelectChange}
           className="flex-1 focus:outline-none bg-white border-none"
@@ -60,6 +62,8 @@ const MultiSelectWithTags = ({ label, options, onChange ,icon}) => {
           </span>
         ))}
       </div>
+      
+      {error && <p className="text-red-500 text-sm">{error}</p>}
     </div>
   );
 };
