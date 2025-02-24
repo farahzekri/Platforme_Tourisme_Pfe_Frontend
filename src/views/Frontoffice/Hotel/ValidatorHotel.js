@@ -1,6 +1,7 @@
 export const ValidationHotel = (name, value) => {
     let errorMessage = "";
-
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
     switch (name) {
         case "name":
             if (value.trim() === "") {
@@ -59,6 +60,51 @@ export const ValidationHotel = (name, value) => {
                 errorMessage = "Veuillez entrer un lien TripAdvisor valide";
             }
             break;
+
+            case "dateDebut":
+                if (!value) {
+                    errorMessage = "La date de début est obligatoire";
+                } else {
+                    const dateDebut = new Date(value);
+                    if (dateDebut < today) {
+                        errorMessage = "La date de début ne peut pas être antérieure à aujourd'hui";
+                    }
+                }
+                break; 
+                
+                case "dateFin":
+                    if (!value) {
+                        errorMessage = "La date de fin est obligatoire";
+                    } else {
+                        const dateDebut = new Date(dateDebut);
+                        const dateFin = new Date(value);
+                        if (dateFin < dateDebut) {
+                            errorMessage = "La date de fin ne peut pas être antérieure à la date de début";
+                        }
+                    }
+                    break;
+        
+                case "minNuits":
+                case "allotement":
+                case "prixWeekday":
+                case "prixWeekend":
+                case "DCR":
+                case "DMJ":
+                    if (!value.trim()) {
+                        errorMessage = "Ce champ est obligatoire";
+                    } else if (isNaN(value) || Number(value) <= 0) {
+                        errorMessage = "Veuillez entrer une valeur numérique valide";
+                    }
+                    break;
+        
+                case "delai_annulation":
+                case "delai_retrocession":
+                    if (!value.trim()) {
+                        errorMessage = "Ce champ est obligatoire";
+                    } else if (!/^\d+h$/.test(value.trim())) {
+                        errorMessage = "Le délai doit être au format 'nombre+h' (ex: 24h)";
+                    }
+                    break;
 
         default:
             errorMessage = "";

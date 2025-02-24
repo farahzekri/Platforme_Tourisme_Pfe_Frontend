@@ -2,7 +2,7 @@ import "swiper/css";
 import "swiper/css/autoplay"; // Si tu utilises l'autoplay
 import "swiper/css/navigation"; // Si tu utilises la navigation
 import "swiper/css/pagination";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
 import image1 from '../../../assets/img/hotel-resto-1.jpg'
@@ -18,15 +18,28 @@ import MultiSelectWithTags from "../composant/Multiselcteyr";
 import { RxActivityLog } from "react-icons/rx";
 import { MdOutlineSelfImprovement, MdWeekend } from "react-icons/md";
 import { IoIosAdd } from "react-icons/io";
-import { useCreateHotel } from "views/hooks/Hotel";
 import Loader from "views/Errorpages/loader";
 import { supplementsOptions } from "./fichierdonne";
 import { ValidationHotel } from "./ValidatorHotel";
 import Alert from "components/Alert/Alert";
+import { useLocation } from "react-router-dom";
+import { useGethotelbyidhotel,useUpdateHotel,useCreateHotel } from "views/hooks/Hotel";
+
 const HotelAjouter = () => {
     const { mutate: createHotel, isLoading, isError } = useCreateHotel();
     const [errors, setErrors] = useState({});
     const [alert, setAlert] = useState({ message: "", type: "" });
+    const location = useLocation();
+    const params = new URLSearchParams(location.search);
+    const isEditing = params.get("edit") === "true";
+    const hotelId = params.get("id");
+    console.log("hotelId from URL:", hotelId);
+
+    const updateHotel = useUpdateHotel();
+    const { data: hotel, isLoadinghotel, error } = useGethotelbyidhotel(hotelId);
+    console.log("isLoadinghotel:", isLoadinghotel);
+console.log("error:", error);
+console.log("hotel data:", hotel);
     const [formData, setFormData] = useState({
         name: '',
         country: '',
@@ -48,7 +61,14 @@ const HotelAjouter = () => {
         Jourdeweekend: [],
         image: [],
     });
-
+    useEffect(() => {
+        console.log("isEditing:", isEditing);
+    console.log("hotelId:", hotelId);
+    console.log("hotel data:", hotel);
+        if (isEditing && hotel) {
+            setFormData(hotel);
+        }
+    }, [isEditing, hotel]);
     const handleFileChange = async (event) => {
         const files = event.target.files;
         const uploadedImages = [];
@@ -112,37 +132,58 @@ const HotelAjouter = () => {
     };
     const handleSubmit = (e) => {
         e.preventDefault();
+        
         let validationErrors = {};
-    Object.keys(formData).forEach((key) => {
-        const error = ValidationHotel(key, formData[key]);
-        if (error) {
-            validationErrors[key] = error;
-        }
-    });
-
-    if (Object.keys(validationErrors).length > 0) {
-        setErrors(validationErrors);
-        setAlert({ message: "Veuillez remplir tous les champs obligatoires correctement.", type: "error" });
-        setTimeout(() => setAlert({ message: "", type: "" }), 5000);
-        return;
-    }
-        createHotel(formData, {
-            onSuccess: (data) => {
-                setAlert({ message: "Hôtel ajouté avec succès !", type: "success" });
-                setTimeout(() => setAlert({ message: "", type: "" }), 5000);
-                setFormData({ name: '', country: '', city: '', stars: '', Typecontract: '', minChildAge: '', maxChildAge: '', address: '', tripAdvisorLink: '', rooms: [], childrenCategories: [], options: [], location: {}, themes: [], arrangement: [], amenities: [], supplements: [] });
-                setErrors({}); 
-            },
-            onError: (error) => {
-                console.error(error);
-                setAlert({ message: "Une erreur est survenue. Veuillez réessayer.", type: "error" });
-                setTimeout(() => setAlert({ message: "", type: "" }), 5000);
+        Object.keys(formData).forEach((key) => {
+            const error = ValidationHotel(key, formData[key]);
+            if (error) {
+                validationErrors[key] = error;
             }
         });
+    
+        if (Object.keys(validationErrors).length > 0) {
+            setErrors(validationErrors);
+            setAlert({ message: "Veuillez remplir tous les champs obligatoires correctement.", type: "error" });
+            setTimeout(() => setAlert({ message: "", type: "" }), 5000);
+            return;
+        }
+    
+        if (isEditing) {
+            // **Mise à jour**
+            updateHotel.mutate(
+                { id: hotelId, formData },
+                {
+                    onSuccess: () => {
+                        setAlert({ message: "Hôtel mis à jour avec succès !", type: "success" });
+                        setTimeout(() => setAlert({ message: "", type: "" }), 5000);
+                    },
+                    onError: (error) => {
+                        console.error(error);
+                        setAlert({ message: "Erreur lors de la mise à jour.", type: "error" });
+                        setTimeout(() => setAlert({ message: "", type: "" }), 5000);
+                    }
+                }
+            );
+        } else {
+            // **Ajout**
+            createHotel(formData, {
+                onSuccess: (data) => {
+                    setAlert({ message: "Hôtel ajouté avec succès !", type: "success" });
+                    setTimeout(() => setAlert({ message: "", type: "" }), 5000);
+                    setFormData({ name: '', country: '', city: '', stars: '', Typecontract: '', minChildAge: '', maxChildAge: '', address: '', tripAdvisorLink: '', rooms: [], childrenCategories: [], options: [], location: {}, themes: [], arrangement: [], amenities: [], supplements: [] });
+                    setErrors({}); 
+                },
+                onError: (error) => {
+                    console.error(error);
+                    setAlert({ message: "Une erreur est survenue. Veuillez réessayer.", type: "error" });
+                    setTimeout(() => setAlert({ message: "", type: "" }), 5000);
+                }
+            });
+        }
     };
 
-    if (isLoading) return <Loader />;
-    if (isError) return <p>Erreur lors du chargement.</p>;
+    if (isEditing && isLoadinghotel) return <Loader />;
+ 
     return (
         <>
             <IndexNavbar fixed />
@@ -170,7 +211,7 @@ const HotelAjouter = () => {
 
                     {/* Texte par-dessus le carousel */}
                     <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white text-3xl font-bold z-10">
-                        Ajouter un Hôtel
+                    {isEditing ? "Modifier l'hôtel" : "Ajouter un hôtel"}
                     </div>
                 </div>
                 <Alert message={alert.message} type={alert.type} />
@@ -295,7 +336,8 @@ const HotelAjouter = () => {
                                 error={errors.tripAdvisorLink} 
                             />
                             <button type="submit" onClick={handleSubmit} className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600 transition">
-                                Ajouter l'hôtel
+                               
+                                {isEditing ? "Modifier l'hôtel":"Ajouter l'hôtel"}
                             </button>
                         </form>
                     </div>
@@ -430,7 +472,7 @@ const HotelAjouter = () => {
                                 isMulti
                                 name="Jourdeweekend"
                                 value={formData.Jourdeweekend}
-                                onChange={(selectedOptions) => handleChange({ name: "supplements", value: selectedOptions }, true)}
+                                onChange={(selectedOptions) => handleChange({ name: "Jourdeweekend", value: selectedOptions }, true)}
                             />
                             <InputWithIcon
                                 label="Images"
@@ -441,12 +483,12 @@ const HotelAjouter = () => {
                                 multiple // Permet de sélectionner plusieurs fichiers à la fois
                             />
 
-                            {/* Affichage des images sélectionnées */}
+                           
                             {formData.image && formData.image.length > 0 && formData.image.map((image, index) => (
                                 <div key={index} style={{ position: "relative", display: "inline-block", margin: "5px" }}>
                                     <img src={image} alt={`Image ${index + 1}`} width="100" style={{ borderRadius: "5px" }} />
 
-                                    {/* Bouton "X" pour supprimer l'image */}
+                                   
                                     <button
                                         onClick={() => handleRemoveImage(index)}
                                         style={{

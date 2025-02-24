@@ -1,7 +1,7 @@
 import "swiper/css";
 import "swiper/css/autoplay";
-import React, { Fragment } from "react";
-import { useGetHotels } from "../../hooks/Hotel"; // Hook pour récupérer les hôtels
+import React, { Fragment, useState } from "react";
+import { useDeleteHotel, useGetHotels } from "../../hooks/Hotel"; // Hook pour récupérer les hôtels
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
 import IndexNavbar from "components/Navbars/IndexNavbar"
@@ -9,9 +9,27 @@ import Loader from "views/Errorpages/loader";
 import { Menu, Transition } from "@headlessui/react";
 import { useNavigate } from "react-router-dom";
 import { FaEllipsisV } from "react-icons/fa";
+import ConfirmationModal from "components/modal/confirmationModal";
 const HotelList = () => {
     const { data: hotels, isLoading, error } = useGetHotels();
+    const { mutate: deleteHotel } = useDeleteHotel();
+
     const navigate = useNavigate();
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedHotel, setSelectedHotel] = useState(null); // État pour stocker l'hôtel à supprimer
+
+    const handleDelete = (hotel) => {
+        setSelectedHotel(hotel); // Stocke l'hôtel sélectionné
+        setIsModalOpen(true); // Ouvre le modal
+    };
+
+    const confirmDelete = () => {
+        if (selectedHotel) {
+            deleteHotel(selectedHotel._id); // Supprime l'hôtel avec l'ID correct
+            setIsModalOpen(false); // Ferme le modal après suppression
+        }
+    };
+
     if (isLoading) return  <Loader />;
     if (error) return <p>Erreur: {error.message}</p>;
     if (!hotels || hotels.length === 0) {
@@ -78,7 +96,7 @@ const HotelList = () => {
                                                         className={`${
                                                             active ? "bg-gray-100" : ""
                                                         } w-full text-left px-4 py-2 text-sm text-gray-700`}
-                                                        onClick={() => navigate(`/edit-hotel/${hotel._id}`)}
+                                                        onClick={() => navigate(`/AjouterHotel?edit=true&id=${hotel._id}`)}
                                                     >
                                                         Modifier
                                                     </button>
@@ -88,9 +106,9 @@ const HotelList = () => {
                                                 {({ active }) => (
                                                     <button
                                                         className={`${
-                                                            active ? "bg-gray-100 text-red-600" : "text-red-600"
+                                                            active ? "bg-gray-100 text-gray-700" : "text-gray-700"
                                                         } w-full text-left px-4 py-2 text-sm`}
-                                                        // onClick={() => handleDelete(hotel._id)}
+                                                        onClick={() => handleDelete(hotel)}
                                                     >
                                                         Supprimer
                                                     </button>
@@ -102,9 +120,9 @@ const HotelList = () => {
                                                         className={`${
                                                             active ? "bg-gray-100" : ""
                                                         } w-full text-left px-4 py-2 text-sm text-gray-700`}
-                                                        onClick={() => navigate(`/contrat/${hotel._id}`)}
+                                                        onClick={() => navigate(`/AjouterPeriode/${hotel._id}`)}
                                                     >
-                                                        Voir le contrat
+                                                        Ajouter periode
                                                     </button>
                                                 )}
                                             </Menu.Item>
@@ -146,6 +164,16 @@ const HotelList = () => {
                         </div>
                     ))}
                 </div>
+                <ConfirmationModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onConfirm={confirmDelete}
+                title="Supprimer l'hôtel"
+                message={`Voulez-vous vraiment supprimer ${selectedHotel?.name} ?`}
+                confirmText="Oui, supprimer"
+                cancelText="Annuler"
+                animationDirection="fadeIn"
+            />
             </div>
 </>
 );
