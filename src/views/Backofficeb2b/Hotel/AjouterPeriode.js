@@ -4,7 +4,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import InputWithIcon from "../composant/input";
+import InputWithIcon from "../../Frontoffice/composant/input";
 import { useGethotelbyidhotel } from "views/hooks/Hotel";
 import IndexNavbar from "components/Navbars/IndexNavbar"
 import Alert from "components/Alert/Alert";
@@ -13,7 +13,8 @@ import { IoCloudyNightSharp } from "react-icons/io5";
 import { MdAssignmentReturn, MdFreeCancellation } from "react-icons/md";
 import { IoMdPricetags } from "react-icons/io";
 import { useCreatePeriode } from "views/hooks/periodehotel";
-import { ValidationHotel } from "./ValidatorHotel";
+import { ValidationHotel } from "../../Frontoffice/Hotel/ValidatorHotel";
+import { FaPercentage } from "react-icons/fa";
 const AjouterPeriode = () => {
     const { hotelId } = useParams();
     const { data: hotel, isLoadinghotel, error } = useGethotelbyidhotel(hotelId);
@@ -29,8 +30,8 @@ const AjouterPeriode = () => {
         delai_retrocession: '',
         prixWeekday: '',
         prixWeekend: '',
-        DCR: '',
-        DMJ: '',
+        pourcentageSupplementSingle: '',
+        pourcentageSupplementSingleWeekend: '',
         supplementsPrix: [],
         arrangementsPrix: []
     });
@@ -52,14 +53,14 @@ const AjouterPeriode = () => {
             setFormData(prevState => ({ ...prevState, arrangementsPrix: updatedArrangements }));
         }
         else {
-              const errorMessage = ValidationHotel(name, value);
+            const errorMessage = ValidationHotel(name, value);
             setFormData({
                 ...formData,
                 [name]: value
             });
             setErrors((prevErrors) => ({
                 ...prevErrors,
-                [name]: errorMessage, 
+                [name]: errorMessage,
             }))
         }
     };
@@ -91,7 +92,7 @@ const AjouterPeriode = () => {
                 validationErrors[key] = error;
             }
         });
-    
+
         if (Object.keys(validationErrors).length > 0) {
             setErrors(validationErrors);
             setAlert({ message: "Veuillez remplir tous les champs obligatoires correctement.", type: "error" });
@@ -115,42 +116,18 @@ const AjouterPeriode = () => {
     };
     return (
         <>
-            <IndexNavbar fixed />
-            <div className="w-full min-h-screen bg-gray-100">
-                <div className="relative w-full h-96 ">
-                    {/* Swiper avec autoplay */}
-                    <Swiper
-                        modules={[Autoplay]}
-                        autoplay={{ delay: 3000, disableOnInteraction: false }}
-                        loop={true}
-                        className="h-full"
-                    >
-                        <SwiperSlide>
-                            <img src={hotel?.image?.[0]} alt="Hotel 1" className="w-full h-full object-cover" />
-                        </SwiperSlide>
-                        <SwiperSlide>
-                            <img src={hotel?.image?.[1]} alt="Hotel 2" className="w-full h-full object-cover" />
-                        </SwiperSlide>
-                        <SwiperSlide>
-                            <img src={hotel?.image?.[2]} alt="Hotel 3" className="w-full h-full object-cover" />
-                        </SwiperSlide>
-                    </Swiper>
 
-                    {/* Texte par-dessus le carousel */}
-                    <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white text-3xl font-bold z-10">
-                        Ajouter Periode
-                    </div>
-                </div>
+            <div className="w-full min-h-screen mt-20 pt-5 bg-gray-100">
 
                 <Alert message={alert.message} type={alert.type} />
 
-                <div className="max-w-8xl mx-auto mt-10 flex space-x-4 grid grid-cols-3 gap-4">
+                <div className="max-w-8xl mx-auto mt-10 flex flex-col space-y-4">
                     {/* First Card: Détails de la période */}
                     <div className="flex-1 bg-white shadow-lg rounded-lg p-8">
                         <h2 className="text-2xl font-bold mb-4">Détails de la période</h2>
                         <form className="space-y-4">
                             <div className="flex gap-4">
-                                <div className="w-1/2">
+                                <div className="w-1/4">
                                     <InputWithIcon
                                         label="Date début*"
                                         type="date"
@@ -158,10 +135,10 @@ const AjouterPeriode = () => {
                                         icon={<HiCalendarDateRange />}
                                         value={formData.dateDebut}
                                         onChange={handleChange}
-                                        error={errors.dateDebut}
+                                    // error={errors.dateDebut}
                                     />
                                 </div>
-                                <div className="w-1/2">
+                                <div className="w-1/4">
                                     <InputWithIcon
                                         label="Date fin*"
                                         type="date"
@@ -169,12 +146,10 @@ const AjouterPeriode = () => {
                                         name="dateFin"
                                         value={formData.dateFin}
                                         onChange={handleChange}
-                                        error={errors.dateFin}
+                                    // error={errors.dateFin}
                                     />
                                 </div>
-                            </div>
-                            <div className="flex gap-4">
-                                <div className="w-1/2">
+                                <div className="w-1/4">
                                     <InputWithIcon
                                         label="Nombre min de nuit*"
                                         type="number"
@@ -185,7 +160,7 @@ const AjouterPeriode = () => {
                                         error={errors.minNuits}
                                     />
                                 </div>
-                                <div className="w-1/2">
+                                <div className="w-1/4">
                                     <InputWithIcon
                                         label="Allotement*"
                                         type="number"
@@ -197,7 +172,18 @@ const AjouterPeriode = () => {
                                 </div>
                             </div>
                             <div className="flex gap-4">
-                                <div className="w-1/2">
+
+                                <div className="w-1/4">
+                                    <InputWithIcon
+                                        label="Allotement*"
+                                        type="number"
+                                        name="allotement"
+                                        value={formData.allotement}
+                                        onChange={handleChange}
+                                        error={errors.allotement}
+                                    />
+                                </div>
+                                <div className="w-1/4">
                                     <InputWithIcon
                                         label="Délai d'annulation*"
                                         type="text"
@@ -208,7 +194,7 @@ const AjouterPeriode = () => {
                                         error={errors.delai_annulation}
                                     />
                                 </div>
-                                <div className="w-1/2">
+                                <div className="w-1/4">
                                     <InputWithIcon
                                         label="Délai de rétrocession*"
                                         type="text"
@@ -219,9 +205,7 @@ const AjouterPeriode = () => {
                                         error={errors.delai_retrocession}
                                     />
                                 </div>
-                            </div>
-                            <div className="flex gap-4">
-                                <div className="w-1/2">
+                                <div className="w-1/4">
                                     <InputWithIcon
                                         label="Prix en semaine*"
                                         type="number"
@@ -232,7 +216,11 @@ const AjouterPeriode = () => {
                                         error={errors.prixWeekday}
                                     />
                                 </div>
-                                <div className="w-1/2">
+                            </div>
+
+                            <div className="flex gap-4">
+
+                                <div className="w-1/3">
                                     <InputWithIcon
                                         label="Prix weekend*"
                                         type="number"
@@ -243,34 +231,30 @@ const AjouterPeriode = () => {
                                         error={errors.prixWeekend}
                                     />
                                 </div>
-                            </div>
-                            <div className="flex gap-4">
-                                <div className="w-1/2">
+                                <div className="w-1/3">
                                     <InputWithIcon
-                                        label="DCR*"
-                                        type="date"
-                                        icon={<HiCalendarDateRange />}
-                                        name="DCR"
-                                        value={formData.DCR}
+                                        label="Suppliment single weekend*"
+                                        type="number"
+                                        icon={<FaPercentage />}
+                                        name="pourcentageSupplementSingleWeekend"
+                                        value={formData.pourcentageSupplementSingleWeekend}
                                         onChange={handleChange}
-                                        error={errors.DCR}
+                                        error={errors.pourcentageSupplementSingleWeekend}
                                     />
                                 </div>
-                                <div className="w-1/2">
+                                <div className="w-1/3">
                                     <InputWithIcon
-                                        label="DMJ*"
-                                        type="date"
-                                        icon={<HiCalendarDateRange />}
-                                        name="DMJ"
-                                        value={formData.DMJ}
+                                        label="Supplement Single*"
+                                        type="number"
+                                        icon={<FaPercentage />}
+                                        name="pourcentageSupplementSingle"
+                                        value={formData.pourcentageSupplementSingle}
                                         onChange={handleChange}
-                                        error={errors.DMJ}
+                                        error={errors.pourcentageSupplementSingle}
                                     />
                                 </div>
                             </div>
-                            <button type="submit" onClick={handleSubmit} className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600 transition">
-                                Ajouter la periode
-                            </button>
+
                         </form>
                     </div>
 
@@ -318,7 +302,13 @@ const AjouterPeriode = () => {
                         ) : (
                             <div>Aucun arrangement à affecter pour cet hôtel.</div>
                         )}
+
+                        <button type="submit" onClick={handleSubmit} className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600 transition">
+                            Ajouter la periode
+                        </button>
                     </div>
+
+
                 </div>
             </div >
         </>

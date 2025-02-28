@@ -135,12 +135,12 @@ export default function ListAdmin() {
     const handleConfirm = async () => {
         if (!selectedUser) return;
 
-        console.log("Admin username to delete:", selectedUser.username); // Now using username
+        console.log("Admin username to delete:", selectedUser.Name_Utlisateur); 
         try {
 
-            await deleteAdminMutation.mutateAsync(selectedUser.username);
+            await deleteAdminMutation.mutateAsync(selectedUser.Name_Utlisateur);
             setTableData((prevData) =>
-                prevData.filter((user) => user.username !== selectedUser.username)
+                prevData.filter((user) => user.Name_Utlisateur !== selectedUser.Name_Utlisateur)
             );
 
             setIsModalOpenconfirm(false);

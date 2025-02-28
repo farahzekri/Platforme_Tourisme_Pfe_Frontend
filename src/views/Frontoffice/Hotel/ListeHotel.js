@@ -30,14 +30,14 @@ const HotelList = () => {
         }
     };
 
-    if (isLoading) return  <Loader />;
+    if (isLoading) return <Loader />;
     if (error) return <p>Erreur: {error.message}</p>;
     if (!hotels || hotels.length === 0) {
         return <p className="text-center text-gray-600 mt-5">Aucun hôtel disponible.</p>;
     }
     return (
         <>
-             <IndexNavbar fixed />
+            <IndexNavbar fixed />
             <div className="w-full min-h-screen bg-gray-100">
                 {/* 🔹 Bannière : Slider avec toutes les images des hôtels */}
                 <div className="relative w-full h-96">
@@ -63,73 +63,7 @@ const HotelList = () => {
                     {hotels.map((hotel) => (
                         <div key={hotel._id} className="relative overflow-hidden w-80 h-auto rounded-3xl shadow-lg cursor-pointer bg-white">
                             {/* Icone menu ... */}
-                            <div className="absolute top-3 right-3">
-                                <Menu as="div" className="relative inline-block text-left">
-                                    <Menu.Button className="text-black hover:text-gray-800">
-                                        <FaEllipsisV size={20} />
-                                    </Menu.Button>
-                                    <Transition
-                                        as={Fragment}
-                                        enter="transition ease-out duration-100"
-                                        enterFrom="transform opacity-0 scale-95"
-                                        enterTo="transform opacity-100 scale-100"
-                                        leave="transition ease-in duration-75"
-                                        leaveFrom="transform opacity-100 scale-100"
-                                        leaveTo="transform opacity-0 scale-95"
-                                    >
-                                        <Menu.Items className="absolute right-0 w-48 mt-2 origin-top-right bg-white border border-gray-200 rounded-md shadow-lg focus:outline-none">
-                                            <Menu.Item>
-                                                {({ active }) => (
-                                                    <button
-                                                        className={`${
-                                                            active ? "bg-gray-100" : ""
-                                                        } w-full text-left px-4 py-2 text-sm text-gray-700`}
-                                                        onClick={() => navigate(`/hotel/${hotel._id}`)}
-                                                    >
-                                                        Voir les détails
-                                                    </button>
-                                                )}
-                                            </Menu.Item>
-                                            <Menu.Item>
-                                                {({ active }) => (
-                                                    <button
-                                                        className={`${
-                                                            active ? "bg-gray-100" : ""
-                                                        } w-full text-left px-4 py-2 text-sm text-gray-700`}
-                                                        onClick={() => navigate(`/AjouterHotel?edit=true&id=${hotel._id}`)}
-                                                    >
-                                                        Modifier
-                                                    </button>
-                                                )}
-                                            </Menu.Item>
-                                            <Menu.Item>
-                                                {({ active }) => (
-                                                    <button
-                                                        className={`${
-                                                            active ? "bg-gray-100 text-gray-700" : "text-gray-700"
-                                                        } w-full text-left px-4 py-2 text-sm`}
-                                                        onClick={() => handleDelete(hotel)}
-                                                    >
-                                                        Supprimer
-                                                    </button>
-                                                )}
-                                            </Menu.Item>
-                                            <Menu.Item>
-                                                {({ active }) => (
-                                                    <button
-                                                        className={`${
-                                                            active ? "bg-gray-100" : ""
-                                                        } w-full text-left px-4 py-2 text-sm text-gray-700`}
-                                                        onClick={() => navigate(`/AjouterPeriode/${hotel._id}`)}
-                                                    >
-                                                        Ajouter periode
-                                                    </button>
-                                                )}
-                                            </Menu.Item>
-                                        </Menu.Items>
-                                    </Transition>
-                                </Menu>
-                            </div>
+                          
 
                             {/* Image unique */}
                             {hotel.image && hotel.image.length > 0 ? (
@@ -146,7 +80,9 @@ const HotelList = () => {
                                 <p className="text-gray-600">{hotel.city}, {hotel.country}</p>
                                 <p className="text-yellow-500">⭐ {hotel.stars} étoiles</p>
                                 <p className="text-gray-500">{hotel.address}</p>
-
+                                <p className={`font-semibold ${hotel.status === "active" ? "text-green-500" : "text-red-500"}`}>
+                                    {hotel.status === "active" ? "✅ Active" : "❌ Inactive - Ajoutez une période"}
+                                </p>
                                 {/* Afficher les options */}
                                 {hotel.options && (
                                     <p className="mt-2 text-sm text-gray-700">
@@ -165,18 +101,18 @@ const HotelList = () => {
                     ))}
                 </div>
                 <ConfirmationModal
-                isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
-                onConfirm={confirmDelete}
-                title="Supprimer l'hôtel"
-                message={`Voulez-vous vraiment supprimer ${selectedHotel?.name} ?`}
-                confirmText="Oui, supprimer"
-                cancelText="Annuler"
-                animationDirection="fadeIn"
-            />
+                    isOpen={isModalOpen}
+                    onClose={() => setIsModalOpen(false)}
+                    onConfirm={confirmDelete}
+                    title="Supprimer l'hôtel"
+                    message={`Voulez-vous vraiment supprimer ${selectedHotel?.name} ?`}
+                    confirmText="Oui, supprimer"
+                    cancelText="Annuler"
+                    animationDirection="fadeIn"
+                />
             </div>
-</>
-);
+        </>
+    );
 };
 
 

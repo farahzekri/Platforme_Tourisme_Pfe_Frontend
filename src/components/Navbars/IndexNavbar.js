@@ -89,11 +89,18 @@ export default function Navbar(props) {
 
 
                 {collection === "b2b" && (
+                  <>
                   <Link to="/add-offer">
                     <button className="px-4 hover:text-primary transition duration-300">
                       Les offre
                     </button>
                   </Link>
+                   <Link to="/Daschbordb2b">
+                   <button className="px-4 hover:text-primary ">
+                     Daschbord
+                   </button>
+                 </Link>
+                 </>
                 )}
                  <HotelDropdown/>
                

@@ -39,15 +39,6 @@ const HotelDropdown = () => {
         <ul className="py-2">
           <li>
             <Link
-              to="/AjouterHotel"
-              className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-100 hover:text-primary transition-all duration-300"
-            >
-              <FaHotel className="text-green-500" />
-              Ajouter un Hôtel
-            </Link>
-          </li>
-          <li>
-            <Link
               to="/ListeHotel"
               className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-100 hover:text-primary transition-all duration-300"
             >
@@ -55,15 +46,7 @@ const HotelDropdown = () => {
               Voir tous les Hôtels
             </Link>
           </li>
-          <li>
-            <Link
-              to="/add-hotel-contract"
-              className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-100 hover:text-primary transition-all duration-300"
-            >
-              <FaFileContract className="text-green-500" />
-              Ajouter Contrat de l'Hôtel
-            </Link>
-          </li>
+         
         </ul>
       </div>
     </div>

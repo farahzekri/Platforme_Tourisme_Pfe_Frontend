@@ -55,14 +55,17 @@ export default function Index() {
   return (
     <>
       <IndexNavbar fixed />
-      <section className="header relative pt-16 items-center flex h-screen max-h-860-px"
+      <section className="header relative pt-16 items-center flex h-screen max-h-860-px "
         style={{
           backgroundImage:`url(${bg_5})`,
           backgroundSize: "cover",
           backgroundPosition: `center ${offsetY}px`, 
           transition: "background-position 0.1s ease-out",
         }}>
-        <div className="container mx-auto items-center flex flex-wrap" >
+        <div className="container mx-auto items-center flex flex-wrap  " >
+          
+         
+        
           <div className="w-full md:w-8/12 lg:w-6/12 xl:w-6/12 px-4">
             <div className="pt-32 sm:pt-0" >
               <div class="space-y-4 text-white">
@@ -86,6 +89,7 @@ export default function Index() {
               </div>
             </div>
           </div>
+           
         </div>
 
       </section>

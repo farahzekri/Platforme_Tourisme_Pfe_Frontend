@@ -24,9 +24,11 @@ import NotFound from "views/Errorpages/Notfound";
 import Loader from "views/Errorpages/loader";
 import Unauthorized from "views/Errorpages/unauthorization";
 import ProtectedRoute from "views/auth/ProtectedRoute";
-import HotelAjouter from "views/Frontoffice/Hotel/AjouterHotel";
+
 import HotelList from "views/Frontoffice/Hotel/ListeHotel";
-import AjouterPeriode from "views/Frontoffice/Hotel/AjouterPeriode";
+
+import SearchResults from "views/Frontoffice/Hotel/SearchResulta";
+import BackofficeB2B from "layouts/Backoffice";
 // import ProtectedRouterprivilege from "views/auth/ProtectedRouterdeprivilege";
 
 const queryClient = new QueryClient();
@@ -48,14 +50,15 @@ const App = () => {
           <TokenChecker>
             <Routes>
               <Route path="/admin/*" element={<ProtectedRoute><Admin /> </ProtectedRoute> } /> 
+              <Route path="/Daschbordb2b/*" element={<BackofficeB2B /> } /> 
               <Route path="/auth/*" element={<Auth />} />
               <Route path="/landing" element={<Landing />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/Unauthorized" element={<Unauthorized />} />
               <Route path="/" element={<Index />} />
-              <Route path="/AjouterHotel" element={< HotelAjouter/>} />
+              {/* <Route path="/AjouterHotel" element={< HotelAjouter/>} /> */}
               <Route path="/ListeHotel" element={< HotelList/>} />
-              <Route path="/AjouterPeriode/:hotelId" element={< AjouterPeriode/>} />
+              <Route path="/search-results" element={< SearchResults/>} />
               <Route path="/*" element={<NotFound />} />
           
            

@@ -88,32 +88,37 @@ export const useGetAllAdmins = () => {
   });
 };
 
-  export const useDeleteAdmin = (username) => {
+  export const useDeleteAdmin = () => {
     const token = useSelector((state) => state.auth.token);
 
     return useMutation(
-        async () => {
-            if (!token) {
-                throw new Error('Token non disponible');
-            }
+      async (username) => { // 👈 S'assurer que `username` est bien reçu
+          if (!token) {
+              throw new Error('Token non disponible');
+          }
+          if (!username) {
+              throw new Error("Nom d'utilisateur manquant");
+          }
 
-            const response = await axios.delete(`${url}/delete/${username}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
+          console.log("Suppression de l'admin avec username:", username); // Debugging
 
-            return response.data;
-        },
-        {
-            onSuccess: (data) => {
-                toast.success(data.message || 'Admin supprimé avec succès');
-            },
-            onError: (error) => {
-                toast.error(error?.response?.data?.message || "Erreur lors de la suppression de l'admin");
-            },
-        }
-    );
+          const response = await axios.delete(`${url}/delete/${username}`, {
+              headers: {
+                  Authorization: `Bearer ${token}`,
+              },
+          });
+
+          return response.data;
+      },
+      {
+          onSuccess: (data) => {
+              toast.success(data.message || 'Admin supprimé avec succès');
+          },
+          onError: (error) => {
+              toast.error(error?.response?.data?.message || "Erreur lors de la suppression de l'admin");
+          },
+      }
+  );
 };
 
 export const useGetAdminStats = () => {

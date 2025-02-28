@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 
 
 const url = 'http://localhost:5000/periode';
@@ -20,3 +20,33 @@ export const useCreatePeriode = () => {
         }
     );
 };
+
+export const useSearchHotels = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation(
+        async (searchParams) => {
+            console.log("🔎 Données envoyées :", searchParams);
+            try {
+                const response = await axios.post(`${url}/serach`, searchParams);
+                console.log("📩 Réponse complète :", response);
+                console.log("📩 Données renvoyées par l'API :", response.data);
+                return response.data;
+            } catch (error) {
+                console.error("❌ Erreur lors de la requête :", error.response ? error.response.data : error.message);
+                throw error;
+            }
+        }
+    );
+};
+
+export const useGetPeriodeByidHotel=(id)=>{
+    return useQuery({ 
+        queryKey: ["Periode", id],
+        queryFn: async () => {
+            const response = await axios.get(`${url}/getperiodebyidhotel/${id}`);
+            return response.data;
+        },
+        enabled: !!id,
+    });
+}
