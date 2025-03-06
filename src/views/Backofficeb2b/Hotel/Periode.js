@@ -4,16 +4,20 @@ import { useGetPeriodeByidHotel } from "views/hooks/periodehotel";
 import Table from "../composant/table";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import Button from "components/Button/button";
-
-
+import { useDeletePeriode } from "views/hooks/periodehotel";
+import ConfirmationModal from "components/modal/confirmationModal";
 
 
 export const PeriodeHotel = () => {
     const { hotelId } = useParams();
     const { data: Periode, isLoading, error } = useGetPeriodeByidHotel(hotelId);
     const [tableData, setTableData] = useState([]);
-    const columns = ["Date De Debut", "Date De Fin", "Delai D'annumltaion",  "Delai De Retrocession", "Allotement", "Prix"];
+    const { mutate: deletePeriode } = useDeletePeriode();
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedPeriode, setSelectedPeriode] = useState(null);
+    const columns = ["Date De Debut", "Date De Fin", "Delai D'annumltaion",  "Delai De Retrocession", "Allotement", "Prix","Supprimer/Modification"];
     const navigate = useNavigate();
+    const [searchQuery, setSearchQuery] = useState('');
     useEffect(() => {
         if (Array.isArray(Periode) && Periode.length > 0) {
             setTableData(
@@ -29,6 +33,26 @@ export const PeriodeHotel = () => {
             );
         }
     }, [Periode]);
+    const filteredData = tableData.filter((period) => {
+        return period["Date De Debut"].toLowerCase().includes(searchQuery.toLowerCase());
+    });
+    const handleUpdate = (id) => {
+        navigate(`/Daschbordb2b/AjouterPeriode/${hotelId}?edit=true&id=${id}`);
+    };
+    const handleDelete = (hotel) => {
+        setSelectedPeriode(hotel); 
+        setIsModalOpen(true);     
+        console.log('userselectione', hotel); 
+    };
+    const confirmDelete = () => {
+        if (selectedPeriode) {
+            console.log('userselectione', selectedPeriode.id); 
+            deletePeriode(selectedPeriode.id); 
+            setIsModalOpen(false);
+        } else {
+            console.log('Aucun hôtel sélectionné'); 
+        }
+    };
     if (isLoading) return <p>Chargement en cours...</p>;
     if (error) return <p>Erreur : {error.message}</p>;
     return (
@@ -68,6 +92,8 @@ export const PeriodeHotel = () => {
                                             className="block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-xl bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
                                             placeholder="Rechercher des utilisateurs..."
                                             required
+                                            value={searchQuery}
+                                            onChange={(e) => setSearchQuery(e.target.value)} 
                                         />
                                     </div>
                                 </form>
@@ -86,8 +112,20 @@ export const PeriodeHotel = () => {
                     color="dark"
                     title="Periodes"
                     columns={columns}
-                    data={tableData}
+                    data={filteredData}
+                    Update={handleUpdate}
+                    ondelete={handleDelete}
                 />
+                <ConfirmationModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onConfirm={confirmDelete}
+                title="Supprimer la Periode"
+                message={`Voulez-vous vraiment supprimer la Periode a le prix   ${selectedPeriode?.Prix} ?`}
+                confirmText="Oui, supprimer"
+                cancelText="Annuler"
+                animationDirection="fadeIn"
+            />
             </div>
         </>
     )

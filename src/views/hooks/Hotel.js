@@ -93,3 +93,25 @@ export const useGethotelbyidhotel = (id) => {
         enabled: !!id, 
     });
 };
+
+export const useUpdateHotelRoomAvailability = () => {
+    const queryClient = useQueryClient();
+  
+    return useMutation({
+      mutationFn: async ({ hotelId, roomType, availableRooms }) => {
+       
+        const response = await axios.put(
+          `${url}/updatedesponibilite/${hotelId}`,
+          { roomType, availableRooms }
+        );
+        return response.data;
+      },
+      onSuccess: () => {
+      
+        queryClient.invalidateQueries(['hotels']);
+      },
+      onError: (error) => {
+        console.error('Erreur lors de la mise à jour de la disponibilité:', error);
+      }
+    });
+  };

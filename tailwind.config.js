@@ -13,6 +13,7 @@ module.exports = {
       "./src/*.html",
       "./public/**/*.js",
       "./public/*.js",
+      "./src/views/Frontoffice/composant/cardmaps.js"
     ],
     options: {
       safelist: [],
@@ -65,21 +66,27 @@ module.exports = {
         800: "#0a495c", 
         900: "#0c4a6e",  // Original color
       },
+      
       palette:{
         greenajou:"#5C8143",
         green:"#7AA95C",
         jaun:"#e9c46a",
+        jaunClair: "#f9f2c0",
+        jaunFonce: "#b88f3d",
         bleufonce:"#264653",
         bleuclere:"#4A919E",
+        bleuClair: "#d0efff",
         orange:"#D46F4D",
         orangefonce:"#A8553B",
         customgreen: '#63E6BE',
-        customgreenfonce:"#4BB294"
-
+        customgreenfonce:"#4BB294",
+        
       }
     },
     extend: {
       animation: {
+        grow: "grow 0.5s ease-in-out forwards",
+        slidein: "slidein 0.5s ease-out forwards",
         fadeIn: 'fadeIn 0.3s ease',
         slideInTop: 'slideInTop 0.5s ease-out',
         slideInBottom: 'slideInBottom 0.5s ease-out',
@@ -106,6 +113,14 @@ module.exports = {
         slideInRight: {
           '0%': { transform: 'translateX(100%)' },
           '100%': { transform: 'translateX(0)' },
+        },
+        grow: {
+          "0%": { transform: "translateY(100%)" },
+          "100%": { transform: "translateY(0)" },
+        },
+        slidein: {
+          "0%": { transform: "translateX(-100%)", opacity: "0" },
+          "100%": { transform: "translateX(0)", opacity: "1" },
         },
       },
       minHeight: {

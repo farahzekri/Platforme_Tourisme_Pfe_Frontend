@@ -6,9 +6,11 @@ import IndexNavbar from "components/Navbars/IndexNavbar.js";
 import Footer from "components/Footers/Footer.js";
 import bg_5 from "../assets/img/bg_5.jpg"
 import SearchBar from "components/serchBar";
-import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
+import { FaArrowLeft, FaArrowRight, FaStar } from "react-icons/fa";
 import image1 from '../assets/img/hotel-resto-7.jpg'
 import image2 from '../assets/img/destination-6.jpg'
+import { useGetHotelsWithPrice } from "./hooks/periodehotel";
+import CardsHotel from "./Frontoffice/Acceuil/CardHotel";
 const offers = [
   { id: 1, image: image1, title: "Manila Hotel", location: "Manila, Philippines", price: "$200/person" },
   { id: 2, image: image2, title: "Bali Resort", location: "Bali, Indonesia", price: "$250/person" },
@@ -24,7 +26,8 @@ export default function Index() {
   const [currentPage, setCurrentPage] = useState(1);
   const offersPerPage = 2;
   const [offsetY, setOffsetY] = useState(0);
-
+  const { data: hotels, isLoading, error } = useGetHotelsWithPrice();
+  
   const handleScroll = () => {
     setOffsetY(window.scrollY * 0.5); 
   };
@@ -50,7 +53,7 @@ export default function Index() {
     }
   };
 
- 
+  
   
   return (
     <>
@@ -95,8 +98,7 @@ export default function Index() {
       </section>
 
       <SearchBar />
-
-
+      <CardsHotel/>
 
       {/* Offres de voyage */}
       <div className="container mx-auto mt-10">
@@ -134,7 +136,7 @@ export default function Index() {
           ))}
         </div>
       </div>
-      {/* <Footer /> */}
+      <Footer />
     </>
   );
 }

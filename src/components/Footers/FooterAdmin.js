@@ -1,59 +1,44 @@
 import React from "react";
-
+import { CiFacebook, CiInstagram, CiLinkedin, CiTwitter } from "react-icons/ci";
 export default function FooterAdmin() {
   return (
     <>
-      <footer className="block py-4">
+      <footer className="block py-4 mt-20 ">
         <div className="container mx-auto px-4">
           <hr className="mb-4 border-b-1 border-blueGray-200" />
-          <div className="flex flex-wrap items-center md:justify-between justify-center">
-            <div className="w-full md:w-4/12 px-4">
-              <div className="text-sm text-blueGray-500 font-semibold py-1 text-center md:text-left">
-                Copyright © {new Date().getFullYear()}{" "}
-                <a
-                  href="https://www.creative-tim.com?ref=nr-footer-admin"
-                  className="text-blueGray-500 hover:text-blueGray-700 text-sm font-semibold py-1"
-                >
-                  Creative Tim
-                </a>
-              </div>
+          <div className="flex flex-col items-center text-center">
+            <div className="social pb-6">
+              <a href="#" className="text-gray-600 hover:opacity-80 transition-opacity duration-300 mx-2 p-2 inline-block rounded-full border border-gray-300 text-2xl">
+                <CiInstagram />
+              </a>
+              <a href="#" className="text-gray-600 hover:opacity-80 transition-opacity duration-300 mx-2 p-2 inline-block rounded-full border border-gray-300 text-2xl">
+               <CiFacebook />
+              </a>
+              <a href="#" className="text-gray-600 hover:opacity-80 transition-opacity duration-300 mx-2 p-2 inline-block rounded-full border border-gray-300 text-2xl">
+              <CiTwitter />
+              </a>
+              <a href="#" className="text-gray-600 hover:opacity-80 transition-opacity duration-300 mx-2 p-2 inline-block rounded-full border border-gray-300 text-2xl">
+              <CiLinkedin />
+              </a>
             </div>
-            <div className="w-full md:w-8/12 px-4">
-              <ul className="flex flex-wrap list-none md:justify-end  justify-center">
-                <li>
-                  <a
-                    href="https://www.creative-tim.com?ref=nr-footer-admin"
-                    className="text-blueGray-600 hover:text-blueGray-800 text-sm font-semibold block py-1 px-3"
-                  >
-                    Creative Tim
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="https://www.creative-tim.com/presentation?ref=nr-footer-admin"
-                    className="text-blueGray-600 hover:text-blueGray-800 text-sm font-semibold block py-1 px-3"
-                  >
-                    About Us
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="http://blog.creative-tim.com?ref=nr-footer-admin"
-                    className="text-blueGray-600 hover:text-blueGray-800 text-sm font-semibold block py-1 px-3"
-                  >
-                    Blog
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="https://github.com/creativetimofficial/notus-react/blob/main/LICENSE.md?ref=nr-footer-admin"
-                    className="text-blueGray-600 hover:text-blueGray-800 text-sm font-semibold block py-1 px-3"
-                  >
-                    MIT License
-                  </a>
-                </li>
-              </ul>
-            </div>
+            <ul className="list-none text-lg space-x-4 mb-0">
+              <li className="inline-block">
+                <a href="#" className="text-gray-600 hover:opacity-80 transition-opacity duration-300">Home</a>
+              </li>
+              <li className="inline-block">
+                <a href="#" className="text-gray-600 hover:opacity-80 transition-opacity duration-300">Services</a>
+              </li>
+              <li className="inline-block">
+                <a href="#" className="text-gray-600 hover:opacity-80 transition-opacity duration-300">About</a>
+              </li>
+              <li className="inline-block">
+                <a href="#" className="text-gray-600 hover:opacity-80 transition-opacity duration-300">Terms</a>
+              </li>
+              <li className="inline-block">
+                <a href="#" className="text-gray-600 hover:opacity-80 transition-opacity duration-300">Privacy Policy</a>
+              </li>
+            </ul>
+            <p className="copyright text-gray-400 text-sm mt-4">Hubs Travail © 2018</p>
           </div>
         </div>
       </footer>

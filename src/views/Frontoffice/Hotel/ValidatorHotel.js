@@ -90,7 +90,7 @@ export const ValidationHotel = (name, value) => {
                 case "prixWeekend":
                 case "pourcentageSupplementSingleWeekend":
                 case "pourcentageSupplementSingle":
-                    if (!value.trim()) {
+                    if (value === "") {
                         errorMessage = "Ce champ est obligatoire";
                     } else if (isNaN(value) || Number(value) <= 0) {
                         errorMessage = "Veuillez entrer une valeur numérique valide";

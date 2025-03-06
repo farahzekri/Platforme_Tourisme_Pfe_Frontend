@@ -3,7 +3,7 @@ import "swiper/css/autoplay";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import InputWithIcon from "../../Frontoffice/composant/input";
 import { useGethotelbyidhotel } from "views/hooks/Hotel";
 import IndexNavbar from "components/Navbars/IndexNavbar"
@@ -15,12 +15,23 @@ import { IoMdPricetags } from "react-icons/io";
 import { useCreatePeriode } from "views/hooks/periodehotel";
 import { ValidationHotel } from "../../Frontoffice/Hotel/ValidatorHotel";
 import { FaPercentage } from "react-icons/fa";
+import { useUpdatePeriode } from "views/hooks/periodehotel";
+import { useGetPeriodeById } from "views/hooks/periodehotel";
+import Loader from "views/Errorpages/loader";
 const AjouterPeriode = () => {
     const { hotelId } = useParams();
     const { data: hotel, isLoadinghotel, error } = useGethotelbyidhotel(hotelId);
-    const mutation = useCreatePeriode();
+
+    const {mutate:createperiode} = useCreatePeriode();
     const [alert, setAlert] = useState({ message: "", type: "" });
     const [errors, setErrors] = useState({});
+    const navigate=useNavigate();
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const isEditMode = queryParams.get("edit") === "true";
+    const periodeId = queryParams.get("id");
+    const updateperiode=useUpdatePeriode();
+    const {data:periode, isLoadingperiode, errorperiode}=useGetPeriodeById(periodeId)
     const [formData, setFormData] = useState({
         dateDebut: '',
         dateFin: '',
@@ -39,32 +50,59 @@ const AjouterPeriode = () => {
 
     const handleChange = (e, index = null) => {
         const { name, value } = e.target;
-
-
-        if (name === "supplementsPrix") {
-            const updatedSupplements = [...formData.supplementsPrix];
-            updatedSupplements[index].prix = value;
-            setFormData(prevState => ({ ...prevState, supplementsPrix: updatedSupplements }));
+    
+        if (name === "supplementsPrix" && index !== null) {
+            setFormData(prevState => {
+                const updatedSupplements = [...(prevState.supplementsPrix || [])];
+    
+                // Vérifier si l'index existe déjà
+                if (!updatedSupplements[index]) {
+                    updatedSupplements[index] = { prix: value };  // Initialiser si inexistant
+                } else {
+                    updatedSupplements[index] = { ...updatedSupplements[index], prix: value };
+                }
+    
+                return { ...prevState, supplementsPrix: updatedSupplements };
+            });
         }
-
-        else if (name === "arrangementsPrix") {
-            const updatedArrangements = [...formData.arrangementsPrix];
-            updatedArrangements[index].prix = value;
-            setFormData(prevState => ({ ...prevState, arrangementsPrix: updatedArrangements }));
+    
+        else if (name === "arrangementsPrix" && index !== null) {
+            setFormData(prevState => {
+                const updatedArrangements = [...(prevState.arrangementsPrix || [])];
+    
+                if (!updatedArrangements[index]) {
+                    updatedArrangements[index] = { prix: value };
+                } else {
+                    updatedArrangements[index] = { ...updatedArrangements[index], prix: value };
+                }
+    
+                return { ...prevState, arrangementsPrix: updatedArrangements };
+            });
         }
+    
         else {
             const errorMessage = ValidationHotel(name, value);
-            setFormData({
-                ...formData,
+            setFormData(prevState => ({
+                ...prevState,
                 [name]: value
-            });
-            setErrors((prevErrors) => ({
+            }));
+            setErrors(prevErrors => ({
                 ...prevErrors,
                 [name]: errorMessage,
-            }))
+            }));
         }
     };
-
+    useEffect(() => {
+        if (isEditMode && periode) {
+            setFormData({
+                ...periode,
+                dateDebut: periode.dateDebut ? periode.dateDebut.split("T")[0] : "",
+                dateFin: periode.dateFin ? periode.dateFin.split("T")[0] : "",
+                supplementsPrix: periode.supplementsPrix || [],
+            });
+        }
+    }, [isEditMode, periode]);
+    
     useEffect(() => {
         if (hotel) {
             const initialSupplements = hotel.supplements.map((supplement, index) => ({
@@ -85,6 +123,8 @@ const AjouterPeriode = () => {
     }, [hotel]);
     const handleSubmit = async (e) => {
         e.preventDefault();
+        console.log("FormData avant envoi :", formData); 
+        // Validation des champs
         let validationErrors = {};
         Object.keys(formData).forEach((key) => {
             const error = ValidationHotel(key, formData[key]);
@@ -92,28 +132,55 @@ const AjouterPeriode = () => {
                 validationErrors[key] = error;
             }
         });
-
+    
         if (Object.keys(validationErrors).length > 0) {
             setErrors(validationErrors);
             setAlert({ message: "Veuillez remplir tous les champs obligatoires correctement.", type: "error" });
             setTimeout(() => setAlert({ message: "", type: "" }), 5000);
             return;
         }
-        mutation.mutate(
-            { id: hotelId, formData },
-            {
-                onSuccess: () => {
-                    setAlert({ message: "Periode Ajouter avec succès !", type: "success" });
-                    setTimeout(() => setAlert({ message: "", type: "" }), 5000);
-                },
-                onError: (error) => {
-                    console.error(error);
-                    setAlert({ message: "Erreur lors de l'Ajouter.", type: "error" });
-                    setTimeout(() => setAlert({ message: "", type: "" }), 5000);
+    
+        if (isEditMode) {
+            // Mode édition : Mettre à jour la période
+            updateperiode.mutate(
+                { id: periodeId, formData },
+                {
+                    onSuccess: () => {
+                        setAlert({ message: "Période mise à jour avec succès !", type: "success" });
+                        setTimeout(() => {
+                            setAlert({ message: "", type: "" });
+                            navigate(`/Daschbordb2b/ListePeriodeParhotel/${hotelId}`);
+                        }, 3000);
+                    },
+                    onError: (error) => {
+                        console.error(error);
+                        setAlert({ message: "Erreur lors de la mise à jour.", type: "error" });
+                        setTimeout(() => setAlert({ message: "", type: "" }), 5000);
+                    }
                 }
-            }
-        );
+            );
+        } else {
+            // Mode ajout : Ajouter une nouvelle période
+            createperiode(
+                { id: hotelId, formData },
+                {
+                    onSuccess: () => {
+                        setAlert({ message: "Période ajoutée avec succès !", type: "success" });
+                        setTimeout(() => {
+                            setAlert({ message: "", type: "" });
+                            navigate(`/Daschbordb2b/ListePeriodeParhotel/${hotelId}`);
+                        }, 3000);
+                    },
+                    onError: (error) => {
+                        console.error(error);
+                        setAlert({ message: "Erreur lors de l'ajout.", type: "error" });
+                        setTimeout(() => setAlert({ message: "", type: "" }), 5000);
+                    }
+                }
+            );
+        }
     };
+    if (isEditMode,isLoadingperiode) return <Loader />;
     return (
         <>
 
@@ -173,16 +240,7 @@ const AjouterPeriode = () => {
                             </div>
                             <div className="flex gap-4">
 
-                                <div className="w-1/4">
-                                    <InputWithIcon
-                                        label="Allotement*"
-                                        type="number"
-                                        name="allotement"
-                                        value={formData.allotement}
-                                        onChange={handleChange}
-                                        error={errors.allotement}
-                                    />
-                                </div>
+                                
                                 <div className="w-1/4">
                                     <InputWithIcon
                                         label="Délai d'annulation*"
@@ -216,12 +274,8 @@ const AjouterPeriode = () => {
                                         error={errors.prixWeekday}
                                     />
                                 </div>
-                            </div>
-
-                            <div className="flex gap-4">
-
-                                <div className="w-1/3">
-                                    <InputWithIcon
+                                <div className="w-1/4">
+                                <InputWithIcon
                                         label="Prix weekend*"
                                         type="number"
                                         name="prixWeekend"
@@ -231,7 +285,12 @@ const AjouterPeriode = () => {
                                         error={errors.prixWeekend}
                                     />
                                 </div>
-                                <div className="w-1/3">
+                            </div>
+
+                            <div className="flex gap-4">
+
+               
+                                <div className="w-1/2">
                                     <InputWithIcon
                                         label="Suppliment single weekend*"
                                         type="number"
@@ -239,10 +298,10 @@ const AjouterPeriode = () => {
                                         name="pourcentageSupplementSingleWeekend"
                                         value={formData.pourcentageSupplementSingleWeekend}
                                         onChange={handleChange}
-                                        error={errors.pourcentageSupplementSingleWeekend}
+                                        // error={errors.pourcentageSupplementSingleWeekend}
                                     />
                                 </div>
-                                <div className="w-1/3">
+                                <div className="w-1/2">
                                     <InputWithIcon
                                         label="Supplement Single*"
                                         type="number"
@@ -304,7 +363,8 @@ const AjouterPeriode = () => {
                         )}
 
                         <button type="submit" onClick={handleSubmit} className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600 transition">
-                            Ajouter la periode
+                            
+                            {isEditMode ? "Modifier Periode":"Ajouter Peirode"}
                         </button>
                     </div>
 

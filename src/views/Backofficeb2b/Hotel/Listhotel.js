@@ -5,16 +5,21 @@ import { useEffect, useState } from "react";
 import Button from "components/Button/button";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
+import { useDeleteHotel } from "views/hooks/Hotel";
+import ConfirmationModal from "components/modal/confirmationModal";
 
 export const HotelListDachbord = () => {
     const { data: hotels, isLoading, error } = useGetHotels();
+    const { mutate: deleteHotel } = useDeleteHotel();
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedHotel, setSelectedHotel] = useState(null);
     const [tableData, setTableData] = useState([]);
     const navigate = useNavigate();
-
+    const [searchQuery, setSearchQuery] = useState('');
 
     const columns = ["Nom de l'hôtel", "Pays", "Ville", "min Age d'enfant", "Max Age d'enfant", "Statut", "Actions"];
     useEffect(() => {
-        if (Array.isArray(hotels) && hotels.length > 0){
+        if (Array.isArray(hotels) && hotels.length > 0) {
             setTableData(
                 hotels.map((hotel) => ({
                     id: hotel._id,
@@ -32,9 +37,33 @@ export const HotelListDachbord = () => {
     const handleUpdate = (id) => {
         navigate(`/Daschbordb2b/AjouterHotel?edit=true&id=${id}`);
     };
-    const handelonperiode=(id)=>{
+    const handelonperiode = (id) => {
         navigate(`/Daschbordb2b/ListePeriodeParhotel/${id}`)
     }
+    const handelonroom =(id)=>{
+        navigate(`/Daschbordb2b/UpdateRoomAvailobel/${id}`)
+    }
+    const handleDelete = (hotel) => {
+        setSelectedHotel(hotel); 
+        setIsModalOpen(true);     
+        console.log('userselectione', hotel); 
+    };
+    const confirmDelete = () => {
+        if (selectedHotel) {
+            console.log('userselectione', selectedHotel.id); 
+            deleteHotel(selectedHotel.id); 
+            setIsModalOpen(false);
+        } else {
+            console.log('Aucun hôtel sélectionné'); 
+        }
+    };
+    const filteredData = tableData.filter((hotel) => {
+        return (
+            hotel["Nom de l'hôtel"].toLowerCase().includes(searchQuery.toLowerCase()) ||
+            hotel.Pays.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            hotel.Ville.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+    });
     if (isLoading) return <p>Chargement en cours...</p>;
     if (error) return <p>Erreur : {error.message}</p>;
 
@@ -74,6 +103,8 @@ export const HotelListDachbord = () => {
                             className="block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-xl bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
                             placeholder="Rechercher des utilisateurs..."
                             required
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)} 
                         />
                     </div>
                 </form>
@@ -92,11 +123,23 @@ export const HotelListDachbord = () => {
                 color="dark"
                 title="Hôtels"
                 columns={columns}
-                data={tableData}
+                data={filteredData}
                 Update={handleUpdate}
                 onPeriode={handelonperiode}
+                ondelete={handleDelete}
+                OnRooms={handelonroom}
 
+            />
 
+            <ConfirmationModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onConfirm={confirmDelete}
+                title="Supprimer l'hôtel"
+                message={`Voulez-vous vraiment supprimer ${selectedHotel?.name} ?`}
+                confirmText="Oui, supprimer"
+                cancelText="Annuler"
+                animationDirection="fadeIn"
             />
         </div>
     );

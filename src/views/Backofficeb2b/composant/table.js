@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye, faMoneyCheck, faPen, faTrashCan, faUserCheck, faUserXmark } from "@fortawesome/free-solid-svg-icons";
+import { faEye, faMoneyCheck, faPen, faPersonShelter, faTrashCan, faUserCheck, faUserXmark } from "@fortawesome/free-solid-svg-icons";
 import { MdOutlineSystemUpdateAlt } from "react-icons/md";
 
 
@@ -17,8 +17,9 @@ const Table = ({
     onReject = () => { },
     onViewdetail = () => { },
     ondelete = () => { },
-    Update=()=>{},
-    onPeriode=()=>{ },
+    Update = () => { },
+    onPeriode = () => { },
+    OnRooms =()=>{},
 }) => {
     const [currentPage, setCurrentPage] = useState(1);
     const rowsPerPage = 20;
@@ -125,28 +126,42 @@ const Table = ({
                                             </div>
                                         ) : column === "Actions" ? (
                                             <div className="flex items-center space-x-4">
-                                            <button
-                                            onClick={() => onViewdetail(row)}// Ajoute ta fonction onViewDetails
-                                            className="flex items-center  "
-                                        >
-                                            <FontAwesomeIcon icon={faEye} style={{ color: "#e9c46a", }} className="text-lg" />
+                                                <button
+                                                    onClick={() => onViewdetail(row)}// Ajoute ta fonction onViewDetails
+                                                    className="flex items-center  "
+                                                >
+                                                    <FontAwesomeIcon icon={faEye} style={{ color: "#e9c46a", }} className="text-lg" />
 
-                                        </button>
-                                         <button 
-                                           onClick={() => Update(row.id)}// Ajoute ta fonction onViewDetails
-                                            className="flex items-center  "
-                                         >
+                                                </button>
+                                                <button
+                                                    onClick={() => Update(row.id)}// Ajoute ta fonction onViewDetails
+                                                    className="flex items-center  "
+                                                >
 
-                                        <FontAwesomeIcon icon={faPen} />
-                                        </button>
-                                        <buton
-                                             onClick={() => onPeriode(row.id)}// Ajoute ta fonction onViewDetails
-                                            className="flex items-center  "
-                                        >
-                                        <FontAwesomeIcon icon={faMoneyCheck} />
-                                        </buton>
-                                        </div>
-                                        ) : column === "Supprimer/voir detail" ? (
+                                                    <FontAwesomeIcon icon={faPen} />
+                                                </button>
+                                                <buton
+                                                    onClick={() => onPeriode(row.id)}// Ajoute ta fonction onViewDetails
+                                                    className="flex items-center  "
+                                                >
+                                                    <FontAwesomeIcon icon={faMoneyCheck} />
+                                                </buton>
+                                                <button
+                                                    onClick={() => OnRooms(row.id)}// Ajoute ta fonction onViewDetails
+                                                    className="flex items-center  "
+                                                >
+
+                                                 <FontAwesomeIcon icon={faPersonShelter} /> 
+                                                </button>
+                                                <button
+                                                    onClick={() => ondelete(row)}
+                                                    className="flex items-center hover:text-palette-orange "
+                                                >
+
+                                                    <FontAwesomeIcon icon={faTrashCan} className="text-palette-orangefonce hover:text-palette-orange text-lg mr-2" />
+                                                </button>
+                                            </div>
+                                        ) : column === "Supprimer/Modification" ? (
                                             <div className="flex items-center space-x-4">
                                                 <button
                                                     onClick={() => ondelete(row)}
@@ -157,11 +172,11 @@ const Table = ({
                                                 </button>
 
                                                 <button
-                                                    onClick={() => onViewdetail(row)}// Ajoute ta fonction onViewDetails
+                                                    onClick={() => Update(row.id)}// Ajoute ta fonction onViewDetails
                                                     className="flex items-center  "
                                                 >
-                                                    <FontAwesomeIcon icon={faEye} style={{ color: "#e9c46a", }} className="text-lg" />
 
+                                                    <FontAwesomeIcon icon={faPen} />
                                                 </button>
                                             </div>
                                         ) : (

@@ -22,7 +22,7 @@ import Loader from "views/Errorpages/loader";
 import { supplementsOptions } from "../../Frontoffice/Hotel/fichierdonne";
 import { ValidationHotel } from "../../Frontoffice/Hotel/ValidatorHotel";
 import Alert from "components/Alert/Alert";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useGethotelbyidhotel, useUpdateHotel, useCreateHotel } from "views/hooks/Hotel";
 import Sidebar from "../composant/Siderbar";
 
@@ -35,6 +35,7 @@ const HotelAjouter = () => {
     const isEditing = params.get("edit") === "true";
     const hotelId = params.get("id");
     console.log("hotelId from URL:", hotelId);
+    const navigate=useNavigate();
 
     const updateHotel = useUpdateHotel();
     const { data: hotel, isLoadinghotel, error } = useGethotelbyidhotel(hotelId);
@@ -156,7 +157,10 @@ const HotelAjouter = () => {
                 {
                     onSuccess: () => {
                         setAlert({ message: "Hôtel mis à jour avec succès !", type: "success" });
-                        setTimeout(() => setAlert({ message: "", type: "" }), 5000);
+                        setTimeout(() => {
+                            setAlert({ message: "", type: "" });
+                            navigate(`/Daschbordb2b/ListeHotel`);
+                        }, 3000);
                     },
                     onError: (error) => {
                         console.error(error);
@@ -170,9 +174,13 @@ const HotelAjouter = () => {
             createHotel(formData, {
                 onSuccess: (data) => {
                     setAlert({ message: "Hôtel ajouté avec succès !", type: "success" });
-                    setTimeout(() => setAlert({ message: "", type: "" }), 5000);
+                    setTimeout(() => {
+                        setAlert({ message: "", type: "" });
+                        navigate(`/Daschbordb2b/ListeHotel`);
+                    }, 3000);
                     setFormData({ name: '', country: '', city: '', stars: '', Typecontract: '', minChildAge: '', maxChildAge: '', address: '', tripAdvisorLink: '', rooms: [], childrenCategories: [], options: [], location: {}, themes: [], arrangement: [], amenities: [], supplements: [] });
                     setErrors({});
+                   
                 },
                 onError: (error) => {
                     console.error(error);

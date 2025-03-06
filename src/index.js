@@ -29,6 +29,7 @@ import HotelList from "views/Frontoffice/Hotel/ListeHotel";
 
 import SearchResults from "views/Frontoffice/Hotel/SearchResulta";
 import BackofficeB2B from "layouts/Backoffice";
+import DetailHotel from "views/Frontoffice/Hotel/DetailHotel";
 // import ProtectedRouterprivilege from "views/auth/ProtectedRouterdeprivilege";
 
 const queryClient = new QueryClient();
@@ -58,6 +59,7 @@ const App = () => {
               <Route path="/" element={<Index />} />
               {/* <Route path="/AjouterHotel" element={< HotelAjouter/>} /> */}
               <Route path="/ListeHotel" element={< HotelList/>} />
+              <Route path="/DetailHotel/:id" element={<DetailHotel/>}/>
               <Route path="/search-results" element={< SearchResults/>} />
               <Route path="/*" element={<NotFound />} />
           

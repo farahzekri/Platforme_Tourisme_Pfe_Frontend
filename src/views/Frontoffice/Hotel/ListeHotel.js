@@ -14,7 +14,7 @@ const HotelList = () => {
     const { data: hotels, isLoading, error } = useGetHotels();
     const { mutate: deleteHotel } = useDeleteHotel();
 
-    const navigate = useNavigate();
+    const activeHotels = Array.isArray(hotels) ? hotels.filter(hotel => hotel.status === 'active') : [];
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedHotel, setSelectedHotel] = useState(null); // État pour stocker l'hôtel à supprimer
 
@@ -60,11 +60,8 @@ const HotelList = () => {
 
                 {/* 🔹 Liste des hôtels */}
                 <div className="max-w-6xl mx-auto mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {hotels.map((hotel) => (
+                    {activeHotels.map((hotel) => (
                         <div key={hotel._id} className="relative overflow-hidden w-80 h-auto rounded-3xl shadow-lg cursor-pointer bg-white">
-                            {/* Icone menu ... */}
-                          
-
                             {/* Image unique */}
                             {hotel.image && hotel.image.length > 0 ? (
                                 <img src={hotel.image[0]} alt={hotel.name} className="w-full h-48 object-cover rounded-t-3xl" />

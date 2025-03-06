@@ -50,3 +50,61 @@ export const useGetPeriodeByidHotel=(id)=>{
         enabled: !!id,
     });
 }
+export const useGetHotelsWithPrice = () => {
+    return useQuery({
+        queryKey: ["hotelsWithPrice"],
+        queryFn: async () => {
+            const response = await axios.get(`${url}/gethotels`);
+            return response.data;
+        },
+    });
+};
+export const useGetHotelsbyidWithPrice = (hotelId) => {
+    console.log("Fetching Hotel ID:", hotelId);
+    
+    return useQuery({
+        queryKey: ["hotelDetails", hotelId ?? "no-id"],
+        queryFn: async () => {
+            if (!hotelId) return null;
+            const response = await axios.get(`${url}/getdetailHotel/${hotelId}`);
+            console.log("API Response:", response.data); 
+            return response.data; // Ajuste ici si la structure est différente
+        },
+        enabled: !!hotelId, 
+    });
+};
+export const useUpdatePeriode = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async ({ id, formData }) => {
+            const response = await axios.put(`${url}/upadeperiode/${id}`, formData);
+            return response.data;
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries(["periode"]); 
+        }
+    });
+};
+export const useGetPeriodeById = (id) => {
+    return useQuery(["periode", id], async () => {
+        const response = await axios.get(`${url}/getperiodebyidperiode/${id}`);
+        return response.data;
+    }, {
+        enabled: !!id, 
+    });
+};
+
+export const useDeletePeriode= () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async (PeriodeId) => {
+            const response = await axios.delete(`${url}/deleteperiode/${PeriodeId}`);
+            return response.data;
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries(["Periode"]); 
+        }
+    });
+};
