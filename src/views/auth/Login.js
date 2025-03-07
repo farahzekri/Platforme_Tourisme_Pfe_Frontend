@@ -6,6 +6,8 @@ import { setCredentials } from "ApiSlice/authSlice";
 import { useLoginMutation } from "ApiSlice/authApiSlice";
 import Alert from "components/Alert/Alert";
 import InputField from "components/InputField/inputField";
+import { useRegisterWithGoogleMutation } from "ApiSlice/authApiSlice";
+import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 export default function Login() {
 
   const errRef = useRef()
@@ -19,7 +21,8 @@ export default function Login() {
   const [errors, setErrors] = useState({});
   const [lockoutTime, setLockoutTime] = useState(0);
   const timerRef = useRef(null);
-  const [login, { isLoading }] = useLoginMutation()
+  const [login, { isLoading }] = useLoginMutation();
+  const [registerWithGoogle, { isLoadingR }] = useRegisterWithGoogleMutation();
   useEffect(() => {
     if (lockoutTime > 0) {
       timerRef.current = setInterval(() => {
@@ -70,27 +73,27 @@ export default function Login() {
       if (collection === "b2b" && statue === "en attente") {
         setAlertMessage("Votre compte est en attente d'approbation par le Super Admin.");
         setAlertType("error");
-  
+
         setTimeout(() => {
           setAlertMessage("");
         }, 3000);
-        return; 
+        return;
       }
-      
+
       setAlertMessage("Connexion réussie !");
       setAlertType("success");
 
       setTimeout(() => {
-        setAlertMessage(""); 
+        setAlertMessage("");
         if (collection === "admin") {
           navigate("/admin");
         } else if (collection === "b2b" && statue === "approuvée") {
           navigate("/");
         }
-      }, 2000); 
+      }, 2000);
     } catch (err) {
       if (err.status === 429) {
-        const retryAfter = err.data.retryAfter || 60; 
+        const retryAfter = err.data.retryAfter || 60;
         setLockoutTime(retryAfter);
         setErrMsg("Trop de tentatives. Réessayez après " + retryAfter + " secondes.");
       }
@@ -98,13 +101,39 @@ export default function Login() {
       setAlertType("error");
 
       setTimeout(() => {
-        setAlertMessage(""); 
+        setAlertMessage("");
       }, 3000);
+    }
+  };
+
+  const handleGoogleSuccess = async (googleUser) => {
+    const idToken = googleUser.credential;
+  
+    // Décode le jeton ou appelle l'API Google pour obtenir les informations de l'utilisateur
+    const googleData = await fetch(`https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=${idToken}`)
+      .then(response => response.json())
+      .catch(err => console.error("Erreur lors de la récupération des données utilisateur Google :", err));
+  
+    if (googleData) {
+      const { email, given_name: firstName, family_name: lastName } = googleData;
+      console.log('Google Data:', { email, firstName, lastName });
+  
+      try {
+        // Vérifier que vous envoyez les bonnes données dans votre requête
+        const response = await registerWithGoogle({ email, firstName, lastName }).unwrap();
+        console.log('Response from Google Auth:', response);
+        dispatch(setCredentials({ user: response.user, accessToken: response.accessToken }));
+        navigate('/');
+      } catch (err) {
+        console.error("Erreur lors de l'authentification Google :", err.response ? err.response.data : err);
+      }
+    } else {
+      console.error("Erreur lors du décodage du jeton Google");
     }
   };
   const errClass = errMsg ? "errmsg" : "offscreen"
 
-  if (isLoading) return <p>Loading..</p>
+  if (isLoading && isLoadingR) return <p>Loading..</p>
 
   return (
     <>
@@ -133,6 +162,7 @@ export default function Login() {
                   <button
                     className="bg-white active:bg-blueGray-50 text-blueGray-700 font-normal px-4 py-2 rounded outline-none focus:outline-none mr-1 mb-1 uppercase shadow hover:shadow-md inline-flex items-center font-bold text-xs ease-linear transition-all duration-150"
                     type="button"
+                    onClick={handleGoogleSuccess}
                   >
                     <img
                       alt="..."
@@ -141,6 +171,17 @@ export default function Login() {
                     />
                     Google
                   </button>
+                  <GoogleLogin
+               
+                    buttonText="Login with Google"
+                    onSuccess={handleGoogleSuccess}
+                    onError={() => {
+                      console.log('Login Failed');
+                    }}
+                   
+                    // isSignedIn={true} // This forces the prompt even if the user is already signed in
+                    
+                  />
                 </div>
                 <hr className="mt-6 border-b-1 border-blueGray-300" />
               </div>
@@ -191,18 +232,20 @@ export default function Login() {
                         type="button"
                         onClick={handleSubmit}
                       >
-                       Se connecter
+                        Se connecter
                       </button>
                     </div>
                     <div className="flex flex-wrap mt-6 relative">
                       <div className="w-1/2">
+                      <Link  to="/auth/forgot-password">
                         <a
                           href="#pablo"
-                          onClick={(e) => e.preventDefault()}
+                         
                           className="text-blueGray-800"
                         >
                           <small>Mot de passe oublié ?</small>
                         </a>
+                        </Link>
                       </div>
                       <div className="w-1/2 text-right">
 

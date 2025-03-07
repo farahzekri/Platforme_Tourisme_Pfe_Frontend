@@ -25,6 +25,23 @@ export const authApiSlice = apiSlice.injectEndpoints({
             }
           }
       }),
+      registerWithGoogle: builder.mutation({
+        query: (credentials) => ({
+          url: '/auth/google/callback',
+          method: 'POST',
+          body: { ...credentials },  // Send email, firstName, lastName
+        }),
+        async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
+          try {
+            const { data } = await queryFulfilled;
+            console.log(data);
+            const { accessToken, user } = data; // Extract the accessToken and user from the response
+            dispatch(setCredentials({ accessToken, currentUser: user })); // Dispatch to update the state
+          } catch (err) {
+            console.error("Erreur lors de l'authentification Google :", err);
+          }
+        },
+      }),
       refresh:builder.mutation({
         query:()=>({
             url:'/auth/refresh',
@@ -53,4 +70,5 @@ export const authApiSlice = apiSlice.injectEndpoints({
     useLoginMutation,
     useSendLogoutMutation,
     useRefreshMutation,
+    useRegisterWithGoogleMutation
   }=authApiSlice

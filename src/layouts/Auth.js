@@ -4,6 +4,9 @@ import Login from "views/auth/Login.js";
 import Register from "views/auth/Register.js";
 import bg_5 from "../assets/img/bg_5.jpg";
 import Registeragence from "views/auth/Registeragence";
+import { GoogleOAuthProvider } from "@react-oauth/google";
+import ForgotPassword from "views/auth/Forgetpassword";
+import ResetPassword from "views/auth/Ressetpassword";
 export default function Auth() {
   return (
     <>
@@ -18,9 +21,12 @@ export default function Auth() {
             }}
           ></div>
           <Routes>
-            <Route path="login" element={<Login />} />
+         
+            <Route path="login" element={ <GoogleOAuthProvider clientId="871218415760-2c819ok13v9vf8m37k284m2kig5eo6qc.apps.googleusercontent.com"><Login />  </GoogleOAuthProvider>} />
             <Route path="register" element={<Register />} />
             <Route path="RegisterAgence" element={<Registeragence />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password/:email" element={<ResetPassword />} />
           </Routes>
 
           {/* <FooterSmall absolute /> */}

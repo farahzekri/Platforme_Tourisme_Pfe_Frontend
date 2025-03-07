@@ -197,3 +197,37 @@ export const useDeletB2b = () => {
       }
   );
 };
+export const useSendPasswordResetEmail = () => {
+  return useMutation({
+    mutationFn: async (email) => {
+      try {
+        const { data } = await axios.post(`${url}/send-password-reset-email`, { email });
+        toast.success(data.message || "Email de réinitialisation envoyé !");
+        return data;
+      } catch (error) {
+        const err = error?.response?.data?.error;
+        toast.error(err || "Erreur lors de l'envoi de l'email !");
+        throw error;
+      }
+    },
+  });
+};
+export const useResetPassword = () => {
+  return useMutation({
+    mutationFn: async ({ email, newPassword }) => {
+      try {
+        // Envoi du email et du nouveau mot de passe dans la requête
+        const { data } = await axios.post(`${url}/reset-password/${email}`, 
+          { newPassword },
+          { headers: { 'Content-Type': 'application/json' } }
+        );
+        toast.success(data.message || "Mot de passe réinitialisé avec succès !");
+        return data;
+      } catch (error) {
+        const err = error?.response?.data?.error;
+        toast.error(err || "Erreur lors de la réinitialisation du mot de passe !");
+        throw error;
+      }
+    },
+  });
+};
