@@ -8,6 +8,7 @@ import { PeriodeHotel } from "views/Backofficeb2b/Hotel/Periode";
 import AjouterPeriode from "views/Backofficeb2b/Hotel/AjouterPeriode";
 import FooterAdmin from "components/Footers/FooterAdmin";
 import HotelRoomAvailability from "views/Backofficeb2b/Hotel/HotelDisponibleroom";
+import HotelDetails from "views/Backofficeb2b/Hotel/Detailhotel";
 
 
 
@@ -25,6 +26,7 @@ export default function BackofficeB2B(){
           <Route path="/ListePeriodeParhotel/:hotelId" element={< PeriodeHotel/>} />
           <Route path="/AjouterPeriode/:hotelId" element={< AjouterPeriode/>} />
           <Route path="/UpdateRoomAvailobel/:hotelId" element={< HotelRoomAvailability/>} />
+          <Route path="/DetailHotel/:id" element={<HotelDetails/>} />
           </Routes>
             </div>
             <FooterAdmin/>

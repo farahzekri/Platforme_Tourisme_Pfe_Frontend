@@ -10,7 +10,7 @@ const CardRecherche = ({ hotel }) => {
     const formatDate = (date) => date.toISOString().split("T")[0];
 
     return (
-        <div className="bg-orange-500 text-white p-5  rounded-lg shadow-lg space-y-4">
+        <div className="bg-[#FDBA74] text-[#014737] p-5  rounded-lg shadow-lg space-y-4">
             <h3 className="text-lg font-bold">Rechercher votre séjour</h3>
             <div className="space-y-2">
                 <label className="block">Pays & Ville</label>

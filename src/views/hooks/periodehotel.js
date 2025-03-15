@@ -108,3 +108,40 @@ export const useDeletePeriode= () => {
         }
     });
 };
+
+export const useGetHotelAvailability = (id, dateArrivee, dateDepart, adultes, enfants, arrangement, suppléments,agesEnfants) => {
+    return useQuery({
+        queryKey: ["hotelAvailability", id, dateArrivee, dateDepart, adultes, enfants, arrangement, suppléments,agesEnfants],
+        queryFn: async () => {
+            if (!id || !dateArrivee || !dateDepart || adultes === undefined) {
+                throw new Error("Paramètres manquants");
+            }
+
+            console.log("🔍 Requête envoyée à :", `${url}/getavailbol/${id}`, {
+                dateArrivee, dateDepart, adultes, enfants, arrangement, suppléments
+            });
+
+            try {
+                const response = await axios.get(`${url}/getavailbol/${id}`, {
+                    params: {
+                        dateArrivee,
+                        dateDepart,
+                        adultes,
+                        enfants,
+                        arrangementSelectionne: arrangement,
+                        supplementsSelectionnes: suppléments,
+                        agesEnfants,
+                    }
+                });
+
+                console.log("✅ Réponse reçue :", response.data);
+                return response.data;
+            } catch (error) {
+                console.error("❌ Erreur lors de la requête :", error);
+                throw new Error("Erreur lors de la récupération des disponibilités");
+            }
+        },
+        enabled: !!id && !!dateArrivee && !!dateDepart && adultes !== undefined,
+        retry: false,
+    });
+};

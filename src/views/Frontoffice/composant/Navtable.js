@@ -17,7 +17,7 @@ const NavTabs = ({ hotel }) => {
           
           <button
             className="w-full flex items-center justify-start px-4 py-2 border rounded-lg bg-white hover:bg-gray-100 focus:outline-none"
-            // onClick={}
+            onClick={() => navigate(`/TarifDisponiblite/${hotel.id}`)}
           >
             Tarifs & Disponibilité
           </button>

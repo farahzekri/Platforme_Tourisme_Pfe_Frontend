@@ -127,8 +127,9 @@ const Table = ({
                                         ) : column === "Actions" ? (
                                             <div className="flex items-center space-x-4">
                                                 <button
-                                                    onClick={() => onViewdetail(row)}// Ajoute ta fonction onViewDetails
+                                                    onClick={() => onViewdetail(row.id)}// Ajoute ta fonction onViewDetails
                                                     className="flex items-center  "
+                                                    title="Voir le détail" 
                                                 >
                                                     <FontAwesomeIcon icon={faEye} style={{ color: "#e9c46a", }} className="text-lg" />
 
@@ -136,6 +137,7 @@ const Table = ({
                                                 <button
                                                     onClick={() => Update(row.id)}// Ajoute ta fonction onViewDetails
                                                     className="flex items-center  "
+                                                    title="Modifier l'hôtel"
                                                 >
 
                                                     <FontAwesomeIcon icon={faPen} />
@@ -143,12 +145,14 @@ const Table = ({
                                                 <buton
                                                     onClick={() => onPeriode(row.id)}// Ajoute ta fonction onViewDetails
                                                     className="flex items-center  "
+                                                     title="Voir la période de l'hôtel"
                                                 >
                                                     <FontAwesomeIcon icon={faMoneyCheck} />
                                                 </buton>
                                                 <button
                                                     onClick={() => OnRooms(row.id)}// Ajoute ta fonction onViewDetails
                                                     className="flex items-center  "
+                                                    title="Chambres disponibles"
                                                 >
 
                                                  <FontAwesomeIcon icon={faPersonShelter} /> 
@@ -156,6 +160,7 @@ const Table = ({
                                                 <button
                                                     onClick={() => ondelete(row)}
                                                     className="flex items-center hover:text-palette-orange "
+                                                    title="Supprimer l'hôtel"
                                                 >
 
                                                     <FontAwesomeIcon icon={faTrashCan} className="text-palette-orangefonce hover:text-palette-orange text-lg mr-2" />

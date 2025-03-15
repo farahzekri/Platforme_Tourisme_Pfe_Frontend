@@ -37,6 +37,10 @@ export const HotelListDachbord = () => {
     const handleUpdate = (id) => {
         navigate(`/Daschbordb2b/AjouterHotel?edit=true&id=${id}`);
     };
+    const handelveiw=(id)=>{
+        console.log("Navigating to:", id);
+        navigate(`/Daschbordb2b/DetailHotel/${id}`)
+    }
     const handelonperiode = (id) => {
         navigate(`/Daschbordb2b/ListePeriodeParhotel/${id}`)
     }
@@ -128,6 +132,7 @@ export const HotelListDachbord = () => {
                 onPeriode={handelonperiode}
                 ondelete={handleDelete}
                 OnRooms={handelonroom}
+                onViewdetail={handelveiw}
 
             />
 
