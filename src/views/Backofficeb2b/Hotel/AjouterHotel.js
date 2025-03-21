@@ -3,12 +3,7 @@ import "swiper/css/autoplay"; // Si tu utilises l'autoplay
 import "swiper/css/navigation"; // Si tu utilises la navigation
 import "swiper/css/pagination";
 import { useEffect, useState } from "react";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay } from "swiper/modules";
-import image1 from '../../../assets/img/hotel-resto-1.jpg'
-import image2 from '../../../assets/img/hotel-resto-2.jpg'
-import image3 from '../../../assets/img/hotel-resto-5.jpg'
-import IndexNavbar from "components/Navbars/IndexNavbar"
+
 import InputWithIcon from "../../Frontoffice/composant/input";
 import { FaBed, FaCity, FaExternalLinkAlt, FaFileContract, FaGlobeAmericas, FaHotel, FaImages, FaLocationArrow, FaThemeisle } from "react-icons/fa";
 import { RiParentFill } from "react-icons/ri";
@@ -24,7 +19,7 @@ import { ValidationHotel } from "../../Frontoffice/Hotel/ValidatorHotel";
 import Alert from "components/Alert/Alert";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useGethotelbyidhotel, useUpdateHotel, useCreateHotel } from "views/hooks/Hotel";
-import Sidebar from "../composant/Siderbar";
+
 
 const HotelAjouter = () => {
     const { mutate: createHotel, isLoading, isError } = useCreateHotel();

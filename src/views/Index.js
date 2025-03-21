@@ -11,6 +11,7 @@ import image1 from '../assets/img/hotel-resto-7.jpg'
 import image2 from '../assets/img/destination-6.jpg'
 import { useGetHotelsWithPrice } from "./hooks/periodehotel";
 import CardsHotel from "./Frontoffice/Acceuil/CardHotel";
+import TypingEffect from "react-typing-effect";
 const offers = [
   { id: 1, image: image1, title: "Manila Hotel", location: "Manila, Philippines", price: "$200/person" },
   { id: 2, image: image2, title: "Bali Resort", location: "Bali, Indonesia", price: "$250/person" },
@@ -27,57 +28,63 @@ export default function Index() {
   const offersPerPage = 2;
   const [offsetY, setOffsetY] = useState(0);
   const { data: hotels, isLoading, error } = useGetHotelsWithPrice();
-  
+
   const handleScroll = () => {
-    setOffsetY(window.scrollY * 0.5); 
+    setOffsetY(window.scrollY * 0.5);
   };
 
   useEffect(() => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-  
+
   const indexOfLastOffer = currentPage * offersPerPage;
   const indexOfFirstOffer = indexOfLastOffer - offersPerPage;
   const currentOffers = offers.slice(indexOfFirstOffer, indexOfLastOffer);
-  
+
   const nextPage = () => {
     if (indexOfLastOffer < offers.length) {
       setCurrentPage(currentPage + 1);
     }
   };
-  
+
   const prevPage = () => {
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1);
     }
   };
 
-  
-  
+
+
   return (
     <>
       <IndexNavbar fixed />
       <section className="header relative pt-16 items-center flex h-screen max-h-860-px "
         style={{
-          backgroundImage:`url(${bg_5})`,
+          backgroundImage: `url(${bg_5})`,
           backgroundSize: "cover",
-          backgroundPosition: `center ${offsetY}px`, 
+          backgroundPosition: `center ${offsetY}px`,
           transition: "background-position 0.1s ease-out",
         }}>
         <div className="container mx-auto items-center flex flex-wrap  " >
-          
-         
-        
+
+
+
           <div className="w-full md:w-8/12 lg:w-6/12 xl:w-6/12 px-4">
             <div className="pt-32 sm:pt-0" >
               <div class="space-y-4 text-white">
                 <span class="text-xl font-semibold text-primary">Bienvenue à Hub Travel</span>
-                <h1 class="text-5xl md:text-4xl lg:text-6xl font-bold leading-tight">
-                  Découvrez votre endroit préféré avec nous
+                <h1 className="text-5xl md:text-4xl lg:text-6xl font-bold leading-tight">
+                  Découvrez{" "}
+                  <TypingEffect
+                    text={["votre endroit préféré avec nous"]}
+                    speed={100}
+                    eraseDelay={2000}
+                    cursor={"|"}
+                  />
                 </h1>
                 <p class="text-lg font-light leading-relaxed">
-                 Voyagez dans n'importe quel coin du monde, sans tourner en rond.
+                  Voyagez dans n'importe quel coin du monde, sans tourner en rond.
                 </p>
               </div>
               <div className="mt-12">
@@ -87,18 +94,18 @@ export default function Index() {
                   className="github-star ml-1 text-white font-bold px-6 py-4 rounded outline-none focus:outline-none mr-1 mb-1 bg-blueGray-700 active:bg-blueGray-600 uppercase text-sm shadow hover:shadow-lg ease-linear transition-all duration-150"
                   target="_blank"
                 >
-                  Github Star
+                  contact nous
                 </a>
               </div>
             </div>
           </div>
-           
+
         </div>
 
       </section>
 
       <SearchBar />
-      <CardsHotel/>
+      <CardsHotel />
 
       {/* Offres de voyage */}
       <div className="container mx-auto mt-10">
