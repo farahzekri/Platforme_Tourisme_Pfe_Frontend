@@ -72,7 +72,7 @@ export default function Index() {
 
           <div className="w-full md:w-8/12 lg:w-6/12 xl:w-6/12 px-4">
             <div className="pt-32 sm:pt-0" >
-              <div class="space-y-4 text-white">
+              <div class=" text-white">
                 <span class="text-xl font-semibold text-primary">Bienvenue à Hub Travel</span>
                 <h1 className="text-5xl md:text-4xl lg:text-6xl font-bold leading-tight">
                   Découvrez{" "}
@@ -89,13 +89,16 @@ export default function Index() {
               </div>
               <div className="mt-12">
 
-                <a
-                  href="https://github.com/creativetimofficial/notus-react?ref=nr-index"
-                  className="github-star ml-1 text-white font-bold px-6 py-4 rounded outline-none focus:outline-none mr-1 mb-1 bg-blueGray-700 active:bg-blueGray-600 uppercase text-sm shadow hover:shadow-lg ease-linear transition-all duration-150"
-                  target="_blank"
-                >
-                  contact nous
-                </a>
+                <button className='group relative'>
+                  <div
+                    className='relative z-10 inline-flex h-12 items-center justify-center overflow-hidden rounded-full
+                bg-gradient-to-r dark:from-[#070e41] dark:to-[#263381] from-[#f6f7ff] to-[#f5f6ff] dark:border-[rgb(76_100_255)] border-2 border-[#263381] 
+                 bg-transparent px-6 font-medium dark:text-white text-black  transition-all duration-300 group-hover:-translate-x-3 group-hover:-translate-y-3'
+                  >
+                    Contact me
+                  </div>
+                  <div className='absolute inset-0 z-0 h-full w-full rounded-full transition-all duration-300 group-hover:-translate-x-3 group-hover:-translate-y-3  group-hover:[box-shadow:5px_5px_#394481,10px_10px_#5766be,15px_15px_#8898f3]'></div>
+                </button>
               </div>
             </div>
           </div>
@@ -103,12 +106,13 @@ export default function Index() {
         </div>
 
       </section>
-
+     <div className="bg-gray-100">
       <SearchBar />
+      </div>
       <CardsHotel />
 
       {/* Offres de voyage */}
-      <div className="container mx-auto mt-10">
+      <div className="container mx-auto mt-10 bg-gray-100">
         <h2 className="text-3xl font-bold text-center mb-6">Offres de voyage</h2>
         <div className="grid grid-cols-2 gap-4">
           {currentOffers.map((offer) => (
@@ -143,7 +147,10 @@ export default function Index() {
           ))}
         </div>
       </div>
+    
+      <div className="mt-10 pt-6">
       <Footer />
+      </div>
     </>
   );
 }

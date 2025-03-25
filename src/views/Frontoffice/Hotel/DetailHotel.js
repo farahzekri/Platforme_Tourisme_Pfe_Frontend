@@ -14,6 +14,7 @@ import IndexNavbar from "components/Navbars/IndexNavbar.js";
 import { FaCalendarAlt, FaInfoCircle, FaStar } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { arrangementOptions, supplementsOptions } from "./fichierdonne";
+import Footer from "components/Footers/Footer";
 
 const DetailHotel = () => {
     const { id } = useParams();
@@ -213,6 +214,9 @@ const DetailHotel = () => {
                 </div>
 
             </div>
+                <div className="mt-10 pt-6">
+                  <Footer />
+                  </div>
 
         </>)
 }
