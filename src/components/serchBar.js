@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 // import { FaSearch, FaCalendarAlt, FaDollarSign } from "react-icons/fa";
 import { PiUsersThreeFill } from "react-icons/pi";
 import { motion } from 'framer-motion';
 
 import { useSearchHotels } from "views/hooks/periodehotel";
 import { useNavigate } from "react-router-dom";
-import { FaChild, FaMapMarkerAlt, FaTimes, FaUser } from "react-icons/fa";
+import { FaChild, FaMapMarkerAlt, FaSearch, FaTimes, FaUser } from "react-icons/fa";
 import DateInput from "./InputField/DateInputRecherhce";
 import CitySelector from "./InputField/cityselecteur";
 const SearchBar = ({ initialData }) => {
@@ -21,7 +21,13 @@ const SearchBar = ({ initialData }) => {
   const [agesEnfants, setAgesEnfants] = useState(initialData?.agesEnfants || []);
   // const [arrangementChoisi, setArrangementChoisi] = useState('petit déjeuner');
   // const [supplementsChoisis, setSelectedSupplement] = useState([]);
-
+  useEffect(() => {
+    if (dateDebut) {
+      const nextDay = new Date(dateDebut);
+      nextDay.setDate(nextDay.getDate() + 1); // Ajoute un jour
+      setDateFin(nextDay.toISOString().split("T")[0]); // Met à jour la date de départ
+    }
+  }, [dateDebut]);
   const handleAgeChange = (index, value) => {
     const newAges = [...agesEnfants];
     newAges[index] = value;
@@ -65,12 +71,12 @@ const SearchBar = ({ initialData }) => {
 
         console.log("📦 Hôtels envoyés au navigateur :", data.hotels);
         setLoading(false);
-        navigate('/search-results', { 
-          replace: true, 
-          state: { 
-            hotels: data.hotels, 
+        navigate('/search-results', {
+          replace: true,
+          state: {
+            hotels: data.hotels,
             searchParams // Ajouter les données de recherche pour les pré-remplir
-          } 
+          }
         });
       },
       onError: (error) => {
@@ -81,7 +87,7 @@ const SearchBar = ({ initialData }) => {
   return (
     <div className="w-full flex flex-col items-center mt-6">
       {/* Onglets */}
-      <div className="flex justify-center gap-4 bg-gray-100 p-2 rounded-lg shadow-md">
+      <div className="flex flex-wrap justify-center gap-4 bg-gray-100 p-2 rounded-lg shadow-md">
         <button
           className={`px-6 py-3 text-lg font-semibold transition-all duration-300 border-2 ${selectedOption === "programme"
             ? "bg-white text-orange-500 border-orange-500 shadow-md"
@@ -112,17 +118,14 @@ const SearchBar = ({ initialData }) => {
             <p className="text-gray-700">Contenu pour Programmes Organisés...</p>
           ) : (
             <>
-              <div className="flex flex-wrap gap-4 ">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 ">
                 {/* Pays */}
-                <div className="flex-1">
+                <div >
 
-                  <CitySelector setCountry={setCountry} setCity={setCity} />
+                  <CitySelector country={country} city={city} setCountry={setCountry} setCity={setCity} />
                 </div>
-
-
-
                 {/* Date d'Arrivée */}
-                <div className="flex-1">
+                <div >
                   <label className="text-gray-700 font-semibold uppercase text-sm">
                     Date d'Arrivée
                   </label>
@@ -139,7 +142,7 @@ const SearchBar = ({ initialData }) => {
                 </div>
 
                 {/* Date de Sortie */}
-                <div className="flex-1">
+                <div >
                   <label className="text-gray-700 font-semibold uppercase text-sm">
                     Date de Sortie
                   </label>
@@ -152,7 +155,7 @@ const SearchBar = ({ initialData }) => {
                 </div>
 
                 {/* Occupation */}
-                <div className="flex-1 relative">
+                <div >
                   <label className="text-gray-700 font-semibold uppercase text-sm">
                     Occupation
                   </label>
@@ -248,11 +251,17 @@ const SearchBar = ({ initialData }) => {
                   </div>
                 )}
                 <button
-
-                  className="px-3 mt-3 py-1 h-20 bg-orange-500 text-white rounded-md hover:bg-orange-600"
-                  onClick={handleSearch} disabled={isLoading}
+                  className="px-6 mt-6 py-3 h-20 flex items-center justify-center gap-2 bg-orange-500 text-white rounded-md hover:bg-orange-600 transition-all duration-300 disabled:opacity-50"
+                  onClick={handleSearch}
+                  disabled={isLoading}
                 >
-                  {isLoading ? "Chargement..." : "Rechercher"}
+                  {isLoading ? (
+                    "Chargement..."
+                  ) : (
+                    <>
+                      <FaSearch className="text-lg" /> Recherche
+                    </>
+                  )}
                 </button>
 
               </div>

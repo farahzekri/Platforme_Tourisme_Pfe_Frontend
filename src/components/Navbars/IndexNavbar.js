@@ -59,7 +59,7 @@ export default function Navbar(props) {
             </a>
 
             <a
-              href="/destination"
+              href="/search-results"
               className="px-4 hover:text-primary transition duration-300"
             >
               Destination

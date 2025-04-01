@@ -18,8 +18,11 @@ import { FaPercentage } from "react-icons/fa";
 import { useUpdatePeriode } from "views/hooks/periodehotel";
 import { useGetPeriodeById } from "views/hooks/periodehotel";
 import Loader from "views/Errorpages/loader";
+import  Button  from "../../../components/Button/button";
+import { faLeftLong, faPlus } from "@fortawesome/free-solid-svg-icons";
 const AjouterPeriode = () => {
     const { hotelId } = useParams();
+    
     const { data: hotel, isLoadinghotel, error } = useGethotelbyidhotel(hotelId);
 
     const {mutate:createperiode} = useCreatePeriode();
@@ -191,10 +194,24 @@ const AjouterPeriode = () => {
                 <div className="max-w-8xl mx-auto mt-10 flex flex-col space-y-4">
                     {/* First Card: Détails de la période */}
                     <div className="flex-1 bg-white shadow-lg rounded-lg p-8">
+                    <div className="flex justify-start mb-5">
+                        <Button
+                             onClick={() => {
+                                console.log("hotelId:", hotelId);  // Debugging
+                                navigate(`/Daschbordb2b/ListePeriodeParhotel/${hotelId}`);
+                            }}
+                            icon={faLeftLong}
+                            label="Retourn"
+                            bgColor="bg-palette-orange"
+                            hoverBgColor="hover:bg-palette-orangefonce"
+                            textColor="text-white"
+                        />
+                         </div>
+                       
                         <h2 className="text-2xl font-bold mb-4">Détails de la période</h2>
                         <form className="space-y-4">
-                            <div className="flex gap-4">
-                                <div className="w-1/4">
+                            <div className="  grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                            
                                     <InputWithIcon
                                         label="Date début*"
                                         type="date"
@@ -204,8 +221,7 @@ const AjouterPeriode = () => {
                                         onChange={handleChange}
                                     // error={errors.dateDebut}
                                     />
-                                </div>
-                                <div className="w-1/4">
+                                
                                     <InputWithIcon
                                         label="Date fin*"
                                         type="date"
@@ -215,8 +231,8 @@ const AjouterPeriode = () => {
                                         onChange={handleChange}
                                     // error={errors.dateFin}
                                     />
-                                </div>
-                                <div className="w-1/4">
+                             
+                              
                                     <InputWithIcon
                                         label="Nombre min de nuit*"
                                         type="number"
@@ -226,8 +242,8 @@ const AjouterPeriode = () => {
                                         onChange={handleChange}
                                         error={errors.minNuits}
                                     />
-                                </div>
-                                <div className="w-1/4">
+                              
+                               
                                     <InputWithIcon
                                         label="Allotement*"
                                         type="number"
@@ -236,12 +252,10 @@ const AjouterPeriode = () => {
                                         onChange={handleChange}
                                         error={errors.allotement}
                                     />
-                                </div>
+                             
                             </div>
-                            <div className="flex gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
 
-                                
-                                <div className="w-1/4">
                                     <InputWithIcon
                                         label="Délai d'annulation*"
                                         type="text"
@@ -251,8 +265,8 @@ const AjouterPeriode = () => {
                                         onChange={handleChange}
                                         error={errors.delai_annulation}
                                     />
-                                </div>
-                                <div className="w-1/4">
+                              
+                             
                                     <InputWithIcon
                                         label="Délai de rétrocession*"
                                         type="text"
@@ -262,8 +276,8 @@ const AjouterPeriode = () => {
                                         onChange={handleChange}
                                         error={errors.delai_retrocession}
                                     />
-                                </div>
-                                <div className="w-1/4">
+                             
+                         
                                     <InputWithIcon
                                         label="Prix en semaine*"
                                         type="number"
@@ -273,8 +287,7 @@ const AjouterPeriode = () => {
                                         onChange={handleChange}
                                         error={errors.prixWeekday}
                                     />
-                                </div>
-                                <div className="w-1/4">
+                        
                                 <InputWithIcon
                                         label="Prix weekend*"
                                         type="number"
@@ -284,13 +297,13 @@ const AjouterPeriode = () => {
                                         onChange={handleChange}
                                         error={errors.prixWeekend}
                                     />
-                                </div>
+                           
                             </div>
 
-                            <div className="flex gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 ">
 
                
-                                <div className="w-1/2">
+                            
                                     <InputWithIcon
                                         label="Suppliment single weekend*"
                                         type="number"
@@ -300,8 +313,8 @@ const AjouterPeriode = () => {
                                         onChange={handleChange}
                                         // error={errors.pourcentageSupplementSingleWeekend}
                                     />
-                                </div>
-                                <div className="w-1/2">
+                           
+                            
                                     <InputWithIcon
                                         label="Supplement Single*"
                                         type="number"
@@ -311,7 +324,7 @@ const AjouterPeriode = () => {
                                         onChange={handleChange}
                                         error={errors.pourcentageSupplementSingle}
                                     />
-                                </div>
+                               
                             </div>
 
                         </form>
@@ -322,8 +335,8 @@ const AjouterPeriode = () => {
                         <h2 className="text-2xl font-bold mb-4">Suppléments</h2>
                         {hotel?.supplements?.length > 0 ? (
                             hotel.supplements.map((supplement, index) => (
-                                <div key={index} className="flex justify-between items-center">
-                                    <span>{supplement}</span>
+                                <div key={index} className="grid grid-cols-3 gap-4 items-center">
+                                    <span className="truncate">{supplement}</span>
                                     <InputWithIcon
                                         type="number"
                                         value={formData.supplementsPrix[index]?.prix || ''}
@@ -346,8 +359,8 @@ const AjouterPeriode = () => {
                         <h2 className="text-2xl font-bold mb-4">Arrangements</h2>
                         {hotel?.arrangement?.length > 0 ? (
                             hotel.arrangement.map((arrangement, index) => (
-                                <div key={index} className="flex justify-between items-center">
-                                    <span>{arrangement}</span>
+                                <div key={index} className="grid grid-cols-3 gap-4 items-center">
+                                    <span  className="truncate">{arrangement}</span>
                                     <InputWithIcon
                                         type="number"
                                         value={formData.arrangementsPrix[index]?.prix || ''}
@@ -362,10 +375,18 @@ const AjouterPeriode = () => {
                             <div>Aucun arrangement à affecter pour cet hôtel.</div>
                         )}
 
-                        <button type="submit" onClick={handleSubmit} className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600 transition">
-                            
-                            {isEditMode ? "Modifier Periode":"Ajouter Peirode"}
-                        </button>
+                     
+                        <div className="flex justify-end mt-9">
+                        <Button
+                            onClick={handleSubmit}
+                            icon={faPlus}
+                            label=  {isEditMode ? "Modifier Periode":"Ajouter Peirode"}
+                            bgColor="bg-palette-greenajou"
+                            hoverBgColor="hover:bg-palette-green"
+                            textColor="text-white"
+                        />
+                     
+                         </div>
                     </div>
 
 

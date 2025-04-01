@@ -32,6 +32,7 @@ import BackofficeB2B from "layouts/Backoffice";
 import DetailHotel from "views/Frontoffice/Hotel/DetailHotel";
 import Tarifetdisponiblite from "views/Frontoffice/Hotel/Tarifetdisponibilite";
 import Review from "views/Frontoffice/Hotel/Review";
+import Contact from "views/Frontoffice/Acceuil/contactme";
 // import ProtectedRouterprivilege from "views/auth/ProtectedRouterdeprivilege";
 
 const queryClient = new QueryClient();
@@ -65,6 +66,7 @@ const App = () => {
               <Route path="/TarifDisponiblite/:id" element={<Tarifetdisponiblite/>}/>
               <Route path="/AvisClient/:id" element={<Review/>}/>
               <Route path="/search-results" element={< SearchResults/>} />
+              <Route path="/contact" element={< Contact/>} />
               <Route path="/*" element={<NotFound />} />
           
            

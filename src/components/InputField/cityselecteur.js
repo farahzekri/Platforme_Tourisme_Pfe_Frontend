@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { FaMapMarkerAlt } from "react-icons/fa";
-const CitySelector = ({ setCountry, setCity }) => {
+const CitySelector = ({ setCountry, setCity ,country,city }) => {
   const [inputValue, setInputValue] = useState("");
   const [filteredOptions, setFilteredOptions] = useState([]);
   const [isFocused, setIsFocused] = useState(false);
@@ -48,7 +48,7 @@ const CitySelector = ({ setCountry, setCity }) => {
       <div className="relative">
         <input
           type="text"
-          value={inputValue}
+          value={inputValue || `${country}, ${city}`}
           onChange={handleInputChange}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setTimeout(() => setIsFocused(false), 150)} // Fermeture avec délai

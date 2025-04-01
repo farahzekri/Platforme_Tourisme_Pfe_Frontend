@@ -62,7 +62,7 @@ const DateInput = ({ label, value, onChange, placeholder, minDate }) => {
                 <input
                     ref={inputRef}
                     type="text"
-                    className=" w-[450px] border border-primary h-20 p-3 pl-5 text-gray-900 text-sm rounded-md focus:ring-2 focus:ring-orange-500 block  ps-10 "
+                    className=" w-full border border-primary h-20 p-3 pl-5 text-gray-900 text-sm rounded-md focus:ring-2 focus:ring-orange-500 block  ps-10 "
                     placeholder={placeholder}
                     defaultValue={value} // Utiliser defaultValue pour éviter l'erreur de mise à jour
                 />

@@ -26,7 +26,7 @@ const InputWithIcon = ({
         {/* Champ input, select ou number */}
         {type === "select" ? (
           <select
-            className="flex-1 focus:outline-none bg-white border-none"
+            className="flex-1 w-full focus:outline-none bg-white border-none"
             value={value}
             onChange={onChange}
             name={name}
@@ -41,7 +41,7 @@ const InputWithIcon = ({
         ) : type === "number" ? (
           <input
             type="number"
-            className="flex-1 focus:outline-none"
+            className="flex-1 w-full focus:outline-none"
             placeholder={placeholder}
             value={value}
             onChange={onChange}
@@ -51,7 +51,7 @@ const InputWithIcon = ({
         )  : type === "file" ? (
           <input
             type="file"
-            className="flex-1 focus:outline-none"
+            className="flex-1 w-full focus:outline-none"
             name={name}
             onChange={onChange}
             multiple={multiple}
@@ -59,7 +59,7 @@ const InputWithIcon = ({
         ):(
           <input
             type={type}
-            className="flex-1 focus:outline-none"
+            className="flex-1 w-full focus:outline-none"
             placeholder={placeholder}
             value={value}
             onChange={onChange}

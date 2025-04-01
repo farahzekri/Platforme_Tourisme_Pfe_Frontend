@@ -1,6 +1,6 @@
 /*eslint-disable*/
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import IndexNavbar from "components/Navbars/IndexNavbar.js";
 import Footer from "components/Footers/Footer.js";
@@ -28,7 +28,7 @@ export default function Index() {
   const offersPerPage = 2;
   const [offsetY, setOffsetY] = useState(0);
   const { data: hotels, isLoading, error } = useGetHotelsWithPrice();
-
+   const navigate=useNavigate()
   const handleScroll = () => {
     setOffsetY(window.scrollY * 0.5);
   };
@@ -94,6 +94,7 @@ export default function Index() {
                     className='relative z-10 inline-flex h-12 items-center justify-center overflow-hidden rounded-full
                 bg-gradient-to-r dark:from-[#070e41] dark:to-[#263381] from-[#f6f7ff] to-[#f5f6ff] dark:border-[rgb(76_100_255)] border-2 border-[#263381] 
                  bg-transparent px-6 font-medium dark:text-white text-black  transition-all duration-300 group-hover:-translate-x-3 group-hover:-translate-y-3'
+                 onClick={()=> navigate('/contact')}
                   >
                     Contact me
                   </div>
@@ -112,7 +113,7 @@ export default function Index() {
       <CardsHotel />
 
       {/* Offres de voyage */}
-      <div className="container mx-auto mt-10 bg-gray-100">
+      <div className="container mx-auto mt-10 bg-white">
         <h2 className="text-3xl font-bold text-center mb-6">Offres de voyage</h2>
         <div className="grid grid-cols-2 gap-4">
           {currentOffers.map((offer) => (

@@ -9,7 +9,7 @@ import { Autoplay } from "swiper/modules";
 import IndexNavbar from "components/Navbars/IndexNavbar"
 import image1 from "../../../assets/img/bg_5.jpg"
 import SearchBar from 'components/serchBar';
-import { FaStar } from "react-icons/fa";
+import { FaChevronLeft, FaChevronRight, FaStar } from "react-icons/fa";
 import PriceRangeSlider from "../composant/inputRecherche/ranger";
 import Footer from "components/Footers/Footer";
 const SearchResults = () => {
@@ -25,6 +25,8 @@ const SearchResults = () => {
     const [budget, setBudget] = useState([0, 1500]);
     const [usePredefinedRanges, setUsePredefinedRanges] = useState(false);
     const [selectedRange, setSelectedRange] = useState(null);
+
+
     const handleStarsChange = (e) => {
         setSelectedStars(parseInt(e.target.value));
     };
@@ -44,6 +46,7 @@ const SearchResults = () => {
     // Gestion du choix de la plage
     const handleRangeChange = (range) => {
         setSelectedRange(range);
+        setBudget(range);
     };
     // Gérer la sélection du type de contrat (radio)
     const handleContractChange = (e) => {
@@ -55,20 +58,33 @@ const SearchResults = () => {
         return (
             (!searchTerm || hotel.hotel.toLowerCase().includes(searchTerm.toLowerCase())) &&
             (!selectedStars || hotel.stars === selectedStars) &&
-            (selectedArrangements.length === 0 || selectedArrangements.some((arr) => hotel.arrangement.includes(arr))) &&
+            (selectedArrangements.length === 0 ||
+                (Array.isArray(hotel.arrangement) && selectedArrangements.some((arr) => hotel.arrangement.includes(arr)))) &&
             (!selectedContract || hotel.Typecontract === selectedContract) &&
-            hotel.prixTotal >= budget[0] &&
-            hotel.prixTotal <= budget[1]
+            hotel.prixTotal >= budget[0] && hotel.prixTotal <= budget[1]
         );
     });
+    const [currentPage, setCurrentPage] = useState(1);
+    const hotelsPerPage = 4; // Nombre d'hôtels affichés par page
+
+    // Calcul des indices des hôtels à afficher
+    const indexOfLastHotel = currentPage * hotelsPerPage;
+    const indexOfFirstHotel = indexOfLastHotel - hotelsPerPage;
+    const currentHotels = filteredHotels.slice(indexOfFirstHotel, indexOfLastHotel);
+
+    // Nombre total de pages
+    const totalPages = Math.ceil(filteredHotels.length / hotelsPerPage);
+
+    // Changer de page
+    const paginate = (pageNumber) => setCurrentPage(pageNumber);
     const resetFilters = () => {
-        setSearchTerm(""); 
-        setSelectedStars(null); 
-        setSelectedArrangements([]); 
-        setSelectedContract(null); 
-        setBudget([0, 105000]); 
-        setUsePredefinedRanges(false); 
-        setSelectedRange(null); 
+        setSearchTerm("");
+        setSelectedStars(null);
+        setSelectedArrangements([]);
+        setSelectedContract(null);
+        setBudget([0, 105000]);
+        setUsePredefinedRanges(false);
+        setSelectedRange(null);
     };
     return (
         <>
@@ -143,7 +159,7 @@ const SearchResults = () => {
                         <div className="mb-4">
                             <label className="block text-xl  font-medium text-gray-700 font-bold">Filtres Par Type d'Arrangement</label>
                             <div className="mt-2">
-                                {['Petit déjeuner', 'Demi-pension', 'Pension complète', 'All inclusive'].map((arr) => (
+                                {['petit déjeuner', 'demi-pension', 'pension complète', 'all inclusive'].map((arr) => (
                                     <label
                                         key={arr}
                                         className="flex items-center px-3 py-2 gap-3 rounded-lg cursor-pointer hover:bg-gray-100 has-[:checked]:text-palette-bleuclere has-[:checked]:bg-blue-50 has-[:checked]:ring-blue-300 has-[:checked]:ring-1"
@@ -172,7 +188,7 @@ const SearchResults = () => {
                         <div className="mb-4">
                             <label className="block text-xl  font-medium text-gray-700 font-bold">Filtres Par Type de Contrat</label>
                             <div className="flex flex-col space-y-2 mt-2">
-                                {['Réduction par âge d\'enfant', 'Non réduction par âge d\'enfant'].map((contract) => (
+                                {['Réduction par age d\'enfant', 'Non réduction par âge d\'enfant'].map((contract) => (
                                     <label key={contract} className="relative flex items-center cursor-pointer">
                                         <input
                                             type="radio"
@@ -229,8 +245,8 @@ const SearchResults = () => {
                                                 type="radio"
                                                 className="sr-only peer"
                                                 name="budget-range"
-                                                value={range.value}
-                                                checked={selectedRange === range.value}
+                                                value={JSON.stringify(range.value)}  // Convertir en chaîne pour éviter le problème de référence
+                                                checked={JSON.stringify(selectedRange) === JSON.stringify(range.value)}
                                                 onChange={() => handleRangeChange(range.value)}
                                             />
                                             <div className="w-6 h-6 bg-transparent border-2 border-palette-bleuclere rounded-full peer-checked:bg-palette-bleuclere peer-checked:border-yellow-500 peer-hover:shadow-lg peer-hover:shadow-yellow-500/50 peer-checked:shadow-lg peer-checked:shadow-yellow-500/50 transition duration-300 ease-in-out"></div>
@@ -254,57 +270,129 @@ const SearchResults = () => {
                         <h2 className="text-2xl font-semibold mb-6">Résultats de recherche</h2>
 
                         {filteredHotels.length === 0 ? (
-                            <p>Aucun hôtel trouvé.</p>
+                            <p className="text-center text-gray-600 text-lg">Aucun hôtel trouvé.</p>
                         ) : (
                             <div className="space-y-6">
-                                {filteredHotels.map((hotel, index) => (
-                                    <div key={index} className="flex items-center p-6 bg-white shadow-xl rounded-2xl border border-gray-200 hover:shadow-2xl transition duration-300">
-                                        {/* Image de l'hôtel */}
-                                        <img
-                                            src={hotel.image}
-                                            alt={hotel.hotel}
-                                            className="w-40 h-40 object-cover rounded-xl mr-6"
-                                        />
+                                {currentHotels.map((hotel, index) => {
+                                    let label, labelStyle;
 
-                                        {/* Informations sur l'hôtel */}
-                                        <div className="flex-1">
-                                            {/* Nom de l'hôtel et étoiles */}
-                                            <div className="flex items-center justify-between">
-                                                <h3 className="text-2xl font-semibold text-gray-900">{hotel.hotel}</h3>
-                                                <div className="flex">
-                                                    {Array.from({ length: hotel.stars }, (_, i) => (
-                                                        <FaStar key={i} className="text-palette-jaunFonce text-lg" />
-                                                    ))}
-                                                </div>
+                                    if (hotel.averageRating === 0) {
+                                        label = "Pas encore noté";
+                                        labelStyle = "bg-[#fb923c] text-white animate-pulse ";
+                                    } else if (hotel.averageRating >= 3 && hotel.averageRating < 4) {
+                                        label = "Pas mal";
+                                        labelStyle = "bg-[#3b82f6] text-white";
+                                    } else if (hotel.averageRating >= 4) {
+                                        label = "🔥 Top choix";
+                                        labelStyle = "bg-[#22c55e] text-white font-bold";
+                                    }
+                                    const optionsList = (hotel.options && hotel.options.length > 0)
+                                        ? hotel.options.split(",").map(option => option.trim())
+                                        : [];
+                                    return (
+                                        <div
+                                            key={index}
+                                            className="flex items-center bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden relative"
+                                        >
+                                            {/* Image à gauche avec Label stylisé */}
+                                            <div className="relative">
+                                                <img
+                                                    src={hotel.image}
+                                                    alt={hotel.hotel}
+                                                    className="w-[250px] h-[250px] object-cover rounded-l-xl"
+                                                />
+                                                <span className={`absolute top-2 left-2 px-3 py-1 rounded-full text-sm ${labelStyle}`}>
+                                                    {label}
+                                                </span>
                                             </div>
 
-                                            <p className="text-sm text-gray-600">{hotel?.city}, {hotel?.country}</p>
+                                            {/* Contenu à droite */}
+                                            <div className="p-4 flex-1">
+                                                {/* Nom et étoiles */}
+                                                <div className="flex items-center justify-between">
+                                                    <h3 className="text-xl font-bold text-gray-900">{hotel.hotel}</h3>
+                                                    <div className="flex">
+                                                        {Array.from({ length: hotel.stars }, (_, i) => (
+                                                            <FaStar key={i} className="text-palette-jaunFonce text-lg" />
+                                                        ))}
+                                                    </div>
+                                                </div>
 
-                                            {/* Prix et Arrangement */}
-                                            <p className="mt-3 text-lg font-semibold text-gray-900">Prix Total: <span className="text-orange-500">{hotel.prixTotal} TND</span></p>
-                                            <p className="text-sm text-gray-600">Arrangement: {hotel.arrangement}</p>
+                                                {/* Localisation */}
+                                                <p className="text-sm text-gray-500">
+                                                    {hotel.city}, {hotel.country}
+                                                </p>
+
+                                                {/* Prix et Arrangement */}
+                                                <p className="text-lg font-semibold text-gray-900">
+                                                    Prix Total: <span className="text-orange-500">{hotel.prixTotal} TND</span>
+                                                </p>
+                                                {optionsList.length > 0 && (
+                                                    <div className="mt-2 space-x-2">
+                                                        <p className="text-sm mb-4 font-semibold text-gray-600">Services supplémentaires:</p>
+                                                        {optionsList.map((option, i) => (
+                                                            <span
+                                                                key={i}
+                                                                className="px-3  py-1 text-sm font-semibold text-gray-900 rounded-full bg-palette-jaunClair cursor-pointer hover:bg-palette-jaunFonce hover:text-lg transition"
+                                                                onClick={() => navigate(`/DetailHotel/${hotel.id}`)}
+                                                            >
+                                                                {option}
+                                                            </span>
+                                                        ))}
+                                                    </div>
+                                                )}
+
+                                                {/* Bouton */}
+                                                <div className="mt-3">
+                                                    <button
+                                                        onClick={() => navigate(`/DetailHotel/${hotel.id}`)}
+                                                        className="bg-green-700 justify-end text-white px-4 py-2 rounded-lg hover:bg-green-600 transition duration-300 text-sm font-medium shadow-md"
+                                                    >
+                                                        Voir Détails & Tarifs
+                                                    </button>
+                                                </div>
+                                            </div>
                                         </div>
-
-                                        <div className="flex justify-end mt-20">
-                                            <button
-                                                onClick={() => navigate(`/DetailHotel/${hotel.id}`)}
-                                                className="bg-green-700 text-white px-5 py-3 rounded-lg hover:bg-green-300 transition duration-300 text-sm font-medium shadow-md">
-                                                Detail & Tarif
-                                            </button>
-                                        </div>
-
-                                    </div>
-
-                                ))}
-
+                                    );
+                                })}
                             </div>
                         )}
+                        <div className="flex justify-center mt-8 space-x-2">
+                            {/* Bouton Précédent */}
+                            <button
+                                onClick={() => paginate(currentPage - 1)}
+                                disabled={currentPage === 1}
+                                className="px-3 py-2 rounded-full border bg-gray-200 hover:bg-gray-300 transition disabled:opacity-50"
+                            >
+                                <FaChevronLeft />
+                            </button>
+
+                            {/* Numéros de pages */}
+                            {Array.from({ length: totalPages }, (_, index) => (
+                                <button
+                                    key={index}
+                                    onClick={() => paginate(index + 1)}
+                                    className={`px-4 py-2 rounded-full border ${currentPage === index + 1 ? "bg-orange-500 text-white" : "bg-gray-200 hover:bg-gray-300"} transition`}
+                                >
+                                    {index + 1}
+                                </button>
+                            ))}
+
+                            {/* Bouton Suivant */}
+                            <button
+                                onClick={() => paginate(currentPage + 1)}
+                                disabled={currentPage === totalPages}
+                                className="px-3 py-2 rounded-full border bg-gray-200 hover:bg-gray-300 transition disabled:opacity-50"
+                            >
+                                <FaChevronRight />
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
             <div className="mt-10 pt-6">
-                  <Footer />
-                  </div>
+                <Footer />
+            </div>
         </>
     );
 };

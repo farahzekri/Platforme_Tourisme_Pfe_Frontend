@@ -19,6 +19,9 @@ import { ValidationHotel } from "../../Frontoffice/Hotel/ValidatorHotel";
 import Alert from "components/Alert/Alert";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useGethotelbyidhotel, useUpdateHotel, useCreateHotel } from "views/hooks/Hotel";
+import  Button  from "../../../components/Button/button";
+
+import { faLeftLong, faPen, faPlus } from "@fortawesome/free-solid-svg-icons";
 
 
 const HotelAjouter = () => {
@@ -30,7 +33,7 @@ const HotelAjouter = () => {
     const isEditing = params.get("edit") === "true";
     const hotelId = params.get("id");
     console.log("hotelId from URL:", hotelId);
-    const navigate=useNavigate();
+    const navigate = useNavigate();
 
     const updateHotel = useUpdateHotel();
     const { data: hotel, isLoadinghotel, error } = useGethotelbyidhotel(hotelId);
@@ -175,7 +178,7 @@ const HotelAjouter = () => {
                     }, 3000);
                     setFormData({ name: '', country: '', city: '', stars: '', Typecontract: '', minChildAge: '', maxChildAge: '', address: '', tripAdvisorLink: '', rooms: [], childrenCategories: [], options: [], location: {}, themes: [], arrangement: [], amenities: [], supplements: [] });
                     setErrors({});
-                   
+
                 },
                 onError: (error) => {
                     console.error(error);
@@ -195,13 +198,23 @@ const HotelAjouter = () => {
             <div className="w-full min-h-screen mt-20 pt-5 bg-gray-100">
 
                 <Alert message={alert.message} type={alert.type} />
-                
+
                 <div className="max-w-8xl mx-auto mt-10 flex flex-col space-y-4">
-                {/* <div className="absolute  items-center justify-center text-lightBlue-450 text-3xl font-bold z-10">
+                    {/* <div className="absolute  items-center justify-center text-lightBlue-450 text-3xl font-bold z-10">
                         {isEditing ? "Modifier l'hôtel" : "Ajouter un hôtel"}
                     </div> */}
                     {/* First Card: Informations de l'Hôtel */}
                     <div className="flex-1 bg-white shadow-lg rounded-lg p-8">
+                    <div className="flex justify-start mb-5">
+                        <Button
+                            onClick={()=> navigate("/Daschbordb2b/ListeHotel")}
+                            icon={faLeftLong}
+                            label="Retourn"
+                            bgColor="bg-palette-orange"
+                            hoverBgColor="hover:bg-palette-orangefonce"
+                            textColor="text-white"
+                        />
+                         </div>
                         <h2 className="text-2xl font-bold mb-4">Informations de l'Hôtel</h2>
                         <form className="space-y-4">
                             <div className="flex gap-4">
@@ -529,10 +542,19 @@ const HotelAjouter = () => {
 
 
                         </form>
-                        <button type="submit" onClick={handleSubmit} className="bg-blue-500 text-white px-6 py-2 mt-20 rounded hover:bg-blue-600 transition">
-
-                            {isEditing ? "Modifier l'hôtel" : "Ajouter l'hôtel"}
-                        </button>
+                      
+                       
+                        <div className="flex justify-end mt-9">
+                        <Button
+                            onClick={handleSubmit}
+                            icon={isEditing ? faPen: faPlus }
+                            label= {isEditing ? "Modifier l'hôtel" : "Ajouter l'hôtel"}
+                            bgColor="bg-palette-greenajou"
+                            hoverBgColor="hover:bg-palette-green"
+                            textColor="text-white"
+                        />
+                     
+                         </div>
                     </div>
                 </div>
 
