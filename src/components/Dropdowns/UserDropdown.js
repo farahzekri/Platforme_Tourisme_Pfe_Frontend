@@ -13,7 +13,7 @@ const UserDropdown = () => {
   const btnDropdownRef = React.createRef();
   const popoverDropdownRef = React.createRef();
   const name = useSelector((state) => state.auth.name);
-  const { collection } = useSelector((state) => state.auth);
+  const { collection,id } = useSelector((state) => state.auth);
   const isAuthorized = useSelector(selectIsAuthorized);
   const openDropdownPopover = () => {
     createPopper(btnDropdownRef.current, popoverDropdownRef.current, {
@@ -78,6 +78,19 @@ const UserDropdown = () => {
         >
           <FontAwesomeIcon icon={faCog} className="text-blueGray-500" />
           Settings
+        </a>
+          </>
+          )}
+           {collection === "b2b" && (
+           <>
+          <div className="h-0 my-2 border border-solid border-blueGray-100" />
+         <a
+         
+          className="flex items-center gap-2 text-sm py-2 px-4 font-medium w-full text-blueGray-700 hover:bg-gray-100 transition-all duration-200"
+          onClick={() => navigate(`/Daschbordb2b/Parametre/${id}`)}
+        >
+          <FontAwesomeIcon icon={faCog} className="text-blueGray-500" />
+          Parametre
         </a>
           </>
           )}

@@ -231,3 +231,59 @@ export const useResetPassword = () => {
     },
   });
 };
+
+export const useUpdateB2BInfo = () => {
+  return useMutation({
+    mutationFn: async ({ id, updatedData }) => {
+      try {
+        const { data } = await axios.put(`${url}/update/${id}`, updatedData);
+        toast.success("Agence mise à jour avec succès !");
+        return data;
+      } catch (error) {
+        const err = error?.response?.data?.message;
+        toast.error(err || "Échec de la mise à jour !");
+        throw error;
+      }
+    },
+  });
+};
+
+export const useGetB2BByidAgence = (id) => {
+  return useQuery({
+    queryKey: ['b2bUser', id], 
+    queryFn: async () => {
+      try {
+        const { data } = await axios.get(`${url}/getagencebyid/${id}`);
+        console.log('API Response:', data); 
+        return data;
+      } catch (error) {
+        const err = error?.response?.data?.message || "Erreur lors de la récupération de l'agence.";
+        toast.error(err);
+        throw new Error(err);
+      }
+    },
+    enabled: !!id, 
+    onError: () => {
+      toast.error("Une erreur s'est produite lors du chargement de l'agence.");
+    },
+  });
+};
+export const useUpdateB2BPassword = () => {
+  return useMutation({
+    mutationFn: async ({ email, oldPassword, newPassword }) => {
+      try {
+        const { data } = await axios.put(`${url}/update-password`, {
+          email,
+          oldPassword,
+          newPassword,
+        });
+        toast.success("Mot de passe mis à jour avec succès !");
+        return data;
+      } catch (error) {
+        const err = error?.response?.data?.message;
+        toast.error(err || "Échec de la mise à jour du mot de passe !");
+        throw error;
+      }
+    },
+  });
+};
