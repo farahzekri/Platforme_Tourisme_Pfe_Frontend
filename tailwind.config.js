@@ -70,6 +70,7 @@ module.exports = {
       palette:{
         greenajou:"#5C8143",
         green:"#7AA95C",
+        customGreen: '#014737',
         jaun:"#e9c46a",
         jaunClair: "#f9f2c0",
         jaunFonce: "#b88f3d",

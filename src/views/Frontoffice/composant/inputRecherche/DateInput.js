@@ -35,7 +35,7 @@ const DateInput = ({ label, value, onChange, placeholder, minDate }) => {
   return (
     <div className="relative max-w-sm">
       {label && (
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-lg font-medium text-gray-700 mb-1">
           {label}
         </label>
       )}
@@ -56,7 +56,7 @@ const DateInput = ({ label, value, onChange, placeholder, minDate }) => {
         <input
           ref={inputRef}
           type="text"
-          className="bg-gray-50 border border-[#014737] text-gray-900 text-sm rounded-lg focus:ring-[#014737] focus:border-[#014737] block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-[#014737] dark:focus:border-[#014737]"
+          className="bg-gray-50 border border-[#014737] text-gray-900 text-base rounded-xl focus:ring-[#014737] focus:border-[#014737] block w-full ps-12 py-5 px-4 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-[#014737] dark:focus:border-[#014737]"
           placeholder={placeholder}
           defaultValue={value} // Utiliser defaultValue pour éviter l'erreur de mise à jour
         />

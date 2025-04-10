@@ -86,6 +86,19 @@ const SearchResults = () => {
         setUsePredefinedRanges(false);
         setSelectedRange(null);
     };
+    const handleRedirectToTarif = (hotelId) => {
+        navigate(`/TarifDisponiblite/${hotelId}`, {
+            state: {
+                dateDebut: searchParams.dateDebut,
+                dateFin: searchParams.dateFin,
+                country: searchParams.country,
+                city: searchParams.city,
+                adulte: searchParams.adultes,
+                enfant: searchParams.enfants,
+                agesEnfant: searchParams.agesEnfants,
+            },
+        });
+    };
     return (
         <>
             <IndexNavbar fixed />
@@ -309,7 +322,7 @@ const SearchResults = () => {
                                             {/* Contenu à droite */}
                                             <div className="p-4 flex-1">
                                                 {/* Nom et étoiles */}
-                                                <div className="flex items-center justify-between">
+                                                <div className="flex items-center gap-2">
                                                     <h3 className="text-xl font-bold text-gray-900">{hotel.hotel}</h3>
                                                     <div className="flex">
                                                         {Array.from({ length: hotel.stars }, (_, i) => (
@@ -324,9 +337,7 @@ const SearchResults = () => {
                                                 </p>
 
                                                 {/* Prix et Arrangement */}
-                                                <p className="text-lg font-semibold text-gray-900">
-                                                    Prix Total: <span className="text-orange-500">{hotel.prixTotal} TND</span>
-                                                </p>
+
                                                 {optionsList.length > 0 && (
                                                     <div className="mt-2 space-x-2">
                                                         <p className="text-sm mb-4 font-semibold text-gray-600">Services supplémentaires:</p>
@@ -341,14 +352,24 @@ const SearchResults = () => {
                                                         ))}
                                                     </div>
                                                 )}
-
+                                                <p className="text-lg font-semibold text-gray-900 text-right mb-2">
+                                                    Prix Total: <span className="text-orange-500 text-2xl font-bold">{hotel.prixTotal} TND</span>
+                                                </p>
                                                 {/* Bouton */}
-                                                <div className="mt-3">
+
+                                                <div className="mt-3 flex justify-between">
                                                     <button
                                                         onClick={() => navigate(`/DetailHotel/${hotel.id}`)}
-                                                        className="bg-green-700 justify-end text-white px-4 py-2 rounded-lg hover:bg-green-600 transition duration-300 text-sm font-medium shadow-md"
+                                                        className="bg-green-700 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition duration-300 text-sm font-medium shadow-md"
                                                     >
-                                                        Voir Détails & Tarifs
+                                                        Voir Détails
+                                                    </button>
+
+                                                    <button
+                                                        onClick={() => handleRedirectToTarif(hotel.id)}
+                                                        className="bg-green-700 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition duration-300 text-sm font-medium shadow-md"
+                                                    >
+                                                        Chambre & Tarifs
                                                     </button>
                                                 </div>
                                             </div>

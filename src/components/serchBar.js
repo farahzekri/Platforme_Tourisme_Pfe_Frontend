@@ -29,10 +29,20 @@ const SearchBar = ({ initialData }) => {
     }
   }, [dateDebut]);
   const handleAgeChange = (index, value) => {
+    let ageValue = parseInt(value, 10);
+  
+    if (isNaN(ageValue)) {
+      ageValue = 2; // Valeur par défaut si vide ou invalide
+    }
+  
+    // Appliquer les limites
+    if (ageValue < 2) ageValue = 2;
+    if (ageValue > 12) ageValue = 12;
+  
     const newAges = [...agesEnfants];
-    newAges[index] = value;
+    newAges[index] = ageValue;
     setAgesEnfants(newAges);
-  };
+  }
 
   // Mettre à jour le nombre d'enfants
   const handleChildrenChange = (e) => {
@@ -172,7 +182,7 @@ const SearchBar = ({ initialData }) => {
 
                 </div>
                 {showModal && (
-                  <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
+                  <div className="fixed inset-0 flex z-10 items-center justify-center bg-gray-800 bg-opacity-50">
                     <motion.div
                       className="bg-white p-6 rounded-lg shadow-lg relative w-96"
                       initial={{ x: '100%' }} // Modal commence à droite
@@ -230,12 +240,20 @@ const SearchBar = ({ initialData }) => {
                               <input
                                 type="number"
                                 value={age}
-                                min="0"
-                                max="17"
+                                min="2"
+                                max="12"
                                 className="border p-2 rounded w-16 text-center"
-                                onChange={(e) => handleAgeChange(index, e.target.value)}
+                                onChange={(e) => handleAgeChange(index, e.target.value,10) || 1}
+                                onInput={(e) => {
+                                  const val = parseInt(e.target.value, 10);
+                                  if (val >= 2 && val <= 12) {
+                                    handleAgeChange(index, val);
+                                  }
+                                }}
                               />
+                              
                             </div>
+                           
                           ))}
                         </div>
                       )}

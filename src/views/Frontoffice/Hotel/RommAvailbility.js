@@ -3,12 +3,14 @@ import { useGetHotelAvailability } from "../../hooks/periodehotel";
 import { useGethotelbyidhotel } from "views/hooks/Hotel";
 import { FaPerson } from "react-icons/fa6";
 import { FaBed, FaCheckCircle, FaChild, FaMoneyBillWave, FaRegCalendarCheck, FaUser, FaUsers } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const HotelAvailability = ({ id, dateArrivee, dateDepart, adultes, enfants ,agesEnfants}) => {
     const [arrangement, setArrangement] = useState('');
     const [suppléments, setSuppléments] = useState([]);
     const { data, isLoading, error } = useGetHotelAvailability(id, dateArrivee, dateDepart, adultes, enfants, arrangement, suppléments,agesEnfants);
     const { data: hotel, isLoadinghotel, errorl } = useGethotelbyidhotel(id);
+    const navigate=useNavigate();
     console.log("Données reçues dans le composant :", data);
 
     const [prixTotal, setPrixTotal] = useState(null);
@@ -37,6 +39,30 @@ const HotelAvailability = ({ id, dateArrivee, dateDepart, adultes, enfants ,ages
             e.target.checked ? [...prev, value] : prev.filter((item) => item !== value)
         );
     };
+    const handleReserveClick = () => {
+        const selectedRoom = data?.chambresDisponibles?.[0]; // ou autre logique pour choisir une chambre
+        navigate(`/reservation/${id}`, {
+          state: {
+            hotelId: id,
+            dateArrivee,
+            dateDepart,
+            arrangement,
+            suppléments,
+            adultes,
+            enfants,
+            agesEnfants,
+            prixTotal: selectedRoom?.prix || 0,
+            nbNuits:selectedRoom?.nbNuits,
+            roomType: selectedRoom?.type || "",
+            hotelName: hotel?.name || "",
+            hotelImage: hotel?.image[0] || "",
+            hotelCountry: hotel?.country || "",
+            hotelCity: hotel?.city || "",
+            hoteladdress: hotel?.address || "",
+            hotelStarts: hotel?.stars || 0,
+          }
+        });
+      };
     if (isLoading) return <p>Chargement des disponibilités...</p>;
     if (error) return <p>Erreur: {error.message}</p>;
     if (!data || !data.chambresDisponibles || data.chambresDisponibles.length === 0) {
@@ -113,6 +139,7 @@ const HotelAvailability = ({ id, dateArrivee, dateDepart, adultes, enfants ,ages
                         <button
                             className="absolute flex items-center  font-semibold right-6 bottom-6 cursor-pointer py-2 px-8 w-max break-keep text-sm rounded-lg transition-colors text-[#7C2D12] hover:text-[#FDBA74] bg-[#FDBA74] hover:bg-[#7C2D12]"
                             type="button"
+                            onClick={handleReserveClick}
                         >
                             <FaRegCalendarCheck  className="mr-2"/>
                             Réserver

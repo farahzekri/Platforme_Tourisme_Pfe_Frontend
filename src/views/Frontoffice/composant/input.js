@@ -59,7 +59,7 @@ const InputWithIcon = ({
         ):(
           <input
             type={type}
-            className="flex-1 w-full focus:outline-none"
+            className="flex-1 w-full  focus:outline-none"
             placeholder={placeholder}
             value={value}
             onChange={onChange}

@@ -2,7 +2,7 @@ import "swiper/css";
 import "swiper/css/autoplay"; // Si tu utilises l'autoplay
 import "swiper/css/navigation"; // Si tu utilises la navigation
 import "swiper/css/pagination";
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
 import IndexNavbar from "components/Navbars/IndexNavbar.js";
@@ -17,19 +17,27 @@ import DateInput from "../composant/inputRecherche/DateInput";
 import TextInput from "../composant/inputRecherche/InputNumber";
 import { FaChildren } from "react-icons/fa6";
 import { BsPersonStanding } from "react-icons/bs";
-import { MdOutlineBedroomParent, MdSafetyCheck } from "react-icons/md";
+import {  MdSafetyCheck } from "react-icons/md";
 import { useGethotelbyidhotel } from "views/hooks/Hotel";
 import { FaRegCalendarCheck } from "react-icons/fa";
 import { FaChildReaching } from "react-icons/fa6";
 export default function Tarifetdisponiblite() {
   const { id } = useParams();
+  const location = useLocation();
+  const {
+    dateDebut,
+    dateFin,
+    adulte,
+    enfant,
+    agesEnfant,
+  } = location.state || {};
   const { data: hotelDetails, isLoading, error } = useGetHotelsbyidWithPrice(id);
   const { data: hotel, isLoadinghotel, errorl } = useGethotelbyidhotel(id);
-  const [dateArrivee, setDateArrivee] = useState("");
-  const [dateDepart, setDateDepart] = useState("");
-  const [adultes, setAdultes] = useState(1);
-  const [enfants, setEnfants] = useState(0);
-  const [agesEnfants, setAgesEnfants] = useState([]);
+  const [dateArrivee, setDateArrivee] = useState(dateDebut || '');
+  const [dateDepart, setDateDepart] = useState(dateFin || '');
+  const [adultes, setAdultes] = useState(adulte || 1);
+  const [enfants, setEnfants] = useState(enfant|| 0);
+  const [agesEnfants, setAgesEnfants] = useState(agesEnfant || []);
   const [searchClicked, setSearchClicked] = useState(false);
   const today = new Date().toISOString().split('T')[0];
   useEffect(() => {
@@ -112,13 +120,13 @@ export default function Tarifetdisponiblite() {
 
               <div className="flex items-center justify-center mb-3">
                 <FaRegCalendarCheck className="text-[#048A68] text-2xl mt-4 mr-2" />
-                <h3 className="text-xl mt-4 font-semibold text-gray-900">Tarif & disponibilité</h3>
+                <h3 className="text-2xl mt-4 font-semibold text-gray-900">Tarif & disponibilité</h3>
               </div>
               <div className="p-4 text-center">
-                <p className="text-gray-700 text-sm">
+                <p className="text-gray-700 text-base">
                   <span className="font-semibold">Sélectionnez vos dates</span> d'arrivée et de départ.
                 </p>
-                <p className="text-gray-700 text-sm mt-1">
+                <p className="text-gray-700 text-base mt-1">
                   Indiquez le <span className="font-semibold">nombre d'adultes et d'enfants</span> pour voir les offres adaptées.
                 </p>
               </div>
