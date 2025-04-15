@@ -15,10 +15,12 @@ import InfotmationOccupation from "./composantFormulaire/informationocuupatoin";
 import WishList from "./composantFormulaire/whisches";
 import PaymentMethodSelector from "./composantFormulaire/mthodepayement";
 import { useCreateReservation } from "views/hooks/Reservation";
+import { useCreatePayment } from "views/hooks/Reservation";
 
 const ReservationFormPage = () => {
     const { state } = useLocation();
-    const { mutate: createReservation, isLoading, isSuccess, error } = useCreateReservation();
+    const { mutateAsync: createReservation } = useCreateReservation();
+    const { mutateAsync: createPayment } = useCreatePayment();
     const [errors, setErrors] = useState({});
     const [formData, setFormData] = useState({
         reserverCivility: "",
@@ -30,71 +32,45 @@ const ReservationFormPage = () => {
         enfant: [{ sexe: "", firstnamech: "", lastnamech: "" }],
         wishes: [],
         paymentMethod: "",
-        roomType:"",
-        dateArrivee:"",
-        dateDepart:"",
-        arrangement:"",
-        supplements:[],
-        totalPrice:""   
+        roomType: "",
+        dateArrivee: "",
+        dateDepart: "",
+        arrangement: "",
+        supplements: [],
+        totalPrice: ""
     });
     const validateForm = () => {
         const newErrors = {};
-      
+
         if (!formData.reserverCivility) newErrors.reserverCivility = "Champ requis";
         if (!formData.reserverFirstname.trim()) newErrors.reserverFirstname = "Champ requis";
         if (!formData.reserverLastname.trim()) newErrors.reserverLastname = "Champ requis";
         if (!formData.reserverEmail.trim()) {
-          newErrors.reserverEmail = "Champ requis";
+            newErrors.reserverEmail = "Champ requis";
         } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.reserverEmail)) {
-          newErrors.reserverEmail = "Email invalide";
+            newErrors.reserverEmail = "Email invalide";
         }
         if (!formData.reserverPhone.trim()) newErrors.reserverPhone = "Champ requis";
-      
-        formData.adults.forEach((adult, i) => {
-            const adultErrors = {}; // On initialise un objet pour l'adulte courant
-    
-            // On vérifie si chaque champ est vide
-            if (!adult.civilite?.trim()) adultErrors.civilite = "Champ requis";
-            if (!adult.firstname?.trim()) adultErrors.firstname = "Champ requis";
-            if (!adult.lastname?.trim()) adultErrors.lastname = "Champ requis";
-    
-            // Si l'adulte a des erreurs, on les ajoute à newErrors
-            if (Object.keys(adultErrors).length > 0) {
-                newErrors.adults = newErrors.adults || [];
-                newErrors.adults[i] = adultErrors; // On ajoute les erreurs pour l'adulte à son index
-            }
-        });
-      
-        formData.enfant.forEach((child, i) => {
-            const childErrors = {};
-            if (!child.firstnamech?.trim()) childErrors.firstnamech = "Champ requis";
-            if (!child.lastnamech?.trim()) childErrors.lastnamech = "Champ requis";
-            if (!child.sexe?.trim()) childErrors.sexe = "Champ requis";
-            
-            if (Object.keys(childErrors).length > 0) {
-                newErrors.enfants = newErrors.enfants || [];
-                newErrors.enfants[i] = childErrors;
-            }
-        });
-      
+
+
         if (!formData.paymentMethod) newErrors.paymentMethod = "Méthode de paiement requise";
-      
+
         return newErrors;
-      };
+    };
 
     const handlePhoneChange = (formattedPhone) => {
-        console.log("📞 Phone formatted:", formattedPhone);  
+        console.log("📞 Phone formatted:", formattedPhone);
         setFormData(prev => ({
-          ...prev,
-          reserverPhone: formattedPhone,
+            ...prev,
+            reserverPhone: formattedPhone,
         }));
         setErrors((prev) => ({
             ...prev,
             reserverPhone: "",
-          }));
-      };
+        }));
+    };
     const handleChange = (e) => {
-      
+
         if (!e.target) {
             console.error("L'élément cible n'est pas défini");
             return;
@@ -111,12 +87,12 @@ const ReservationFormPage = () => {
         setFormData(prev => ({
             ...prev,
             [name]: value,
-            
+
         }));
         setErrors((prev) => ({
             ...prev,
             [name]: "",
-          }));
+        }));
     };
     const handleAdultChange = (index, field, value) => {
         const updatedAdults = [...formData.adults];
@@ -124,7 +100,7 @@ const ReservationFormPage = () => {
             updatedAdults[index] = {};
         }
         updatedAdults[index][field] = value;
-    
+
         setFormData((prev) => ({
             ...prev,
             adults: updatedAdults,
@@ -132,7 +108,7 @@ const ReservationFormPage = () => {
         setErrors((prev) => ({
             ...prev,
             adults: "",
-          }))
+        }))
     };
     const handleChildChange = (index, field, value) => {
         const updatedChildren = [...formData.enfant];
@@ -140,7 +116,7 @@ const ReservationFormPage = () => {
             updatedChildren[index] = {};
         }
         updatedChildren[index][field] = value;
-    
+
         setFormData((prev) => ({
             ...prev,
             enfant: updatedChildren,
@@ -148,72 +124,107 @@ const ReservationFormPage = () => {
         setErrors((prev) => ({
             ...prev,
             enfant: "",
-          }))
+        }))
     };
     const handleChangePayment = (value) => {
         setFormData((prev) => ({ ...prev, paymentMethod: value }));
         setErrors((prev) => ({
             ...prev,
             paymentMethod: "",
-          }))
+        }))
     };
 
     let hasScrolledToError = false;
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
+        console.log("🟢 handleSubmit appelé !");
         const validationErrors = validateForm();
-
+        console.log("🟡 Erreurs retournées par validateForm :", validationErrors);
         if (Object.keys(validationErrors).length > 0) {
-          setErrors(validationErrors);
-      
-          if (!hasScrolledToError) {
-            const firstErrorField = document.querySelector("[data-error='true']");
-            if (firstErrorField) {
-              firstErrorField.scrollIntoView({ behavior: "smooth", block: "center" });
-              hasScrolledToError = true;
+            setErrors(validationErrors);
+
+            if (!hasScrolledToError) {
+                const firstErrorField = document.querySelector("[data-error='true']");
+                if (firstErrorField) {
+                    firstErrorField.scrollIntoView({ behavior: "smooth", block: "center" });
+                    hasScrolledToError = true;
+                }
             }
-          }
-          return;
+            return;
         }
-      
+
         hasScrolledToError = false;
         setErrors({});
         const reservationPayload = {
-          reserverCivility: formData.reserverCivility,
-          reserverFirstname: formData.reserverFirstname,
-          reserverLastname: formData.reserverLastname,
-          reserverEmail: formData.reserverEmail,
-          reserverPhone: formData.reserverPhone,
-          adults: formData.adults.filter(adult =>
-            adult.firstname?.trim() !== "" || adult.lastname?.trim() !== "" || adult.civilite?.trim() !== ""
-          ).map(adult => ({
-            civility: adult?.civilite || "",
-            firstname: adult?.firstname || "",
-            lastname: adult?.lastname || ""
-          })),
-          children: formData.enfant.filter(child =>
-            child.firstnamech?.trim() !== "" || child.lastnamech?.trim() !== "" || child.sexe?.trim() !== ""
-          ).map(child => ({
-            civility: child?.sexe || "",
-            firstname: child?.firstnamech || "",
-            lastname: child?.lastnamech || ""
-          })),
-          roomType: state.roomType,
-          dateArrivee: state.dateArrivee,
-          dateDepart: state.dateDepart,
-          arrangement: state.arrangement,
-          supplements: state.supplements,
-          wishes: formData.wishes || "",
-          totalPrice: state.prixTotal,
-          paymentMethod:formData.paymentMethod,         };
-      
-        console.log("Envoyer la réservation : ", reservationPayload);
-      
-        createReservation({
-          hotelId: state.hotelId,
-          formData: reservationPayload,
+            reserverCivility: formData.reserverCivility,
+            reserverFirstname: formData.reserverFirstname,
+            reserverLastname: formData.reserverLastname,
+            reserverEmail: formData.reserverEmail,
+            reserverPhone: formData.reserverPhone,
+            adults: formData.adults.filter(adult =>
+                adult.firstname?.trim() !== "" || adult.lastname?.trim() !== "" || adult.civilite?.trim() !== ""
+            ).map(adult => ({
+                civility: adult?.civilite || "",
+                firstname: adult?.firstname || "",
+                lastname: adult?.lastname || ""
+            })),
+            children: formData.enfant.filter(child =>
+                child.firstnamech?.trim() !== "" || child.lastnamech?.trim() !== "" || child.sexe?.trim() !== ""
+            ).map(child => ({
+                civility: child?.sexe || "",
+                firstname: child?.firstnamech || "",
+                lastname: child?.lastnamech || ""
+            })),
+            roomType: state.roomType,
+            dateArrivee: state.dateArrivee,
+            dateDepart: state.dateDepart,
+            arrangement: state.arrangement,
+            supplements: state.supplements,
+            wishes: formData.wishes || "",
+            totalPrice: state.prixTotal,
+            paymentMethod: formData.paymentMethod,
+        };
+
+        console.log("🧪 createReservation :", createReservation);
+
+        console.log("Création réservation...");
+        const response  = await createReservation({
+            hotelId: state.hotelId,
+            formData: reservationPayload,
         });
-      };
+        const reservation = response.reservation;
+        console.log("Réservation faite :", reservation);
+        const reservationId = reservation._id; // assure-toi que le backend renvoie bien _id
+        let amount = 0;
+        if (reservation.paymentMethod === "enligne_total") {
+          amount = reservation.totalPrice;
+        } else if (reservation.paymentMethod === "enligne_moitie") {
+          amount = reservation.totalPrice / 2;
+        }
+        
+        if (amount <= 0) {
+          console.error("❌ Montant de paiement invalide :", amount);
+          return;
+        }
+        // const amount = state.prixTotal;
+
+        console.log("Création paiement...");
+        const payment = await createPayment({
+
+            amount,
+            reservationId,
+        });
+        localStorage.setItem("reservationData", JSON.stringify({
+            ...state,
+            reservationId,
+            prixTotal: amount
+        }));
+        console.log("Paiement reçu :", payment);
+
+
+        window.location.href = payment.paymentUrl;
+
+    };
 
     return (
         <>
@@ -266,11 +277,11 @@ const ReservationFormPage = () => {
                         />
                         <InfotmationOccupation
                             formData={formData}
-                            onChange={handleAdultChange }
+                            onChange={handleAdultChange}
                             handleChildChange={handleChildChange}
                             adult={state.adultes}
                             enfant={state.enfants}
-                            errors={errors}
+                        // errors={errors}
                         />
                         <WishList
                             wishes={formData.wishes}
@@ -286,25 +297,25 @@ const ReservationFormPage = () => {
                             onChange={handleChangePayment}
                             prixTotal={state.prixTotal}
                         />
-                         <div className="flex justify-between mt-10">
-                        <button
-                            type="button"
-                            onClick={() => window.history.back()}
-                            className="px-4 h-11 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition"
-                        >
-                            Annuler
-                        </button>
+                        <div className="flex justify-between mt-10">
+                            <button
+                                type="button"
+                                onClick={() => window.history.back()}
+                                className="px-4 h-11 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition"
+                            >
+                                Annuler
+                            </button>
 
-                        <button
-                            type="button"
-                            onClick={handleSubmit} 
-                            className="px-4 py-2 bg-[#0F766E] text-white rounded-lg hover:bg-[#0D5C56] transition"
-                        >
-                            Confirmer & Paiement
-                        </button>
+                            <button
+                                type="button"
+                                onClick={handleSubmit}
+                                className="px-4 py-2 bg-[#0F766E] text-white rounded-lg hover:bg-[#0D5C56] transition"
+                            >
+                                Confirmer & Paiement
+                            </button>
+                        </div>
                     </div>
-                    </div>
-                   
+
 
                     {/* RÉCAPITULATIF À DROITE */}
                     <ReservationSummary state={state} />

@@ -16,13 +16,14 @@ const SearchBar = ({ initialData }) => {
   const [city, setCity] = useState(initialData?.city || '');
   const [dateDebut, setDateDebut] = useState(initialData?.dateDebut || '');
   const [dateFin, setDateFin] = useState(initialData?.dateFin || '');
+  
   const [adultes, setAdults] = useState(initialData?.adultes || 2);
   const [enfants, setChildren] = useState(initialData?.enfants || 0);
   const [agesEnfants, setAgesEnfants] = useState(initialData?.agesEnfants || []);
   // const [arrangementChoisi, setArrangementChoisi] = useState('petit déjeuner');
   // const [supplementsChoisis, setSelectedSupplement] = useState([]);
   useEffect(() => {
-    if (dateDebut) {
+    if (dateDebut  && !initialData?.dateFin) {
       const nextDay = new Date(dateDebut);
       nextDay.setDate(nextDay.getDate() + 1); // Ajoute un jour
       setDateFin(nextDay.toISOString().split("T")[0]); // Met à jour la date de départ

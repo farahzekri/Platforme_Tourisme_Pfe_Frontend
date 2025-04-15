@@ -18,3 +18,14 @@ export const useCreateReservation = () => {
     }
   );
 };
+export const useCreatePayment = () => {
+  return useMutation(
+    async ({ amount, reservationId }) => {
+      const response = await axios.post(`${url}/create`, {
+        amount,
+        reservationId,
+      });
+      return response.data; 
+    }
+  );
+};

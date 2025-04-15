@@ -8,7 +8,7 @@ import SelectInput from "views/Frontoffice/composant/inputRecherche/selecteur";
 
 
 
-const InfotmationOccupation = ({ formData, onChange, adult, enfant, handleChildChange, errors }) => {
+const InfotmationOccupation = ({ formData, onChange, adult, enfant, handleChildChange }) => {
 
     return (
         <>
@@ -40,10 +40,10 @@ const InfotmationOccupation = ({ formData, onChange, adult, enfant, handleChildC
                                     icon={TbGenderAndrogyne}
                                 />
                             </div>
-                            <div data-error={!!errors.adults?.[i]?.lastname}>
+                            <div >
 
                                 <TextInput
-                                    label="Nom*"
+                                    label="Nom"
                                     name={`adult-${i}-lastname`}
                                     value={formData.adults[i]?.lastname || ""}
                                     onChange={(e) => onChange(i, "lastname", e.target.value)}
@@ -51,15 +51,13 @@ const InfotmationOccupation = ({ formData, onChange, adult, enfant, handleChildC
                                     type="texttarget"
 
                                 />
-                                {errors.adults?.[i]?.lastname && (
-                                    <p className="text-red-500 text-sm">{errors.adults[i].lastname}</p>
-                                )}
+                               
                             </div>
 
-                            <div  data-error={!!errors.adults?.[i]?.firstname}>
+                            <div  >
 
                                 <TextInput
-                                    label="Prénom*"
+                                    label="Prénom"
                                     name={`adult-${i}-firstname`}
                                     value={formData.adults?.[i]?.firstname || ""}
                                     onChange={(e) => onChange(i, "firstname", e.target.value)}
@@ -67,9 +65,7 @@ const InfotmationOccupation = ({ formData, onChange, adult, enfant, handleChildC
                                     type="texttarget"
 
                                 />
-                               {errors.adults?.[i]?.firstname && (
-                                    <p className="text-red-500 text-sm">{errors.adults[i].firstname}</p>
-                                )}
+                              
                             </div>
 
                         </div>
@@ -97,10 +93,10 @@ const InfotmationOccupation = ({ formData, onChange, adult, enfant, handleChildC
                                 />
                             </div>
 
-                            <div data-error={!!errors.enfant?.[i]?.lastnamech} >
+                            <div>
 
                                 <TextInput
-                                    label="Nom de l'enfant*"
+                                    label="Nom de l'enfant"
                                     name="enfant.lastnamech"
                                     value={formData.enfant?.[i]?.lastnamech || ""}
                                     onChange={(e) => handleChildChange(i, "lastnamech", e.target.value)}
@@ -108,15 +104,15 @@ const InfotmationOccupation = ({ formData, onChange, adult, enfant, handleChildC
                                     type="text"
 
                                 />
-                                {errors.enfant?.[i]?.lastnamech && (
-                                    <p className="text-red-500 text-sm">{errors.enfants[i].lastnamech}</p>
-                                )}
+                               
+
+                               
                             </div>
 
                             <div>
 
                                 <TextInput
-                                    label="Prénom de l'enfant*"
+                                    label="Prénom de l'enfant"
                                     name={`enfant-${i}-firstnamech`}
                                     value={formData.enfant?.[i]?.firstnamech || ""}
                                     onChange={(e) => handleChildChange(i, "firstnamech", e.target.value)}

@@ -8,13 +8,14 @@ const CardRecherche = ({ hotel }) => {
     dayAfterTomorrow.setDate(today.getDate() + 2);
 
     const formatDate = (date) => date.toISOString().split("T")[0];
-
+    const country = hotel?.country || "Pays inconnu";
+    const city = hotel?.city || "Ville inconnue";
     return (
         <div className="bg-[#FDBA74] text-[#014737] p-5  rounded-lg shadow-lg space-y-4">
             <h3 className="text-lg font-bold">Rechercher votre séjour</h3>
             <div className="space-y-2">
                 <label className="block">Pays & Ville</label>
-                <input type="text" value={`${hotel.country} - ${hotel.city}`} readOnly className="w-full p-2 rounded text-black" />
+                <input type="text" value={`${country} - ${city}`} readOnly className="w-full p-2 rounded text-black" />
             </div>
             <div className="grid grid-cols-2 gap-3">
                 <div>

@@ -41,7 +41,7 @@ export default function Tarifetdisponiblite() {
   const [searchClicked, setSearchClicked] = useState(false);
   const today = new Date().toISOString().split('T')[0];
   useEffect(() => {
-    if (dateArrivee) {
+    if (dateArrivee && !dateFin) {
       const nextDay = new Date(dateArrivee);
       nextDay.setDate(nextDay.getDate() + 1); // Ajoute un jour
       setDateDepart(nextDay.toISOString().split("T")[0]); // Met à jour la date de départ
