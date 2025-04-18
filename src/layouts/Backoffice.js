@@ -11,6 +11,8 @@ import HotelRoomAvailability from "views/Backofficeb2b/Hotel/HotelDisponibleroom
 import HotelDetails from "views/Backofficeb2b/Hotel/Detailhotel";
 import UpdateAgence from "views/Backofficeb2b/Parametre/updateprofile";
 import UpdatePassword from "views/Backofficeb2b/Parametre/chnagemotdepsse";
+import { Reservation } from "views/Backofficeb2b/Hotel/Reservationparhotel";
+import { ToutlesReservation } from "views/Backofficeb2b/Reservation/Toutlesreservation";
 
 
 
@@ -28,6 +30,8 @@ export default function BackofficeB2B(){
           <Route path="/ListePeriodeParhotel/:hotelId" element={< PeriodeHotel/>} />
           <Route path="/AjouterPeriode/:hotelId" element={< AjouterPeriode/>} />
           <Route path="/UpdateRoomAvailobel/:hotelId" element={< HotelRoomAvailability/>} />
+          <Route path="/Reservationdhotel/:hotelId" element={< Reservation/>} />
+          <Route path="/Toutlesreservationdeb2b/:b2bId" element={< ToutlesReservation/>} />
           <Route path="/DetailHotel/:id" element={<HotelDetails/>} />
           <Route path="/changementmotdepase/:id" element={<UpdatePassword/>} />
           <Route path="/Parametre/:id" element={<UpdateAgence/>} />

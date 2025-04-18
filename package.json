@@ -24,6 +24,8 @@
     "framer-motion": "^12.5.0",
     "gulp": "4.0.2",
     "gulp-append-prepend": "1.0.8",
+    "jspdf": "^3.0.1",
+    "jspdf-autotable": "^5.0.2",
     "jwt-decode": "^4.0.0",
     "leaflet": "^1.9.4",
     "lucide-react": "^0.487.0",

@@ -44,6 +44,9 @@ export const HotelListDachbord = () => {
     const handelonperiode = (id) => {
         navigate(`/Daschbordb2b/ListePeriodeParhotel/${id}`)
     }
+    const handelreservation =(id)=>{
+        navigate(`/Daschbordb2b/Reservationdhotel/${id}`)
+    }
     const handelonroom =(id)=>{
         navigate(`/Daschbordb2b/UpdateRoomAvailobel/${id}`)
     }
@@ -133,6 +136,7 @@ export const HotelListDachbord = () => {
                 ondelete={handleDelete}
                 OnRooms={handelonroom}
                 onViewdetail={handelveiw}
+                OnReservation={handelreservation}
 
             />
 

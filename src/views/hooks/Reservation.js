@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import axios from "axios";
 
 const url = "http://localhost:5000/reservation"; 
@@ -28,4 +28,25 @@ export const useCreatePayment = () => {
       return response.data; 
     }
   );
+};
+
+export const useGetReservationsByHotel = (hotelId) => {
+  return useQuery({
+    queryKey: ["reservations", "byHotel", hotelId],
+    queryFn: async () => {
+      const response = await axios.get(`${url}/getreservationbyhotel/${hotelId}`);
+      return response.data;
+    },
+    enabled: !!hotelId, // le fetch ne s'exécute que si hotelId est défini
+  });
+};
+export const useGetReservationsByB2B = (b2bId) => {
+  return useQuery({
+    queryKey: ["reservations", "byB2B", b2bId],
+    queryFn: async () => {
+      const response = await axios.get(`${url}/getReservationsByB2B/${b2bId}`);
+      return response.data;
+    },
+    enabled: !!b2bId, 
+  });
 };

@@ -185,7 +185,7 @@ const ReservationFormPage = () => {
             paymentMethod: formData.paymentMethod,
         };
 
-        console.log("🧪 createReservation :", createReservation);
+        console.log("createReservation :", createReservation);
 
         console.log("Création réservation...");
         const response  = await createReservation({

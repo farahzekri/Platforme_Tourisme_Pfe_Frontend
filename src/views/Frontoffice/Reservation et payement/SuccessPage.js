@@ -10,7 +10,11 @@ import IndexNavbar from "components/Navbars/IndexNavbar";
 import ReservationSummary from "./detailreservation";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-
+import autoTable from "jspdf-autotable";
+import logo from "../../../assets/img/hubs-logo.jpg"
+import jsPDF from "jspdf";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faFilePdf } from "@fortawesome/free-solid-svg-icons";
 const SuccessPage = () => {
     const { state } = useLocation();
     const [reservationData, setReservationData] = useState(null);
@@ -24,6 +28,93 @@ const SuccessPage = () => {
             setReservationData(JSON.parse(data));
         }
     }, []);
+
+    const handleDownloadVoucher = () => {
+        const doc = new jsPDF();
+
+        const today = new Date().toLocaleDateString();
+
+        // 1. LOGO + HEADER
+        doc.addImage(logo, "PNG", 15, 10, 40, 20);
+        doc.setFontSize(16);
+        doc.text("Hubs Travel - Voucher de Réservation", 60, 25); // un peu plus bas
+
+        // Date à droite, en haut
+        doc.setFontSize(10);
+        doc.text(`Tunis, le ${today}`, 195, 15, { align: "right" }); // bien en haut à droite
+
+        doc.line(15, 35, 195, 35); // séparation
+
+        // 2. INFOS RÉSERVATION
+        doc.setFontSize(12);
+        doc.text(`Hôtel : ${reservationData.hotelName} (${reservationData.hotelCity})`, 20, 45);
+        doc.text(
+            `Bénéficiaires : ${reservationData.adultes} adulte(s), ${reservationData.enfants} enfant(s)`,
+            20,
+            55
+        );
+        doc.text(`Arrivée : ${reservationData.dateArrivee}`, 20, 65);
+        doc.text(`Départ : ${reservationData.dateDepart}`, 20, 75);
+        doc.text(`Nombre de nuits : ${reservationData.nbNuits}`, 20, 85);
+
+        // 3. TABLEAU RECAP
+        autoTable(doc, {
+            startY: 95,
+            head: [["Type de chambre", "Arrangement", "Supplément", "Prix Total (TND)"]],
+            body: [
+                [
+                    reservationData.roomType || "Standard",
+                    reservationData.arrangement || "petit déjeuner",
+                    reservationData.suppléments || "Aucun",
+                    `${reservationData.prixTotal} TND`,
+                ],
+            ],
+            theme: "grid",
+            headStyles: {
+                fillColor: [22, 160, 133],
+                textColor: 255,
+                halign: "center",
+            },
+            styles: {
+                halign: "center",
+                cellPadding: 4,
+            },
+        });
+
+        // 4. REMARQUES
+        const finalY = doc.lastAutoTable.finalY + 10;
+        doc.setFontSize(11);
+        doc.text("Remarques :", 20, finalY);
+        doc.setFontSize(10);
+        doc.text(
+            `Ce voucher doit être présenté à la réception de l'hôtel le jour de votre arrivée.\n` +
+            `Il contient toutes les informations nécessaires pour valider votre réservation.\n` +
+            `Merci de vérifier que les informations sont correctes. En cas de doute, contactez notre service client.`,
+            20,
+            finalY + 10
+        );
+
+        // 5. FOOTER
+        doc.setFontSize(9);
+        doc.text("Hubs Travel - Une plateforme de confiance", 105, 285, { align: "center" });
+        const signatureY = 250; // position verticale du cachet
+        const signatureX = 140; // position horizontale du cachet
+
+        doc.setDrawColor(0); // Couleur de la bordure (noir)
+        doc.setLineWidth(0.5);
+        doc.rect(signatureX, signatureY, 55, 25); // rectangle encadré
+
+        // Texte à l'intérieur
+        doc.setFont("helvetica", "italic");
+        doc.setFontSize(12);
+        doc.text("Hubs Travel", signatureX + 5, signatureY + 10);
+
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(10);
+        doc.text(reservationData.hotelName || "Nom de l'hôtel", signatureX + 5, signatureY + 18);
+        // 6. SAVE
+        doc.save("voucher_reservation.pdf");
+    };
     return (
         <>
             <IndexNavbar fixed />
@@ -53,7 +144,17 @@ const SuccessPage = () => {
                             <h2 className="text-2xl font-bold text-green-700 mb-4">Merci pour votre paiement !</h2>
                             <p className="text-gray-600 leading-relaxed">
                                 Votre réservation a bien été <span className="font-semibold text-green-700">confirmée</span>.<br />
-                                Vous recevrez un <span className="font-semibold">email de confirmation</span> sous peu.
+                                Vous pouvez <span className="font-semibold">télécharger votre voucher</span> dès maintenant.
+                               
+                                <div className=" flex justify-center ">
+                                <button
+                                    onClick={handleDownloadVoucher}
+                                    className="mt-6 px-6  py-3 bg-gray-700 text-white rounded-lg hover:bg-gray-500 transition flex items-center gap-2"
+                                >
+                                    <FontAwesomeIcon icon={faFilePdf} className="text-white text-lg" />
+                                    Télécharger le voucher (PDF)
+                                </button>
+                                </div>
                             </p>
                         </div>
                     </div>

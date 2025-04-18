@@ -2,14 +2,15 @@
 import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import image from '../../../assets/img/hubs-logo.jpg'
-import { faBars, faBusinessTime, faCheckToSlot, faClipboardList, faClockRotateLeft, faHouse, faUserShield } from "@fortawesome/free-solid-svg-icons";
+import { faBars, faBusinessTime, faCheckToSlot, faClipboardList, faClockRotateLeft, faHouse, faMoneyCheckDollar, faUserShield } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useSelector } from "react-redux";
+import { selectCurrentUserId } from "ApiSlice/authSlice";
 
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  
+ const b2bId = useSelector(selectCurrentUserId);
 
   return (
     <>
@@ -43,7 +44,7 @@ const Sidebar = () => {
         {/* Super Admin */}
 
         <ul className="space-y-2 mt-3">
-          <SidebarItem to="" icon={<FontAwesomeIcon icon={faHouse} />} label="Dashboard"  allowedRoles={["superadmin", "admin"]} />
+          <SidebarItem to="" icon={<FontAwesomeIcon icon={faHouse} />} label="Dashboard" allowedRoles={["superadmin", "admin"]} />
 
         </ul>
         <hr className="my-4 border-gray-300" />
@@ -71,37 +72,46 @@ const Sidebar = () => {
             to="/Daschbordb2b/AjouterHotel"
             icon={<FontAwesomeIcon icon={faCheckToSlot} />}
             label="Ajouter un Hotel"
-           
+
           />
         </ul>
+        <hr className="my-4 border-gray-300" />
+        <h6 className="text-gray-700 text-xs uppercase font-extrabold">Reservation </h6>
+        <ul className="space-y-2 mt-3">
+          <SidebarItem
+            to={`/Daschbordb2b/Toutlesreservationdeb2b/${b2bId}`}
+            icon={<FontAwesomeIcon icon={faMoneyCheckDollar} />}
+            label="Reservation de tout les hotel"
+          />
 
-        
-            <hr className="my-4 border-gray-300" />
-            <h6 className="text-gray-700 text-xs uppercase font-extrabold">Historique</h6>
-            <ul className="space-y-2 mt-3">
-              <SidebarItem to="/admin/Historique" icon={<FontAwesomeIcon icon={faClockRotateLeft} />} label="Historique" allowedRoles={["superadmin"]}/>
-            </ul>
-         
+        </ul>
+
+        <hr className="my-4 border-gray-300" />
+        <h6 className="text-gray-700 text-xs uppercase font-extrabold">Historique</h6>
+        <ul className="space-y-2 mt-3">
+          <SidebarItem to="/admin/Historique" icon={<FontAwesomeIcon icon={faClockRotateLeft} />} label="Historique" allowedRoles={["superadmin"]} />
+        </ul>
+
       </nav>
     </>
   );
 };
 
 // Composant SidebarItem pour éviter la répétition du code
-const SidebarItem = ({ to, icon, label,  }) => {
+const SidebarItem = ({ to, icon, label, }) => {
   const location = useLocation();
   const navigate = useNavigate();
-  
+
 
   const isActive = location.pathname === to;
 
- 
+
 
   const handleClick = (e) => {
     e.preventDefault();
-    
-      navigate(to);
-    
+
+    navigate(to);
+
   };
 
   return (
